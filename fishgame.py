@@ -700,11 +700,31 @@ class Game:
             'first_mythical': False,
             'fisherman': False,
             'master_fisherman': False,
+            'legendary_angler': False,  # ADD THIS
             'millionaire': False,
+            'billionaire': False,  # ADD THIS
             'mutation_hunter': False,
+            'golden_catch': False,
+            'magical_encounter': False,
             'encyclopedia_25': False,
             'encyclopedia_50': False,
+            'encyclopedia_75': False,  # ADD THIS
             'encyclopedia_100': False,
+            'heavyweight': False,  # ADD THIS
+            'titan_hunter': False,  # ADD THIS
+            'leviathan_slayer': False,  # ADD THIS
+            'speed_fisher': False,  # ADD THIS
+            'night_owl': False,  # ADD THIS
+            'storm_chaser': False,  # ADD THIS
+            'explorer': False,  # ADD THIS
+            'master_explorer': False,  # ADD THIS
+            'trophy_collector': False,  # ADD THIS
+            'quest_master': False,  # ADD THIS
+            'skill_master': False,  # ADD THIS
+            'perfect_reflexes': False,  # ADD THIS
+            'lucky_streak': False,  # ADD THIS
+            'deep_diver': False,  # ADD THIS
+            'cosmic_fisher': False,  # ADD THIS
         }
         
         # Setup save directory
@@ -732,8 +752,11 @@ class Game:
             time.sleep(1)
 
     def check_achievements(self):
+        """Enhanced achievement checking system"""
         total_caught = sum(info['times_caught'] for info in self.encyclopedia.caught_fish.values())
+        species_count = len(self.encyclopedia.caught_fish)
         
+        # Basic catch achievements
         if total_caught >= 1 and not self.achievements['first_catch']:
             self.achievements['first_catch'] = True
             print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Catch!" + Style.RESET_ALL)
@@ -748,14 +771,147 @@ class Game:
             print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Master Fisherman (200 fish caught)!" + Style.RESET_ALL)
             self.money += 2000
         
+        if total_caught >= 1000 and not self.achievements['legendary_angler']:
+            self.achievements['legendary_angler'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Legendary Angler (1000 fish caught)!" + Style.RESET_ALL)
+            self.money += 10000
+        
+        # Money achievements
         if self.money >= 1000000 and not self.achievements['millionaire']:
             self.achievements['millionaire'] = True
             print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Millionaire!" + Style.RESET_ALL)
         
-        species_count = len(self.encyclopedia.caught_fish)
-        if species_count >= 10 and not self.achievements['encyclopedia_25']:
+        if self.money >= 1000000000 and not self.achievements['billionaire']:
+            self.achievements['billionaire'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Billionaire!" + Style.RESET_ALL)
+            self.skill_points += 5
+        
+        # Mutation achievements
+        all_mutations = set()
+        for fish_info in self.encyclopedia.caught_fish.values():
+            all_mutations.update(fish_info.get('mutations_found', []))
+        
+        mutation_types = ["albino", "glowing", "spotted", "golden", "shadow", "magical"]
+        if all(m in all_mutations for m in mutation_types) and not self.achievements['mutation_hunter']:
+            self.achievements['mutation_hunter'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Mutation Hunter (Found all mutations)!" + Style.RESET_ALL)
+            self.money += 5000
+        
+        if 'golden' in all_mutations and not self.achievements['golden_catch']:
+            self.achievements['golden_catch'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Golden Catch!" + Style.RESET_ALL)
+        
+        if 'magical' in all_mutations and not self.achievements['magical_encounter']:
+            self.achievements['magical_encounter'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Magical Encounter!" + Style.RESET_ALL)
+            self.skill_points += 2
+        
+        # Encyclopedia completion achievements
+        all_fish_species = set()
+        for location in self.locations:
+            for fish in location.fish:
+                all_fish_species.add(fish.name)
+        
+        total_species = len(all_fish_species)
+        completion_percent = (species_count / total_species * 100) if total_species > 0 else 0
+        
+        if completion_percent >= 25 and not self.achievements['encyclopedia_25']:
             self.achievements['encyclopedia_25'] = True
             print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 25% Complete!" + Style.RESET_ALL)
+            self.money += 1000
+        
+        if completion_percent >= 50 and not self.achievements['encyclopedia_50']:
+            self.achievements['encyclopedia_50'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 50% Complete!" + Style.RESET_ALL)
+            self.money += 3000
+        
+        if completion_percent >= 75 and not self.achievements['encyclopedia_75']:
+            self.achievements['encyclopedia_75'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 75% Complete!" + Style.RESET_ALL)
+            self.money += 7500
+        
+        if completion_percent >= 100 and not self.achievements['encyclopedia_100']:
+            self.achievements['encyclopedia_100'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia Master (100% Complete)!" + Style.RESET_ALL)
+            self.money += 50000
+            self.skill_points += 10
+        
+        # Weight-based achievements
+        heaviest_weight = 0
+        for fish_info in self.encyclopedia.caught_fish.values():
+            if fish_info['heaviest'] > heaviest_weight:
+                heaviest_weight = fish_info['heaviest']
+        
+        if heaviest_weight >= 100 and not self.achievements['heavyweight']:
+            self.achievements['heavyweight'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Heavyweight (100kg+ fish)!" + Style.RESET_ALL)
+        
+        if heaviest_weight >= 1000 and not self.achievements['titan_hunter']:
+            self.achievements['titan_hunter'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Titan Hunter (1000kg+ fish)!" + Style.RESET_ALL)
+            self.money += 5000
+        
+        if heaviest_weight >= 10000 and not self.achievements['leviathan_slayer']:
+            self.achievements['leviathan_slayer'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Leviathan Slayer (10,000kg+ fish)!" + Style.RESET_ALL)
+            self.money += 25000
+            self.skill_points += 3
+        
+        # Time-based achievements
+        if self.time_of_day == 'night' and len(self.esky.fish) > 0:
+            if any(fish.catch_time for fish in self.esky.fish) and not self.achievements['night_owl']:
+                self.achievements['night_owl'] = True
+                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Night Owl (Fish at night)!" + Style.RESET_ALL)
+        
+        # Weather achievements
+        if self.weather == 'stormy' and len(self.esky.fish) > 0:
+            if not self.achievements['storm_chaser']:
+                self.achievements['storm_chaser'] = True
+                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Storm Chaser (Fish in a storm)!" + Style.RESET_ALL)
+        
+        # Location achievements
+        locations_fished = set()
+        for fish_info in self.encyclopedia.caught_fish.values():
+            locations_fished.add(fish_info.get('location', 'Unknown'))
+        
+        if len(locations_fished) >= 3 and not self.achievements['explorer']:
+            self.achievements['explorer'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Explorer (Fish in 3 locations)!" + Style.RESET_ALL)
+        
+        if len(locations_fished) >= len(self.locations) and not self.achievements['master_explorer']:
+            self.achievements['master_explorer'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Master Explorer (Fish in all locations)!" + Style.RESET_ALL)
+            self.money += 10000
+        
+        # Trophy room achievement
+        if len(self.trophy_room) >= 10 and not self.achievements['trophy_collector']:
+            self.achievements['trophy_collector'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Trophy Collector (10 trophies)!" + Style.RESET_ALL)
+        
+        # Quest achievement
+        if self.completed_quests >= 20 and not self.achievements['quest_master']:
+            self.achievements['quest_master'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Quest Master (20 quests completed)!" + Style.RESET_ALL)
+            self.skill_points += 3
+        
+        # Skill tree achievement
+        total_skill_levels = sum(self.skills.values())
+        if total_skill_levels >= 20 and not self.achievements['skill_master']:
+            self.achievements['skill_master'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Skill Master (20+ skill levels)!" + Style.RESET_ALL)
+        
+        # Deep sea achievement - check if any deep sea fish caught
+        deep_sea_fish_names = [fish.name for fish in deep_sea_fish]
+        if any(name in self.encyclopedia.caught_fish for name in deep_sea_fish_names) and not self.achievements['deep_diver']:
+            self.achievements['deep_diver'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Deep Diver (Catch a deep sea fish)!" + Style.RESET_ALL)
+        
+        # Space achievement
+        space_fish_names = [fish.name for fish in space_fish]
+        if any(name in self.encyclopedia.caught_fish for name in space_fish_names) and not self.achievements['cosmic_fisher']:
+            self.achievements['cosmic_fisher'] = True
+            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Cosmic Fisher (Fish in space)!" + Style.RESET_ALL)
+            self.money += 15000
 
     def clear_screen(self):
         os.system('cls' if platform.system() == 'Windows' else 'clear')
@@ -1494,9 +1650,9 @@ class Game:
 
     def view_achievements(self):
         self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "╔══════════════════════════════════════╗" + Style.RESET_ALL)
         print(Fore.CYAN + "║          ACHIEVEMENTS               ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚══════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
         achievement_descriptions = {
@@ -1506,25 +1662,68 @@ class Game:
             'first_mythical': "Catch a mythical fish",
             'fisherman': "Catch 50 fish total",
             'master_fisherman': "Catch 200 fish total",
+            'legendary_angler': "Catch 1000 fish total",
             'millionaire': "Earn $1,000,000",
+            'billionaire': "Earn $1,000,000,000",
             'mutation_hunter': "Find all mutation types",
-            'encyclopedia_25': "Discover 10 species",
-            'encyclopedia_50': "Discover 20 species",
-            'encyclopedia_100': "Discover all species",
+            'golden_catch': "Catch a golden mutation",
+            'magical_encounter': "Catch a magical mutation",
+            'encyclopedia_25': "Discover 25% of all species",
+            'encyclopedia_50': "Discover 50% of all species",
+            'encyclopedia_75': "Discover 75% of all species",
+            'encyclopedia_100': "Discover 100% of all species",
+            'heavyweight': "Catch a fish weighing 100kg+",
+            'titan_hunter': "Catch a fish weighing 1000kg+",
+            'leviathan_slayer': "Catch a fish weighing 10,000kg+",
+            'speed_fisher': "Complete a minigame in under 3 seconds",
+            'night_owl': "Fish at night",
+            'storm_chaser': "Fish during a storm",
+            'explorer': "Fish in 3 different locations",
+            'master_explorer': "Fish in all locations",
+            'trophy_collector': "Collect 10 trophies",
+            'quest_master': "Complete 20 quests",
+            'skill_master': "Reach 20+ total skill levels",
+            'perfect_reflexes': "Complete 10 minigames perfectly",
+            'lucky_streak': "Catch 5 rare+ fish in a row",
+            'deep_diver': "Catch a deep sea fish",
+            'cosmic_fisher': "Catch a fish in space",
         }
+        
+        # Display ALL achievements from self.achievements, even if not in descriptions
+        for name in self.achievements.keys():
+            if name not in achievement_descriptions:
+                achievement_descriptions[name] = name.replace('_', ' ').title()
         
         unlocked = sum(1 for v in self.achievements.values() if v)
         total = len(self.achievements)
         
         print(Fore.YELLOW + f"Progress: {unlocked}/{total} achievements unlocked\n" + Style.RESET_ALL)
         
-        for name, unlocked in self.achievements.items():
-            status = Fore.GREEN + "✓" if unlocked else Fore.RED + "✗"
-            desc = achievement_descriptions.get(name, name)
-            print(f"{status} {desc}{Style.RESET_ALL}")
+        # Group achievements by category
+        categories = {
+            'Fishing': ['first_catch', 'first_rare', 'first_legendary', 'first_mythical', 
+                    'fisherman', 'master_fisherman', 'legendary_angler', 'speed_fisher', 
+                    'perfect_reflexes', 'lucky_streak'],
+            'Wealth': ['millionaire', 'billionaire'],
+            'Discovery': ['encyclopedia_25', 'encyclopedia_50', 'encyclopedia_75', 'encyclopedia_100'],
+            'Mutations': ['mutation_hunter', 'golden_catch', 'magical_encounter'],
+            'Size': ['heavyweight', 'titan_hunter', 'leviathan_slayer'],
+            'Exploration': ['explorer', 'master_explorer', 'deep_diver', 'cosmic_fisher'],
+            'Conditions': ['night_owl', 'storm_chaser'],
+            'Progress': ['trophy_collector', 'quest_master', 'skill_master'],
+        }
+        
+        for category, achievement_list in categories.items():
+            print(Fore.MAGENTA + f"\n{category}:" + Style.RESET_ALL)
+            for name in achievement_list:
+                if name in self.achievements:
+                    unlocked = self.achievements[name]
+                    status = Fore.GREEN + "✓" if unlocked else Fore.RED + "✗"
+                    desc = achievement_descriptions.get(name, name)
+                    print(f"{status} {desc}{Style.RESET_ALL}")
         
         input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
+        
     def view_stats(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
@@ -1660,7 +1859,7 @@ if __name__ == "__main__":
     show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         open beta V.0.3               ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         open beta V.0.4             ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
