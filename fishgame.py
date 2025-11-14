@@ -443,35 +443,7 @@ RODS =  [
     Rod("Blobfish rod", 2000000, 10.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish.")
 ]
 
-def generate_quest(self):
-    quest_types = [
-        {"type": "catch_species", "target": random.choice([f.name for loc in self.locations for f in loc.fish]), "reward": 500},
-        {"type": "catch_weight", "target": random.randint(10, 100), "reward": 300},
-        {"type": "catch_rarity", "target": random.choice(["Rare", "Legendary"]), "count": random.randint(1, 3), "reward": 800},
-    ]
-    return random.choice(quest_types)
 
-def quest_menu(self):
-    self.clear_screen()
-    print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
-    print(Fore.CYAN + "║            QUESTS                 ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
-    print(Fore.YELLOW + f"Completed Quests: {self.completed_quests}" + Style.RESET_ALL)
-    print()
-    
-    if not self.active_quests:
-        print(Fore.GREEN + "No active quests. Generating new quest..." + Style.RESET_ALL)
-        self.active_quests.append(self.generate_quest())
-    
-    for i, quest in enumerate(self.active_quests, 1):
-        if quest['type'] == 'catch_species':
-            print(f"{i}. Catch a {quest['target']} (Reward: ${quest['reward']})")
-        elif quest['type'] == 'catch_weight':
-            print(f"{i}. Catch a fish weighing {quest['target']}kg+ (Reward: ${quest['reward']})")
-        elif quest['type'] == 'catch_rarity':
-            print(f"{i}. Catch {quest.get('count', 1)} {quest['target']} fish (Reward: ${quest['reward']})")
-    
-    input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
 
 def create_character():
     """Character creation at game start"""
@@ -537,7 +509,7 @@ def create_character():
 
 # ===== MINI GAME =====
 def reaction_minigame(difficulty_modifier=1.0):
-    """Fast-paced reaction time game"""
+    """Fast-paced reaction time game - NOW HARDER WITH DIFFICULTY"""
     print(Fore.YELLOW + "Get ready... Wait for the signal!" + Style.RESET_ALL)
     time_to_wait = random.uniform(1.5, 4.0)
     time.sleep(time_to_wait)
@@ -545,44 +517,46 @@ def reaction_minigame(difficulty_modifier=1.0):
     print(Fore.GREEN + ">>> NOW! Press Enter!" + Style.RESET_ALL)
     start_time = time.time()
     
-    # Set a timeout so player can't wait forever
-    import sys
-    import select
-    
-    # Simple cross-platform solution
     try:
         input()
         reaction_time = time.time() - start_time
     except:
         reaction_time = 999
     
-    # Better times = lower numbers, difficulty makes it harder
-    target_time = 0.8 * difficulty_modifier
+    # Harder difficulty = stricter timing windows
+    target_time = 0.8 * difficulty_modifier  # Base time affected by difficulty
+    good_time = target_time * 1.5
+    
     if reaction_time < target_time:
         print(Fore.GREEN + f"Perfect! ({reaction_time:.3f}s)" + Style.RESET_ALL)
         return True
-    elif reaction_time < target_time * 1.5:
+    elif reaction_time < good_time:
         print(Fore.YELLOW + f"Good! ({reaction_time:.3f}s)" + Style.RESET_ALL)
         return True
     else:
-        print(Fore.RED + f"Too slow! ({reaction_time:.3f}s)" + Style.RESET_ALL)
+        print(Fore.RED + f"Too slow! ({reaction_time:.3f}s) [Target: <{good_time:.2f}s]" + Style.RESET_ALL)
         return False
 
 
 def sequence_minigame(difficulty_modifier=1.0):
-    """Memory sequence game"""
-    sequence_length = int(3 + difficulty_modifier)
-    # Use simple letters/numbers that work everywhere
-    symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    """Memory sequence game - NOW HARDER WITH DIFFICULTY"""
+    # Difficulty increases sequence length
+    base_length = 3
+    sequence_length = int(base_length + (difficulty_modifier * 1.5))
+    
+    symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     sequence = [random.choice(symbols) for _ in range(sequence_length)]
     
     print(Fore.CYAN + "Memorize this sequence:" + Style.RESET_ALL)
     print(Fore.YELLOW + " ".join(sequence) + Style.RESET_ALL)
-    time.sleep(2 + sequence_length * 0.3)
     
-    # Clear screen
+    # Less time to memorize on higher difficulty
+    memorize_time = max(1.5, 2.5 - (difficulty_modifier * 0.3))
+    time.sleep(memorize_time + sequence_length * 0.25)
+    
     print("\n" * 50)
     print(Fore.CYAN + "Enter the sequence (separate with spaces):" + Style.RESET_ALL)
+    print(Fore.YELLOW + f"[{sequence_length} items to remember]" + Style.RESET_ALL)
     user_input = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().upper().split()
     
     if user_input == sequence:
@@ -594,23 +568,28 @@ def sequence_minigame(difficulty_modifier=1.0):
 
 
 def pattern_minigame(difficulty_modifier=1.0):
-    """Pattern matching game"""
-    length = int(4 + difficulty_modifier)
+    """Pattern matching game - NOW HARDER WITH DIFFICULTY"""
+    # Difficulty increases pattern length and speed
+    base_length = 4
+    length = int(base_length + (difficulty_modifier * 1.2))
     pattern = ''.join(random.choices(['L', 'R'], k=length))
     
     print(Fore.CYAN + "The fish is moving! Follow the pattern:" + Style.RESET_ALL)
     print(Fore.YELLOW + "Watch carefully..." + Style.RESET_ALL)
-    time.sleep(1)  # Give player a moment to get ready
+    time.sleep(0.8)
+    
+    # Display speed increases with difficulty
+    display_speed = max(0.2, 0.5 - (difficulty_modifier * 0.08))
     
     for char in pattern:
         direction = "LEFT" if char == 'L' else "RIGHT"
         print(Fore.YELLOW + f"  {direction}" + Style.RESET_ALL)
-        time.sleep(0.5)
+        time.sleep(display_speed)
     
-    time.sleep(0.5)  # Small pause before asking for input
+    time.sleep(0.3)
     print("\n" * 50)
     
-    print(Fore.CYAN + "\nEnter the pattern (L for left, R for right, no spaces):" + Style.RESET_ALL)
+    print(Fore.CYAN + f"\nEnter the pattern ({length} moves - L for left, R for right, no spaces):" + Style.RESET_ALL)
     print(Fore.CYAN + "Example: LRRL" + Style.RESET_ALL)
     user_input = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().upper()
     
@@ -803,14 +782,15 @@ class Game:
             print(Fore.YELLOW + "3. Sell Fish" + Style.RESET_ALL)
             print(Fore.YELLOW + "4. Shop" + Style.RESET_ALL)
             print(Fore.YELLOW + "5. View Encyclopedia" + Style.RESET_ALL)
-            print(Fore.YELLOW + "6. Trophy Room" + Style.RESET_ALL)
-            print(Fore.YELLOW + "7. View Achievements" + Style.RESET_ALL)
-            print(Fore.YELLOW + "8. Stats" + Style.RESET_ALL)
-            print(Fore.YELLOW + "9. Skill Tree" + Style.RESET_ALL)
+            print(Fore.YELLOW + "6. Quests" + Style.RESET_ALL)
+            print(Fore.YELLOW + "7. Trophy Room" + Style.RESET_ALL)
+            print(Fore.YELLOW + "8. View Achievements" + Style.RESET_ALL)
+            print(Fore.YELLOW + "9. Stats" + Style.RESET_ALL)
+            print(Fore.YELLOW + "10. Skill Tree" + Style.RESET_ALL)
             print(Fore.CYAN + "----------------------------------------" + Style.RESET_ALL)
-            print(Fore.YELLOW + "10. Save Game" + Style.RESET_ALL)
-            print(Fore.YELLOW + "11. Load Game" + Style.RESET_ALL)
-            print(Fore.YELLOW + "12. Exit" + Style.RESET_ALL)
+            print(Fore.YELLOW + "11. Save Game" + Style.RESET_ALL)
+            print(Fore.YELLOW + "12. Load Game" + Style.RESET_ALL)
+            print(Fore.YELLOW + "13. Exit" + Style.RESET_ALL)
 
             menu_actions = {
                 '1': self.choose_location,
@@ -818,15 +798,15 @@ class Game:
                 '3': self.sell_fish_menu,
                 '4': self.shop_menu,
                 '5': lambda: (self.clear_screen(), self.encyclopedia.display(), input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)),
-                '6': self.trophy_room_menu,
-                '7': self.view_achievements,
-                '8': self.view_stats,
-                '9': self.skill_tree_menu,
-                '10': lambda: (self.save_game(), print(Fore.GREEN + "Game saved successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),
-                '11': lambda: (self.load_game(), print(Fore.GREEN + "Game loaded successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),
-                '12': lambda: (print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL), sys.exit()),
+                '6': self.quest_menu,  # NEW
+                '7': self.trophy_room_menu,  # was 6
+                '8': self.view_achievements,  # was 7
+                '9': self.view_stats,  # was 8
+                '10': self.skill_tree_menu,  # was 9
+                '11': lambda: (self.save_game(), print(Fore.GREEN + "Game saved successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),  # was 10
+                '12': lambda: (self.load_game(), print(Fore.GREEN + "Game loaded successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),  # was 11
+                '13': lambda: (print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL), sys.exit()),  # was 12
             }
-            
             # Add debug menu conditionally
             if getattr(self, 'debug_mode', False):
                 menu_actions['99'] = self.debug_menu
@@ -837,7 +817,25 @@ class Game:
             else:
                 print(Fore.RED + "Invalid choice. Please select a valid option." + Style.RESET_ALL)
                 input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-    
+    def add_xp(self, amount):
+    # Apply difficulty multiplier to XP (harder = more XP)
+        difficulty_bonus = self.difficulty_mult  # 0.8x for Easy, 1.6x for Legendary
+        skill_bonus = (1 + self.skills['iron_grip'] * 0.15)
+        
+        amount = int(amount * difficulty_bonus * skill_bonus)
+        self.xp += amount
+        
+        # Show bonus indicator for hard difficulties
+        if self.difficulty_mult > 1.0:
+            bonus_pct = int((self.difficulty_mult - 1.0) * 100)
+            print(Fore.LIGHTGREEN_EX + f"You gained {amount} XP! (+{bonus_pct}% difficulty bonus)" + Style.RESET_ALL)
+        else:
+            print(Fore.LIGHTGREEN_EX + f"You gained {amount} XP!" + Style.RESET_ALL)
+        
+        while self.xp >= self.xp_threshold:
+            self.xp -= self.xp_threshold
+            self.level_up()
+
     def save_game(self):
         save_path = os.path.join(self.game_folder, "game_save.json")
         game_data = {
@@ -1134,6 +1132,90 @@ class Game:
             print(Fore.GREEN + f"Total Value: ${total_value}" + Style.RESET_ALL)
         
         input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
+
+    def quest_menu(self):
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║            QUESTS                 ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
+        print(Fore.YELLOW + f"Completed Quests: {self.completed_quests}" + Style.RESET_ALL)
+        print()
+        
+        if not self.active_quests:
+            print(Fore.GREEN + "No active quests. Generating new quest..." + Style.RESET_ALL)
+            self.active_quests.append(self.generate_quest())
+        
+        for i, quest in enumerate(self.active_quests, 1):
+            if quest['type'] == 'catch_species':
+                print(f"{i}. Catch a {quest['target']} ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
+            elif quest['type'] == 'catch_weight':
+                print(f"{i}. Catch a fish weighing {quest['target']}kg+ ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
+            elif quest['type'] == 'catch_rarity':
+                print(f"{i}. Catch {quest['goal']} {quest['target']} fish ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
+        
+        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
+
+        def check_quest_completion(self, caught_fish):
+            """Check if any active quests were completed"""
+            completed = []
+            
+            for quest in self.active_quests:
+                if quest['type'] == 'catch_species':
+                    if caught_fish.name == quest['target']:
+                        quest['progress'] += 1
+                        if quest['progress'] >= quest['goal']:
+                            completed.append(quest)
+                elif quest['type'] == 'catch_weight':
+                    if caught_fish.weight >= quest['target']:
+                        quest['progress'] += 1
+                        if quest['progress'] >= quest['goal']:
+                            completed.append(quest)
+                elif quest['type'] == 'catch_rarity':
+                    if caught_fish.rarity == quest['target']:
+                        quest['progress'] += 1
+                        if quest['progress'] >= quest['goal']:
+                            completed.append(quest)
+            
+            for quest in completed:
+                self.money += quest['reward']
+                self.completed_quests += 1
+                self.active_quests.remove(quest)
+                print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
+                # Generate new quest
+                self.active_quests.append(self.generate_quest())
+
+    def generate_quest(self):
+        """Generate a random quest"""
+        all_fish_names = []
+        for location in self.locations:
+            for fish in location.fish:
+                all_fish_names.append(fish.name)
+        
+        quest_types = [
+            {
+                "type": "catch_species", 
+                "target": random.choice(all_fish_names), 
+                "reward": 500,
+                "progress": 0,
+                "goal": 1
+            },
+            {
+                "type": "catch_weight", 
+                "target": random.randint(10, 100), 
+                "reward": 300,
+                "progress": 0,
+                "goal": 1
+            },
+            {
+                "type": "catch_rarity", 
+                "target": random.choice(["Rare", "Legendary"]), 
+                "count": random.randint(1, 3), 
+                "reward": 800,
+                "progress": 0,
+                "goal": random.randint(1, 3)
+            },
+        ]
+        return random.choice(quest_types)
 
     def trophy_room_menu(self):
         self.clear_screen()
@@ -1452,23 +1534,60 @@ class Game:
         input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
 
     def skill_tree_menu(self):
-        self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║           SKILL TREE              ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Skill Points: {getattr(self, 'skill_points', 0)}" + Style.RESET_ALL)
-        print()
-        for skill, level in getattr(self, 'skills', {}).items():
-            print(Fore.GREEN + f"{skill.replace('_', ' ').title()}: Level {level}" + Style.RESET_ALL)
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
+        while True:
+            self.clear_screen()
+            print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.CYAN + "║           SKILL TREE              ║" + Style.RESET_ALL)
+            print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
+            print(Fore.YELLOW + f"Skill Points Available: {self.skill_points}" + Style.RESET_ALL)
+            print()
+            
+            skill_info = {
+                'rare_finder': ('Rare Finder', 5, '+2% rare fish chance per level'),
+                'quick_reflexes': ('Quick Reflexes', 5, '-5% minigame difficulty per level'),
+                'master_angler': ('Master Angler', 5, '+5% catch rate per level'),
+                'lucky_fisherman': ('Lucky Fisherman', 5, '+10% mutation chance per level'),
+                'bargain_hunter': ('Bargain Hunter', 3, '+10% sell price per level'),
+                'iron_grip': ('Iron Grip', 3, '+15% XP gain per level'),
+            }
+            
+            i = 1
+            for skill_key, (name, max_level, desc) in skill_info.items():
+                current_level = self.skills.get(skill_key, 0)
+                color = Fore.GREEN if current_level < max_level else Fore.LIGHTBLACK_EX
+                status = f"[{current_level}/{max_level}]"
+                print(color + f"{i}. {name} {status}" + Style.RESET_ALL)
+                print(f"   {desc}")
+                i += 1
+            
+            print(f"\n{i}. Back to menu")
+            
+            choice = input(Fore.CYAN + "\nUpgrade skill (or back): " + Style.RESET_ALL)
+            
+            try:
+                choice_idx = int(choice) - 1
+                if choice_idx == len(skill_info):
+                    return
+                
+                skill_keys = list(skill_info.keys())
+                if 0 <= choice_idx < len(skill_keys):
+                    skill_key = skill_keys[choice_idx]
+                    skill_name, max_level, _ = skill_info[skill_key]
+                    current_level = self.skills.get(skill_key, 0)
+                    
+                    if current_level >= max_level:
+                        print(Fore.RED + f"{skill_name} is already maxed out!" + Style.RESET_ALL)
+                    elif self.skill_points > 0:
+                        self.skills[skill_key] = current_level + 1
+                        self.skill_points -= 1
+                        print(Fore.GREEN + f"Upgraded {skill_name} to level {self.skills[skill_key]}!" + Style.RESET_ALL)
+                    else:
+                        print(Fore.RED + "Not enough skill points!" + Style.RESET_ALL)
+                    
+                    input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
+            except ValueError:
+                pass
 
-    def add_xp(self, amount):
-        amount = int(amount * (1 + self.skills['iron_grip'] * 0.15))
-        self.xp += amount
-        print(Fore.LIGHTGREEN_EX + f"You gained {amount} XP!" + Style.RESET_ALL)
-        while self.xp >= self.xp_threshold:
-            self.xp -= self.xp_threshold
-            self.level_up()
 
     def level_up(self):
         self.level += 1
@@ -1538,7 +1657,7 @@ if __name__ == "__main__":
     elif choice == '99':  #dev mode
         print(Fore.MAGENTA + "[DEV MODE ENABLED]" + Style.RESET_ALL)
         character_data = {
-            'name': 'Noko',
+            'name': 'DEV_Player',
             'stats': {'strength': 10, 'luck': 10, 'patience': 10},
             'difficulty_name': 'Easy',
             'difficulty_mult': 0.5
