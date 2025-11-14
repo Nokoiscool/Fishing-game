@@ -9,6 +9,37 @@ import sys
 from colorama import Fore, Style, init
 from datetime import datetime
 
+def show_intro():
+    intro = """
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                                                              ║
+    ║  ██╗   ██╗███████╗██████╗ ██╗   ██╗                          ║
+    ║  ██║   ██║██╔════╝██╔══██╗╚██╗ ██╔╝                          ║
+    ║  ██║   ██║█████╗  ██████╔╝ ╚████╔╝                           ║
+    ║  ╚██╗ ██╔╝██╔══╝  ██╔══██╗  ╚██╔╝                            ║
+    ║   ╚████╔╝ ███████╗██║  ██║   ██║                             ║
+    ║    ╚═══╝  ╚══════╝╚═╝  ╚═╝   ╚═╝                             ║
+    ║                                                              ║
+    ║   ██████╗ ██████╗  ██████╗ ██╗                               ║
+    ║  ██╔════╝██╔═══██╗██╔═══██╗██║                               ║
+    ║  ██║     ██║   ██║██║   ██║██║                               ║
+    ║  ██║     ██║   ██║██║   ██║██║                               ║
+    ║  ╚██████╗╚██████╔╝╚██████╔╝███████╗                          ║
+    ║   ╚═════╝ ╚═════╝  ╚═════╝ ╚══════╝                          ║
+    ║                                                              ║
+    ║   ██████╗  █████╗ ███╗   ███╗██╗███╗   ██╗ ██████╗  ©        ║
+    ║  ██╔════╝ ██╔══██╗████╗ ████║██║████╗  ██║██╔════╝           ║
+    ║  ██║  ███╗███████║██╔████╔██║██║██╔██╗ ██║██║  ███╗          ║
+    ║  ██║   ██║██╔══██║██║╚██╔╝██║██║██║╚██╗██║██║   ██║          ║
+    ║  ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝          ║
+    ║   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝           ║
+    ║                                                              ║
+    ╚══════════════════════════════════════════════════════════════╝
+    """
+    
+    print(Fore.CYAN + intro + Style.RESET_ALL)
+    time.sleep(2)
+    os.system("cls")
 
 init(autoreset=True)
 
@@ -55,8 +86,8 @@ class Fish:
         self.catch_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def assign_mutation(self):
-        mutations = ["normal", "albino", "glowing", "spotted", "golden", "shadow"]
-        weights = [80, 5, 5, 5, 3, 2]
+        mutations = ["normal", "albino", "glowing", "spotted", "golden", "shadow", "magical"]
+        weights = [79.99, 5, 5, 5, 3, 2, 0.01]
         return random.choices(mutations, weights=weights)[0]
 
     mutation_colors = {
@@ -65,7 +96,8 @@ class Fish:
         "glowing": Fore.GREEN,
         "spotted": Fore.YELLOW,
         "golden": Fore.LIGHTYELLOW_EX,
-        "shadow": Fore.LIGHTBLACK_EX
+        "shadow": Fore.LIGHTBLACK_EX,
+        "magical": Fore.MAGENTA
     }
 
     mutation_multipliers = {
@@ -74,7 +106,8 @@ class Fish:
         "glowing": 2.5,
         "spotted": 1.5,
         "golden": 5.0,
-        "shadow": 3.0
+        "shadow": 3.0,
+        "magical": 10.0
     }
 
     def get_color(self):
@@ -328,7 +361,7 @@ deep_sea_fish = [
     Fish("Greenland Shark", 400.0, 1000.0, "Rare", 2, 85, "Can live over 400 years, slowest shark.", 380),
     Fish("Giant Grenadier", 5.0, 20.0, "Uncommon", 6, 42, "Deep-dwelling rattail fish.", 78),
     Fish("Snailfish", 0.01, 8.0, "Uncommon", 7, 38, "Gelatinous fish found at extreme depths.", 70),
-    Fish("Blobfish", 2.0, 9.0, "Mythical", 0.001, 100000, "Looks familuar.....", 105),
+    Fish("Blobfish", 2.0, 9.0, "Mythical", 0.00001, 100000, "Looks familuar.....", 105),
     Fish("Abyssal Octopus", 5.0, 15.0, "Rare", 3, 58, "Rarely seen octopus from extreme depths.", 125),
     Fish("Kraken", 5000, 10000, "Mythical", 0.001, 10000, "Legendary sea monster said to drag ships to the depths.", 200000),
     Fish("Leviathan", 20000, 100000, "Mythical", 0.0003, 15000, "Biblical sea monster of enormous power.", 300000),
@@ -381,17 +414,19 @@ space_fish = [
     Fish("Singularity Eel", 1000.0, 5000.0, "Mythical", 0.01, 10000, "Can bend space-time with its body.", 30000),
     Fish("Cosmic Kraken", 5000.0, 20000.0, "Mythical", 0.005, 20000, "Devours stars and moons.", 500000),
     Fish("Celestial Leviathan", 10000.0, 50000.0, "Mythical", 0.001, 30000, "The universe made flesh, older than time itself.", 1000000),
+    Fish("Redstone katten", 5, 40, "Mythical", 0.0067, 67000, "The famous Redstone Katten", 10000 ),
 ]
 
 
 # ===== EQUIPMENT DATA =====
-BAITS = [
+BAITS = [ 
     Bait("Worm", 0, 0, "Basic free bait"),
     Bait("Bread", 10, 0.1, "Simple but effective"),
     Bait("Minnow", 25, 0.2, "Small fish attract bigger fish"),
     Bait("Shrimp", 50, 0.3, "Good for ocean fishing"),
     Bait("Squid", 75, 0.4, "Attracts larger predators"),
     Bait("Special Lure", 150, 0.6, "Significantly increases rare fish chances"),
+    Bait("yung gooners master bait", 20000, 2, "The allmighty master baits" )
 ]
 
 RODS =  [
@@ -403,6 +438,7 @@ RODS =  [
     Rod("Mythic Rod", 15000, 1.05, "Forged from celestial metal, improves rare catch chances dramatically."),
     Rod("Abyssal Rod", 30000, 1.1, "Can withstand extreme pressures of the deep sea."),
     Rod("Quantum Rod", 50000, 1.15, "Uses temporal resonance to always hook something."),
+    Rod("Creamzon fludder rod", 670000, 1.16, "When you cream in a zone, you would want this big stick." ),
     Rod("Godly Rod", 100000, 1.2, "Said to catch even mythical creatures with ease."),
     Rod("Blobfish rod", 2000000, 10.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish.")
 ]
@@ -537,7 +573,7 @@ def sequence_minigame(difficulty_modifier=1.0):
     """Memory sequence game"""
     sequence_length = int(3 + difficulty_modifier)
     # Use simple letters/numbers that work everywhere
-    symbols = ['A', 'B', 'C', 'D', 'E', 'F']
+    symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
     sequence = [random.choice(symbols) for _ in range(sequence_length)]
     
     print(Fore.CYAN + "Memorize this sequence:" + Style.RESET_ALL)
@@ -572,6 +608,7 @@ def pattern_minigame(difficulty_modifier=1.0):
         time.sleep(0.5)
     
     time.sleep(0.5)  # Small pause before asking for input
+    print("\n" * 50)
     
     print(Fore.CYAN + "\nEnter the pattern (L for left, R for right, no spaces):" + Style.RESET_ALL)
     print(Fore.CYAN + "Example: LRRL" + Style.RESET_ALL)
@@ -789,17 +826,50 @@ class Game:
                 '11': lambda: (self.load_game(), print(Fore.GREEN + "Game loaded successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),
                 '12': lambda: (print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL), sys.exit()),
             }
+            
+            # Add debug menu conditionally
+            if getattr(self, 'debug_mode', False):
+                menu_actions['99'] = self.debug_menu
+            
             choice = input(Fore.GREEN + "Choose an option: " + Style.RESET_ALL)
             if choice in menu_actions:
                 menu_actions[choice]()
-            elif choice == '99' and getattr(self, 'debug_mode', False):
-                self.debug_menu()
             else:
                 print(Fore.RED + "Invalid choice. Please select a valid option." + Style.RESET_ALL)
                 input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-                self.clear_screen()
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
     
+    def save_game(self):
+        save_path = os.path.join(self.game_folder, "game_save.json")
+        game_data = {
+            'level': self.level,
+            'xp': self.xp,
+            'xp_threshold': self.xp_threshold,
+            'money': self.money,
+            'player_name': self.player_name,
+            'stats': self.stats,
+            'difficulty_name': self.difficulty_name,
+            'difficulty_mult': self.difficulty_mult,
+            'weather': self.weather,
+            'achievements': self.achievements,
+            'skill_points': self.skill_points,
+            'skills': self.skills,
+            'rod_durability': self.rod_durability,
+            'rod_max_durability': self.rod_max_durability,
+            'time_of_day': self.time_of_day,
+            'time_counter': self.time_counter,
+            'trophy_room': self.trophy_room,
+            'active_quests': self.active_quests,
+            'completed_quests': self.completed_quests,
+            'encyclopedia': self.encyclopedia.caught_fish,
+            'current_rod': self.current_rod.name,
+            'current_bait': self.current_bait.name,
+            'owned_rods': [rod.name for rod in self.owned_rods],
+            'owned_baits': [bait.name for bait in self.owned_baits],
+            'fish': [fish.to_dict() for fish in self.esky.fish]
+        }
+    
+        with open(save_path, "w") as f:
+            json.dump({'data': game_data}, f, indent=4)
     
     def load_game(self):
         load_path = os.path.join(self.game_folder, "game_save.json")
@@ -912,27 +982,40 @@ class Game:
             print(Fore.CYAN + f"The weather changed to {self.weather}!" + Style.RESET_ALL)
             time.sleep(1)
         
-        # Apply difficulty and patience stat
-        base_difficulty = 1 + (self.level * 0.1)
-        difficulty = base_difficulty * self.difficulty_mult * (1 - self.stats['patience'] * 0.05)
-
-        success_chance = self.current_rod.catch_bonus * (1 + self.stats['strength'] * 0.02)
-        success_chance *= (1 + self.skills['master_angler'] * 0.05) # Skill bonus
-
-        
-        if random.random() > success_chance:
-            print(Fore.RED + "The fish got away before you could react!" + Style.RESET_ALL)
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-            return
-        
-        # Get the fish template
+        # Get the fish template first
         fish_template = location.get_random_fish(self.weather, self.current_bait.rarity_boost, self.time_of_day)
         if not fish_template:
             print(Fore.RED + "No fish were available to catch!" + Style.RESET_ALL)
             input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
             return
         
-        # Create a NEW instance of the fish (don't modify the template)
+        # Calculate difficulty based on multiple factors
+        rarity_difficulty = {
+            "Common": 1.0,
+            "Uncommon": 1.3,
+            "Rare": 1.6,
+            "Legendary": 2.0,
+            "Mythical": 2.5
+        }
+        
+        base_difficulty = 1 + (self.level * 0.05)  # Scales with level
+        fish_difficulty = rarity_difficulty.get(fish_template.rarity, 1.0)
+        player_difficulty = self.difficulty_mult
+        patience_reduction = (1 - self.stats['patience'] * 0.03)  # Max 30% reduction
+        skill_reduction = (1 - self.skills.get('quick_reflexes', 0) * 0.05)  # Max 25% reduction
+        
+        # Combined difficulty
+        total_difficulty = base_difficulty * fish_difficulty * player_difficulty * patience_reduction * skill_reduction
+        
+        success_chance = self.current_rod.catch_bonus * (1 + self.stats['strength'] * 0.02)
+        success_chance *= (1 + self.skills.get('master_angler', 0) * 0.05)
+        
+        if random.random() > success_chance:
+            print(Fore.RED + "The fish got away before you could react!" + Style.RESET_ALL)
+            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        # Create a NEW instance of the fish
         caught_fish = Fish(
             fish_template.name,
             fish_template.min_weight,
@@ -944,7 +1027,8 @@ class Game:
             fish_template.sell_price
         )
         
-        if fishing_mini_game(difficulty, caught_fish.name):
+        # Pass the calculated difficulty to minigame
+        if fishing_mini_game(total_difficulty, caught_fish.name):
             caught_fish.catch()
             self.esky.add_fish(caught_fish)
             self.encyclopedia.add_fish(caught_fish)
@@ -962,16 +1046,21 @@ class Game:
             elif caught_fish.rarity == "Mythical" and not self.achievements['first_mythical']:
                 self.achievements['first_mythical'] = True
                 print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Mythical Fish!" + Style.RESET_ALL)
+            
             self.check_achievements()
-            # Rod durability
+        else:
+            print(Fore.RED + "The fish escaped during the struggle!" + Style.RESET_ALL)
+        
+        # Rod durability
         durability_loss = random.randint(1, 3)
         self.rod_durability = max(0, self.rod_durability - durability_loss)
         if self.rod_durability < 20:
-            print(Fore.RED + f"⚠️  Rod condition low: {self.rod_durability}%" + Style.RESET_ALL)
+            print(Fore.RED + f"⚠️ Rod condition low: {self.rod_durability}%" + Style.RESET_ALL)
         if self.rod_durability == 0:
             print(Fore.RED + "💥 Your rod broke! Reverting to Bamboo Rod." + Style.RESET_ALL)
             self.current_rod = RODS[0]
             self.rod_durability = 100
+        
         input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
 
     def debug_menu(self):
@@ -1418,8 +1507,10 @@ class Game:
 
 # ===== MAIN =====
 if __name__ == "__main__":
+    show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣          ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         open beta V.0.2               ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
@@ -1468,3 +1559,4 @@ if __name__ == "__main__":
 
     else:
         print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
+        
