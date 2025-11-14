@@ -766,6 +766,29 @@ class Game:
         while True:
             self.display_menu()
 
+    def print_header(self):
+        # Calculate padding needed for the name
+        name_text = f"🎣 {self.player_name}'s FISHING GAME 🎣"
+        # Minimum width for aesthetics
+        min_width = 47
+        # Calculate required width based on name length
+        content_width = len(name_text) + 8  # 8 for spacing (4 on each side)
+        box_width = max(min_width, content_width)
+        
+        # Create the border
+        top_border = "╔" + "═" * box_width + "╗"
+        bottom_border = "╚" + "═" * box_width + "╝"
+        
+        # Center the name text
+        padding = (box_width - len(name_text)) // 2
+        right_padding = box_width - padding - len(name_text)
+        content_line = "║" + " " * padding + name_text + " " * right_padding + "║"
+        
+        # Print with colors
+        print(Fore.CYAN + top_border + Style.RESET_ALL)
+        print(Fore.CYAN + content_line + Style.RESET_ALL)
+        print(Fore.CYAN + bottom_border + Style.RESET_ALL)
+
     def display_menu(self):
         while True:
             self.clear_screen()
@@ -778,9 +801,7 @@ class Game:
             }
             weather_color = weather_colors.get(self.weather, Fore.WHITE)
             
-            print(Fore.CYAN + "╔═══════════════════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + f"║    🎣 {self.player_name}'s FISHING GAME 🎣                ║" + Style.RESET_ALL)
-            print(Fore.CYAN + "╚═══════════════════════════════════════════════╝" + Style.RESET_ALL)
+            self.print_header()
             print(Fore.YELLOW + f"Level: {self.level} | XP: {self.xp}/{self.xp_threshold} | 💰: ${self.money}" + Style.RESET_ALL)
             print(weather_color + f"Weather: {self.weather.capitalize()}" + Style.RESET_ALL)
             print(Fore.MAGENTA + f"Difficulty: {self.difficulty_name}" + Style.RESET_ALL)
@@ -1116,7 +1137,7 @@ class Game:
     def view_inventory(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║         YOUR INVENTORY            ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║         YOUR INVENTORY              ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         
         if not self.esky.fish:
@@ -1247,7 +1268,7 @@ class Game:
         while True:
             self.clear_screen()
             print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + "║           FISH MARKET             ║" + Style.RESET_ALL)
+            print(Fore.CYAN + "║           FISH MARKET               ║" + Style.RESET_ALL)
             print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
             print(Fore.YELLOW + f"Current Money: ${self.money}" + Style.RESET_ALL)
             print()
@@ -1348,7 +1369,7 @@ class Game:
         while True:
             self.clear_screen()
             print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + "║          FISHING SHOP             ║" + Style.RESET_ALL)
+            print(Fore.CYAN + "║          FISHING SHOP               ║" + Style.RESET_ALL)
             print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
             print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
             print()
@@ -1375,7 +1396,7 @@ class Game:
     def buy_rods(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            ROD SHOP               ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║            ROD SHOP                 ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
         print(Fore.GREEN + f"Current: {self.current_rod.name}" + Style.RESET_ALL)
@@ -1412,7 +1433,7 @@ class Game:
     def buy_bait(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            BAIT SHOP              ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║            BAIT SHOP                ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
         print(Fore.GREEN + f"Current: {self.current_bait.name}" + Style.RESET_ALL)
@@ -1450,7 +1471,7 @@ class Game:
     def upgrade_esky(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║        ESKY UPGRADE               ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║        ESKY UPGRADE                 ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
         print(Fore.GREEN + f"Current Capacity: {self.esky.max_capacity}" + Style.RESET_ALL)
@@ -1474,7 +1495,7 @@ class Game:
     def view_achievements(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║          ACHIEVEMENTS             ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║          ACHIEVEMENTS               ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
@@ -1507,7 +1528,7 @@ class Game:
     def view_stats(self):
         self.clear_screen()
         print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            STATISTICS             ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║            STATISTICS               ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
@@ -1639,7 +1660,7 @@ if __name__ == "__main__":
     show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         open beta V.0.2               ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         open beta V.0.3               ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
