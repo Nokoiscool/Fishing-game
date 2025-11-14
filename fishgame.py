@@ -421,28 +421,38 @@ space_fish = [
 # ===== EQUIPMENT DATA =====
 BAITS = [ 
     Bait("Worm", 0, 0, "Basic free bait"),
-    Bait("Bread", 10, 0.1, "Simple but effective"),
-    Bait("Minnow", 25, 0.2, "Small fish attract bigger fish"),
-    Bait("Shrimp", 50, 0.3, "Good for ocean fishing"),
-    Bait("Squid", 75, 0.4, "Attracts larger predators"),
-    Bait("Special Lure", 150, 0.6, "Significantly increases rare fish chances"),
-    Bait("yung gooners master bait", 20000, 2, "The allmighty master baits" )
+    Bait("Bread", 50, 0.05, "Simple but effective"),
+    Bait("Cricket", 120, 0.08, "Insects attract small fish"),
+    Bait("Minnow", 250, 0.12, "Small fish attract bigger fish"),
+    Bait("Corn", 180, 0.10, "Surprisingly effective for many species"),
+    Bait("Shrimp", 500, 0.15, "Good for ocean fishing"),
+    Bait("Nightcrawler", 400, 0.14, "Premium worm for serious anglers"),
+    Bait("Squid", 800, 0.18, "Attracts larger predators"),
+    Bait("Cut Bait", 650, 0.16, "Fresh fish chunks work well"),
+    Bait("Artificial Lure", 1200, 0.22, "Mimics prey movement"),
+    Bait("Live Bait", 1500, 0.25, "The real deal for big catches"),
+    Bait("Special Lure", 2500, 0.30, "Increases rare fish chances"),
+    Bait("Premium Lure", 4000, 0.35, "Hand-crafted attractant"),
+    Bait("Exotic Bait", 6500, 0.40, "Imported rare ingredients"),
+    Bait("Master Bait", 50000, 0.50, "The ultimate fishing bait")
 ]
 
 RODS =  [
     Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
-    Rod("Fiberglass Rod", 200, 0.8, "A decent upgrade"),
-    Rod("Carbon Rod", 500, 0.9, "Professional quality"),
-    Rod("Titanium Rod", 1000, 0.95, "Top of the line"),
-    Rod("Legendary Rod", 5000, 1.0, "Never miss a catch"),
-    Rod("Mythic Rod", 15000, 1.05, "Forged from celestial metal, improves rare catch chances dramatically."),
-    Rod("Abyssal Rod", 30000, 1.1, "Can withstand extreme pressures of the deep sea."),
-    Rod("Quantum Rod", 50000, 1.15, "Uses temporal resonance to always hook something."),
-    Rod("Creamzon fludder rod", 670000, 1.16, "When you cream in a zone, you would want this big stick." ),
-    Rod("Godly Rod", 100000, 1.2, "Said to catch even mythical creatures with ease."),
-    Rod("Blobfish rod", 2000000, 10.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish.")
+    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
+    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
+    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
+    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
+    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
+    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
+    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
+    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
+    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
+    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
+    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
+    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
+    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
 ]
-
 
 
 def create_character():
