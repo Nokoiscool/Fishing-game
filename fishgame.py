@@ -635,6 +635,7 @@ def create_character():
     print(Fore.YELLOW + "2. Normal (Balanced challenge)" + Style.RESET_ALL)
     print(Fore.RED + "3. Hard (True fisherman's test)" + Style.RESET_ALL)
     print(Fore.MAGENTA + "4. Legendary (For the brave)" + Style.RESET_ALL)
+    print(Fore.RED + "5. ??? (Type '5' if you dare...)" + Style.RESET_ALL)
     
     difficulty_choice = input(Fore.CYAN + "\nChoose (1-4): " + Style.RESET_ALL)
     difficulty_map = {
@@ -642,9 +643,13 @@ def create_character():
         '2': ('Normal', 1.0),
         '3': ('Hard', 1.3),
         '4': ('Legendary', 1.6),
-        '5': ('hidden', 5) 
+        '5': ('IMPOSSIBLE', 10.0)
     }
     difficulty_name, difficulty_mult = difficulty_map.get(difficulty_choice, ('Normal', 1.0))
+    if difficulty_choice == '5':
+        print(Fore.RED + "\n⚠️  WARNING: You have selected IMPOSSIBLE difficulty!" + Style.RESET_ALL)
+        print(Fore.RED + "Minigames will be EXTREMELY difficult with no mercy." + Style.RESET_ALL)
+        time.sleep(2)
     
     print()
     print(Fore.GREEN + f"Welcome, {name}!" + Style.RESET_ALL)
@@ -655,11 +660,9 @@ def create_character():
     return name, stats, difficulty_name, difficulty_mult
 
 # ===== MINI GAME =====
-def reaction_minigame(difficulty_modifier=1.0):
+def reaction_minigame(difficulty_modifier=1.0, is_hidden=False):
     print(Fore.YELLOW + "Get ready... Wait for the signal!" + Style.RESET_ALL)
     time_to_wait = random.uniform(1.5, 4.0)
-
-    #TODO: remove cap if difficulty hidden is chosen    
     
     # Clear buffer during wait
     start_wait = time.time()
@@ -679,11 +682,16 @@ def reaction_minigame(difficulty_modifier=1.0):
     except:
         reaction_time = 999
     
-    # More forgiving timing windows with soft cap on difficulty
-    # Cap difficulty at 1.5x instead of unlimited scaling
-    capped_difficulty = min(difficulty_modifier, 1.5)
-    target_time = 1.5  # Base perfect time (increased from 0.8)
-    good_time = target_time * capped_difficulty * 1.8  # More generous window
+    # Hidden difficulty: NO CAP on difficulty scaling
+    if is_hidden:
+        capped_difficulty = difficulty_modifier
+        target_time = max(0.1, 1.5 / difficulty_modifier)  # Gets HARDER as difficulty increases
+        good_time = target_time * 1.3  # Tighter window for hidden
+    else:
+        # Cap difficulty at 1.5x for normal difficulties
+        capped_difficulty = min(difficulty_modifier, 1.5)
+        target_time = 1.5
+        good_time = target_time * capped_difficulty * 1.8
     
     if reaction_time < target_time:
         print(Fore.GREEN + f"Perfect! ({reaction_time:.3f}s)" + Style.RESET_ALL)
@@ -695,15 +703,21 @@ def reaction_minigame(difficulty_modifier=1.0):
         print(Fore.RED + f"Too slow! ({reaction_time:.3f}s) [Target: <{good_time:.2f}s]" + Style.RESET_ALL)
         return False
 
-def sequence_minigame(difficulty_modifier=1.0):
-    """Memory sequence game - NOW HARDER WITH DIFFICULTY"""
-        # Cap difficulty so it never behaves above x1.5
-    capped_difficulty = min(difficulty_modifier, 1.5)
 
-    #TODO: remove cap if difficulty hidden is chosen  
-    # Difficulty increases sequence length
-    base_length = 3
-    sequence_length = int(base_length + (capped_difficulty * 1.5))
+def sequence_minigame(difficulty_modifier=1.0, is_hidden=False):
+    """Memory sequence game - Hidden difficulty removes cap"""
+    
+    # Hidden difficulty: NO CAP and MUCH harder scaling
+    if is_hidden:
+        base_length = 3
+        sequence_length = int(base_length + (difficulty_modifier * 2.0))  # Scales FAST
+        memorize_time = max(0.3, 2.5 - (difficulty_modifier * 0.15))  # Much less time
+    else:
+        # Cap difficulty at 1.5x for normal difficulties
+        capped_difficulty = min(difficulty_modifier, 1.5)
+        base_length = 3
+        sequence_length = int(base_length + (capped_difficulty * 1.5))
+        memorize_time = max(1.5, 2.5 - (difficulty_modifier * 0.3))
     
     symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     sequence = [random.choice(symbols) for _ in range(sequence_length)]
@@ -711,7 +725,6 @@ def sequence_minigame(difficulty_modifier=1.0):
     print(Fore.CYAN + "Memorize this sequence:" + Style.RESET_ALL)
     print(Fore.YELLOW + " ".join(sequence) + Style.RESET_ALL)
     
-    memorize_time = max(1.5, 2.5 - (difficulty_modifier * 0.3))
     display_time = memorize_time + sequence_length * 0.25
     
     # Clear buffer during memorization
@@ -736,15 +749,21 @@ def sequence_minigame(difficulty_modifier=1.0):
         return False
 
 
-def pattern_minigame(difficulty_modifier=1.0):
-    """Pattern matching game - NOW HARDER WITH DIFFICULTY"""    
-    #TODO: remove cap if difficulty hidden is chosen  
-    # Cap difficulty modifier so it never behaves above x1.5 difficulty
-    capped_difficulty = min(difficulty_modifier, 1.5)
-
-    # Difficulty increases pattern length
-    base_length = 4
-    length = int(base_length + (capped_difficulty * 1.2))
+def pattern_minigame(difficulty_modifier=1.0, is_hidden=False):
+    """Pattern matching game - Hidden difficulty removes cap"""
+    
+    # Hidden difficulty: NO CAP and MUCH harder scaling
+    if is_hidden:
+        base_length = 4
+        length = int(base_length + (difficulty_modifier * 2.0))  # Scales FAST
+        display_speed = max(0.05, 0.5 - (difficulty_modifier * 0.04))  # Gets VERY fast
+    else:
+        # Cap difficulty at 1.5x for normal difficulties
+        capped_difficulty = min(difficulty_modifier, 1.5)
+        base_length = 4
+        length = int(base_length + (capped_difficulty * 1.2))
+        display_speed = max(0.2, 0.5 - (capped_difficulty * 0.08))
+    
     pattern = ''.join(random.choices(['L', 'R'], k=length))
     
     print(Fore.CYAN + "The fish is moving! Follow the pattern:" + Style.RESET_ALL)
@@ -757,9 +776,6 @@ def pattern_minigame(difficulty_modifier=1.0):
             msvcrt.getch()
     
     time.sleep(0.8)
-    
-    # Display speed increases with difficulty (but capped)
-    display_speed = max(0.2, 0.5 - (capped_difficulty * 0.08))
     
     for char in pattern:
         direction = "LEFT" if char == 'L' else "RIGHT"
@@ -787,9 +803,9 @@ def pattern_minigame(difficulty_modifier=1.0):
     else:
         print(Fore.RED + f"Wrong! Pattern was: {pattern}" + Style.RESET_ALL)
         return False
-    
-        
-def fishing_mini_game(difficulty_modifier=1.0, fish_name=""):
+
+
+def fishing_mini_game(difficulty_modifier=1.0, fish_name="", is_hidden=False):
     """Main fishing minigame - randomly selects one of the minigames"""
     print(Fore.YELLOW + f"You hooked a {fish_name}!" + Style.RESET_ALL)
     time.sleep(0.5)
@@ -797,7 +813,7 @@ def fishing_mini_game(difficulty_modifier=1.0, fish_name=""):
     minigames = [reaction_minigame, sequence_minigame, pattern_minigame]
     selected_game = random.choice(minigames)
     
-    success = selected_game(difficulty_modifier)
+    success = selected_game(difficulty_modifier, is_hidden)
     
     if not success:
         input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
@@ -1393,13 +1409,15 @@ class Game:
             fish_template.sell_price
         )
         
-        # Pass the calculated difficulty to minigame
-        if fishing_mini_game(total_difficulty, caught_fish.name):
+        # Check if hidden difficulty (difficulty_mult >= 10)
+        is_hidden = self.difficulty_mult >= 10
+        
+        # Pass the calculated difficulty AND is_hidden flag to minigame
+        if fishing_mini_game(total_difficulty, caught_fish.name, is_hidden):
             caught_fish.catch()
             self.esky.add_fish(caught_fish)
             self.encyclopedia.add_fish(caught_fish)
             print(Fore.GREEN + f"Caught: {caught_fish}" + Style.RESET_ALL)
-            #TODO: NEw species caught message
             print(Fore.LIGHTGREEN_EX + f"Sell value: ${caught_fish.get_sell_price()}" + Style.RESET_ALL)
             self.add_xp(caught_fish.xp_reward)
             
