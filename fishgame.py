@@ -9,6 +9,7 @@ import sys
 from colorama import Fore, Style, init
 from datetime import datetime
 
+
 def show_intro():
     intro = """
     ╔══════════════════════════════════════════════════════════════╗
