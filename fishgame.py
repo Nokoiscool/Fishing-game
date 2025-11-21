@@ -10,6 +10,34 @@ import subprocess
 from colorama import Fore, Style, init
 from datetime import datetime
 
+RAINBOW = [
+    Fore.RED,
+    Fore.LIGHTRED_EX,
+    Fore.YELLOW,
+    Fore.GREEN,
+    Fore.CYAN,
+    Fore.LIGHTBLUE_EX,
+    Fore.BLUE,
+    Fore.MAGENTA,
+    Fore.LIGHTMAGENTA_EX
+]
+
+def gradient_char(c, t):
+    """Smooth diagonal color shift."""
+    return RAINBOW[t % len(RAINBOW)] + c + Style.RESET_ALL
+
+def print_frame(lines, t):
+    """Overwrite the previous frame WITHOUT clearing the screen."""
+    # Move cursor to top (no flashing)
+    sys.stdout.write("\x1b[H")
+    for y, line in enumerate(lines):
+        colored = ""
+        for x, ch in enumerate(line):
+            index = x + y + t  # diagonal movement
+            colored += gradient_char(ch, index)
+        sys.stdout.write(colored + "\n")
+    sys.stdout.flush()
+
 def show_intro():
     intro = """
     ╔══════════════════════════════════════════════════════════════╗
@@ -37,11 +65,24 @@ def show_intro():
     ║                                                              ║
     ╚══════════════════════════════════════════════════════════════╝
     """
-    
-    print(Fore.CYAN + intro + Style.RESET_ALL)
-    time.sleep(2)
-    os.system("cls")
 
+    lines = intro.split("\n")
+
+    # Reserve screen space (avoid scrolling)
+    print("\n" * (len(lines) + 2))
+
+    # Animation frames
+    for t in range(150):
+        print_frame(lines, t)
+        time.sleep(0.02)
+
+    # pause
+    time.sleep(1)
+
+    # clear
+    sys.stdout.write("\x1b[2J\x1b[H")
+    sys.stdout.flush()
+    
 init(autoreset=True)
 
 DID_YOU_KNOW_FACTS = [
@@ -328,7 +369,7 @@ lake_fish = [
     Fish("Crystal Leviathan", 2000, 8000, "Mythical", 0.02, 2000, "A massive transparent creature dwelling in the deepest lakes.", 25000),
     Fish("Hylian Pike", 2, 4, "Rare", 0.7, 14, "A majestic river fish with ancient markings on its scales.", 50),
     Fish("Nordic Dragon Salmon", 5, 9, "Epic", 0.5, 16, "A salmon with tiny horns and a powerful voice for some reason.", 80),
-    Fish("Magicarp",8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300)
+    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300)
 ]
 
 ocean_fish = [
@@ -434,6 +475,7 @@ deep_sea_fish = [
     Fish("Giant Grenadier", 5.0, 20.0, "Uncommon", 6, 42, "Deep-dwelling rattail fish.", 78),
     Fish("Snailfish", 0.01, 8.0, "Uncommon", 7, 38, "Gelatinous fish found at extreme depths.", 70),
     Fish("Blobfish", 2.0, 9.0, "Mythical", 0.00001, 100000, "Looks familuar.....", 105),
+    Fish("Noko the blobfish", 2.0, 9.0, "Godly", 0.0000001, 1000000, "A blobfish that has been blessed by the gods.", 106),
     Fish("Abyssal Octopus", 5.0, 15.0, "Rare", 3, 58, "Rarely seen octopus from extreme depths.", 125),
     Fish("Kraken", 5000, 10000, "Mythical", 0.001, 10000, "Legendary sea monster said to drag ships to the depths.", 200000),
     Fish("Leviathan", 20000, 100000, "Mythical", 0.0003, 15000, "Biblical sea monster of enormous power.", 300000),
@@ -599,7 +641,8 @@ def create_character():
         '1': ('Easy', 0.8),
         '2': ('Normal', 1.0),
         '3': ('Hard', 1.3),
-        '4': ('Legendary', 1.6)
+        '4': ('Legendary', 1.6),
+        '5': ('hidden', 5) 
     }
     difficulty_name, difficulty_mult = difficulty_map.get(difficulty_choice, ('Normal', 1.0))
     
@@ -615,6 +658,8 @@ def create_character():
 def reaction_minigame(difficulty_modifier=1.0):
     print(Fore.YELLOW + "Get ready... Wait for the signal!" + Style.RESET_ALL)
     time_to_wait = random.uniform(1.5, 4.0)
+
+    #TODO: remove cap if difficulty hidden is chosen    
     
     # Clear buffer during wait
     start_wait = time.time()
@@ -655,6 +700,7 @@ def sequence_minigame(difficulty_modifier=1.0):
         # Cap difficulty so it never behaves above x1.5
     capped_difficulty = min(difficulty_modifier, 1.5)
 
+    #TODO: remove cap if difficulty hidden is chosen  
     # Difficulty increases sequence length
     base_length = 3
     sequence_length = int(base_length + (capped_difficulty * 1.5))
@@ -692,7 +738,7 @@ def sequence_minigame(difficulty_modifier=1.0):
 
 def pattern_minigame(difficulty_modifier=1.0):
     """Pattern matching game - NOW HARDER WITH DIFFICULTY"""    
-
+    #TODO: remove cap if difficulty hidden is chosen  
     # Cap difficulty modifier so it never behaves above x1.5 difficulty
     capped_difficulty = min(difficulty_modifier, 1.5)
 
@@ -1314,7 +1360,8 @@ class Game:
             "Uncommon": 1.3,
             "Rare": 1.6,
             "Legendary": 2.0,
-            "Mythical": 2.5
+            "Mythical": 2.5,
+            "Godly": 4.0
         }
         
         base_difficulty = 1 + (self.level * 0.05)  # Scales with level
@@ -1352,6 +1399,7 @@ class Game:
             self.esky.add_fish(caught_fish)
             self.encyclopedia.add_fish(caught_fish)
             print(Fore.GREEN + f"Caught: {caught_fish}" + Style.RESET_ALL)
+            #TODO: NEw species caught message
             print(Fore.LIGHTGREEN_EX + f"Sell value: ${caught_fish.get_sell_price()}" + Style.RESET_ALL)
             self.add_xp(caught_fish.xp_reward)
             
@@ -1437,7 +1485,7 @@ class Game:
             total_value = 0
             
             # Sort fish by rarity
-            rarity_order = {"Mythical": 0, "Legendary": 1, "Rare": 2, "Uncommon": 3, "Common": 4}
+            rarity_order = {"godly": 0, "Mythical": 1, "Legendary": 2, "Rare": 3, "Uncommon": 4, "Common": 5}
             sorted_fish = sorted(self.esky.fish, key=lambda f: (rarity_order.get(f.rarity, 5), f.name))
             
             for i, fish in enumerate(sorted_fish, 1):
@@ -1476,34 +1524,34 @@ class Game:
         
         input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
 
-        def check_quest_completion(self, caught_fish):
-            """Check if any active quests were completed"""
-            completed = []
-            
-            for quest in self.active_quests:
-                if quest['type'] == 'catch_species':
-                    if caught_fish.name == quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-                elif quest['type'] == 'catch_weight':
-                    if caught_fish.weight >= quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-                elif quest['type'] == 'catch_rarity':
-                    if caught_fish.rarity == quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-            
-            for quest in completed:
-                self.money += quest['reward']
-                self.completed_quests += 1
-                self.active_quests.remove(quest)
-                print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
-                # Generate new quest
-                self.active_quests.append(self.generate_quest())
+    def check_quest_completion(self, caught_fish):
+                """Check if any active quests were completed"""
+                completed = []
+                    
+                for quest in self.active_quests:
+                    if quest['type'] == 'catch_species':
+                        if caught_fish.name == quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    elif quest['type'] == 'catch_weight':
+                        if caught_fish.weight >= quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    elif quest['type'] == 'catch_rarity':
+                        if caught_fish.rarity == quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    
+                for quest in completed:
+                    self.money += quest['reward']
+                    self.completed_quests += 1
+                    self.active_quests.remove(quest)
+                    print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
+                        # Generate new quest
+                    self.active_quests.append(self.generate_quest())
 
     def generate_quest(self):
         """Generate a random quest"""
@@ -1593,7 +1641,7 @@ class Game:
     def sell_by_rarity(self):
         self.clear_screen()
         print(Fore.CYAN + "Sell fish by rarity:" + Style.RESET_ALL)
-        rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical"]
+        rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Godly"]
         
         for i, rarity in enumerate(rarities, 1):
             fish_of_rarity = [f for f in self.esky.fish if f.rarity == rarity]
@@ -2004,7 +2052,7 @@ class Game:
 if __name__ == "__main__":
     show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣             ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
     print(Fore.CYAN + "║         open beta V.0.4.3             ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
@@ -2054,4 +2102,3 @@ if __name__ == "__main__":
 
     else:
         print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
-        
