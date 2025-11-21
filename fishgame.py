@@ -6,9 +6,37 @@ import platform
 import time
 import random
 import sys
+import subprocess
 from colorama import Fore, Style, init
 from datetime import datetime
 
+RAINBOW = [
+    Fore.RED,
+    Fore.LIGHTRED_EX,
+    Fore.YELLOW,
+    Fore.GREEN,
+    Fore.CYAN,
+    Fore.LIGHTBLUE_EX,
+    Fore.BLUE,
+    Fore.MAGENTA,
+    Fore.LIGHTMAGENTA_EX
+]
+
+def gradient_char(c, t):
+    """Smooth diagonal color shift."""
+    return RAINBOW[t % len(RAINBOW)] + c + Style.RESET_ALL
+
+def print_frame(lines, t):
+    """Overwrite the previous frame WITHOUT clearing the screen."""
+    # Move cursor to top (no flashing)
+    sys.stdout.write("\x1b[H")
+    for y, line in enumerate(lines):
+        colored = ""
+        for x, ch in enumerate(line):
+            index = x + y + t  # diagonal movement
+            colored += gradient_char(ch, index)
+        sys.stdout.write(colored + "\n")
+    sys.stdout.flush()
 
 def show_intro():
     intro = """
@@ -37,12 +65,81 @@ def show_intro():
     ║                                                              ║
     ╚══════════════════════════════════════════════════════════════╝
     """
-    
-    print(Fore.CYAN + intro + Style.RESET_ALL)
-    time.sleep(2)
-    os.system("cls")
 
+    lines = intro.split("\n")
+
+    # Reserve screen space (avoid scrolling)
+    print("\n" * (len(lines) + 2))
+
+    # Animation frames
+    for t in range(150):
+        print_frame(lines, t)
+        time.sleep(0.02)
+
+    # pause
+    time.sleep(1)
+
+    # clear
+    sys.stdout.write("\x1b[2J\x1b[H")
+    sys.stdout.flush()
+    
 init(autoreset=True)
+
+DID_YOU_KNOW_FACTS = [
+    "Real blobfish don't look blobby underwater – they only deform at low pressure!",
+    "Sturgeon are older than dinosaurs and can live for over 100 years.",
+    "The Kraken myth likely began after sailors spotted giant squid.",
+    "Pike are known as 'water wolves' because of their sudden ambush attacks.",
+    "Barreleye fish have transparent heads so their eyes can look straight upward.",
+    "Anglerfish males fuse into the female's body permanently in real life.",
+    "Blue whales are the largest animals to ever exist – larger than any dinosaur.",
+    "The Arapaima can breathe air using a modified swim bladder.",
+    "Greenland sharks can live up to 500 years – the longest-lived vertebrate.",
+    "Oarfish sightings historically caused sea serpent legends.",
+    "Some deep-sea creatures produce red bioluminescence – invisible to most predators!",
+    "Salmon can smell their home stream from miles away in the ocean.",
+    "Electric eels can generate up to 860 volts – enough to stun a horse!",
+    "Manta rays have the largest brain-to-body ratio of all fish species.",
+    "Some fish can recognize human faces and remember them for months.",
+    "The fastest fish is the black marlin, which can swim over 80 mph.",
+    "Catfish have over 100,000 taste buds all over their body!",
+    "Flying fish can glide through the air for over 650 feet.",
+    "Lungfish can survive out of water for up to 4 years by burrowing in mud.",
+    "Parrotfish create 85% of the sand on tropical beaches by eating coral.",
+    "The oldest known fish lived 200 million years before dinosaurs appeared.",
+    "Coelacanths were thought extinct for 66 million years until found in 1938.",
+    "Some sharks must keep swimming or they'll sink – they have no swim bladder.",    
+    "Fishing during storms increases your chances of catching rare fish!",
+    "Dawn and dusk are the best times to encounter mythical creatures.",
+    "Magical mutations are the rarest – only 0.01% of fish have them!",
+    "Upgrading your patience stat makes minigames significantly easier.",
+    "The Blobfish is so rare that most players never catch one!",
+    "You can earn skill points by leveling up and completing certain achievements.",
+    "Higher difficulty settings give you more XP per catch – risk equals reward!",
+    "Some fish are only available in specific locations – explore them all!",
+    "Trophy fish can be preserved in your trophy room before selling.",
+    "The Deep Sea location has the highest concentration of legendary fish.",
+    "Night fishing can trigger special mutations and rare spawns.",
+    "Your rod durability decreases with each catch – remember to repair it!",
+    "Golden mutations can sell for 5x the normal price!",
+    "Completing the encyclopedia gives massive rewards and skill points.",
+    "The Space location has fish that defy the laws of physics!",
+    "Weather changes randomly, so adapt your strategy accordingly.",
+    "Jormungandr is the serpent that encircles the entire world in Norse mythology.",
+    "Kappa from Japanese folklore can be defeated by bowing politely.",
+    "In Celtic mythology, salmon were considered the wisest of all creatures.",
+    "The Leviathan appears in multiple ancient cultures as a chaos monster.",
+    "Japanese legend says koi that swim up waterfalls become dragons.",
+    "Ancient Polynesians navigated oceans by watching fish behavior.",
+    "Vikings believed certain fish could predict storms and weather changes.",
+    "Also try Minecraft!",
+]
+
+def get_random_fact():
+    return random.choice(DID_YOU_KNOW_FACTS)
+
+
+
 
 # ===== MODELS =====
 class Fish:
@@ -272,6 +369,7 @@ lake_fish = [
     Fish("Crystal Leviathan", 2000, 8000, "Mythical", 0.02, 2000, "A massive transparent creature dwelling in the deepest lakes.", 25000),
     Fish("Hylian Pike", 2, 4, "Rare", 0.7, 14, "A majestic river fish with ancient markings on its scales.", 50),
     Fish("Nordic Dragon Salmon", 5, 9, "Epic", 0.5, 16, "A salmon with tiny horns and a powerful voice for some reason.", 80),
+    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300)
 ]
 
 ocean_fish = [
@@ -347,7 +445,8 @@ river_fish = [
     Fish("Strawberry Koi", 0.5, 1.2, "Common", 5.2, 8, "A bright koi with flecks of red that resemble fruit.", 25),
     Fish("Slimey Gloopfish", 0.3, 0.7, "Common", 7.5, 5, "A cheerful blob-fish hybrid that wiggles adorably.", 15),
     Fish("Lambda Salmon", 1, 3, "Rare", 1.3, 12, "A salmon marked with a mysterious orange symbol. It resists authority.", 70),
-    Fish("Resonance Catfish", 2, 5, "Uncommon", 2.2, 15, "A catfish that vibrates violently, as if stuck mid-experiment.", 50)
+    Fish("Resonance Catfish", 2, 5, "Uncommon", 2.2, 15, "A catfish that vibrates violently, as if stuck mid-experiment.", 50),
+    Fish("ludvik laks", 10, 50, "Rare", 1, 100, "Big and bulky, but very nice!", 300)
 ]
 
 deep_sea_fish = [
@@ -376,6 +475,7 @@ deep_sea_fish = [
     Fish("Giant Grenadier", 5.0, 20.0, "Uncommon", 6, 42, "Deep-dwelling rattail fish.", 78),
     Fish("Snailfish", 0.01, 8.0, "Uncommon", 7, 38, "Gelatinous fish found at extreme depths.", 70),
     Fish("Blobfish", 2.0, 9.0, "Mythical", 0.00001, 100000, "Looks familuar.....", 105),
+    Fish("Noko the blobfish", 2.0, 9.0, "Godly", 0.0000001, 1000000, "A blobfish that has been blessed by the gods.", 106),
     Fish("Abyssal Octopus", 5.0, 15.0, "Rare", 3, 58, "Rarely seen octopus from extreme depths.", 125),
     Fish("Kraken", 5000, 10000, "Mythical", 0.001, 10000, "Legendary sea monster said to drag ships to the depths.", 200000),
     Fish("Leviathan", 20000, 100000, "Mythical", 0.0003, 15000, "Biblical sea monster of enormous power.", 300000),
@@ -405,7 +505,7 @@ volcanic_lake_fish = [
     Fish("Prometheus Wyrm", 2000.0, 8000.0, "Mythical", 0.01, 7000, "Dragon-serpent that stole fire from the gods.", 50000),
     Fish("Fireflower Lionfish", 1, 3, "Rare", 1.3, 15, "A fiery lionfish whose fins burst with sparks when startled.", 70),
     Fish("Balrog Guppy", 10, 18, "Legendary", 0.2, 45, "A tiny fish wreathed in flame, somehow both cute and terrifying.", 450),
-    Fish("Abyssal Serpent of Cinders", 45, 90, "Mythical", 0.1, 90, "A writhing serpent born from the dying flame beneath the waves.", 1500)
+    Fish("Abyssal Serpent of Cinders", 450, 900, "Mythical", 0.1, 90, "A writhing serpent born from the dying flame beneath the waves.", 1500)
 
 ]
 arctic_fish = [
@@ -541,7 +641,8 @@ def create_character():
         '1': ('Easy', 0.8),
         '2': ('Normal', 1.0),
         '3': ('Hard', 1.3),
-        '4': ('Legendary', 1.6)
+        '4': ('Legendary', 1.6),
+        '5': ('hidden', 5) 
     }
     difficulty_name, difficulty_mult = difficulty_map.get(difficulty_choice, ('Normal', 1.0))
     
@@ -555,9 +656,10 @@ def create_character():
 
 # ===== MINI GAME =====
 def reaction_minigame(difficulty_modifier=1.0):
-    """Fast-paced reaction time game - NOW HARDER WITH DIFFICULTY"""
     print(Fore.YELLOW + "Get ready... Wait for the signal!" + Style.RESET_ALL)
     time_to_wait = random.uniform(1.5, 4.0)
+
+    #TODO: remove cap if difficulty hidden is chosen    
     
     # Clear buffer during wait
     start_wait = time.time()
@@ -577,9 +679,11 @@ def reaction_minigame(difficulty_modifier=1.0):
     except:
         reaction_time = 999
     
-    # Harder difficulty = stricter timing windows
-    target_time = 0.8 * difficulty_modifier
-    good_time = target_time * 1.5
+    # More forgiving timing windows with soft cap on difficulty
+    # Cap difficulty at 1.5x instead of unlimited scaling
+    capped_difficulty = min(difficulty_modifier, 1.5)
+    target_time = 1.5  # Base perfect time (increased from 0.8)
+    good_time = target_time * capped_difficulty * 1.8  # More generous window
     
     if reaction_time < target_time:
         print(Fore.GREEN + f"Perfect! ({reaction_time:.3f}s)" + Style.RESET_ALL)
@@ -591,11 +695,15 @@ def reaction_minigame(difficulty_modifier=1.0):
         print(Fore.RED + f"Too slow! ({reaction_time:.3f}s) [Target: <{good_time:.2f}s]" + Style.RESET_ALL)
         return False
 
-
 def sequence_minigame(difficulty_modifier=1.0):
     """Memory sequence game - NOW HARDER WITH DIFFICULTY"""
+        # Cap difficulty so it never behaves above x1.5
+    capped_difficulty = min(difficulty_modifier, 1.5)
+
+    #TODO: remove cap if difficulty hidden is chosen  
+    # Difficulty increases sequence length
     base_length = 3
-    sequence_length = int(base_length + (difficulty_modifier * 1.5))
+    sequence_length = int(base_length + (capped_difficulty * 1.5))
     
     symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     sequence = [random.choice(symbols) for _ in range(sequence_length)]
@@ -629,9 +737,14 @@ def sequence_minigame(difficulty_modifier=1.0):
 
 
 def pattern_minigame(difficulty_modifier=1.0):
-    """Pattern matching game - NOW HARDER WITH DIFFICULTY"""
+    """Pattern matching game - NOW HARDER WITH DIFFICULTY"""    
+    #TODO: remove cap if difficulty hidden is chosen  
+    # Cap difficulty modifier so it never behaves above x1.5 difficulty
+    capped_difficulty = min(difficulty_modifier, 1.5)
+
+    # Difficulty increases pattern length
     base_length = 4
-    length = int(base_length + (difficulty_modifier * 1.2))
+    length = int(base_length + (capped_difficulty * 1.2))
     pattern = ''.join(random.choices(['L', 'R'], k=length))
     
     print(Fore.CYAN + "The fish is moving! Follow the pattern:" + Style.RESET_ALL)
@@ -645,7 +758,8 @@ def pattern_minigame(difficulty_modifier=1.0):
     
     time.sleep(0.8)
     
-    display_speed = max(0.2, 0.5 - (difficulty_modifier * 0.08))
+    # Display speed increases with difficulty (but capped)
+    display_speed = max(0.2, 0.5 - (capped_difficulty * 0.08))
     
     for char in pattern:
         direction = "LEFT" if char == 'L' else "RIGHT"
@@ -674,6 +788,7 @@ def pattern_minigame(difficulty_modifier=1.0):
         print(Fore.RED + f"Wrong! Pattern was: {pattern}" + Style.RESET_ALL)
         return False
     
+        
 def fishing_mini_game(difficulty_modifier=1.0, fish_name=""):
     """Main fishing minigame - randomly selects one of the minigames"""
     print(Fore.YELLOW + f"You hooked a {fish_name}!" + Style.RESET_ALL)
@@ -1020,8 +1135,9 @@ class Game:
                 "stormy": Fore.RED
             }
             weather_color = weather_colors.get(self.weather, Fore.WHITE)
-            
+
             self.print_header()
+            print(Fore.YELLOW + "💡 DID YOU KNOW? " + Style.RESET_ALL + get_random_fact())
             print(Fore.YELLOW + f"Level: {self.level} | XP: {self.xp}/{self.xp_threshold} | 💰: ${self.money}" + Style.RESET_ALL)
             print(weather_color + f"Weather: {self.weather.capitalize()}" + Style.RESET_ALL)
             print(Fore.MAGENTA + f"Difficulty: {self.difficulty_name}" + Style.RESET_ALL)
@@ -1244,7 +1360,8 @@ class Game:
             "Uncommon": 1.3,
             "Rare": 1.6,
             "Legendary": 2.0,
-            "Mythical": 2.5
+            "Mythical": 2.5,
+            "Godly": 4.0
         }
         
         base_difficulty = 1 + (self.level * 0.05)  # Scales with level
@@ -1282,6 +1399,7 @@ class Game:
             self.esky.add_fish(caught_fish)
             self.encyclopedia.add_fish(caught_fish)
             print(Fore.GREEN + f"Caught: {caught_fish}" + Style.RESET_ALL)
+            #TODO: NEw species caught message
             print(Fore.LIGHTGREEN_EX + f"Sell value: ${caught_fish.get_sell_price()}" + Style.RESET_ALL)
             self.add_xp(caught_fish.xp_reward)
             
@@ -1367,7 +1485,7 @@ class Game:
             total_value = 0
             
             # Sort fish by rarity
-            rarity_order = {"Mythical": 0, "Legendary": 1, "Rare": 2, "Uncommon": 3, "Common": 4}
+            rarity_order = {"godly": 0, "Mythical": 1, "Legendary": 2, "Rare": 3, "Uncommon": 4, "Common": 5}
             sorted_fish = sorted(self.esky.fish, key=lambda f: (rarity_order.get(f.rarity, 5), f.name))
             
             for i, fish in enumerate(sorted_fish, 1):
@@ -1406,34 +1524,34 @@ class Game:
         
         input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
 
-        def check_quest_completion(self, caught_fish):
-            """Check if any active quests were completed"""
-            completed = []
-            
-            for quest in self.active_quests:
-                if quest['type'] == 'catch_species':
-                    if caught_fish.name == quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-                elif quest['type'] == 'catch_weight':
-                    if caught_fish.weight >= quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-                elif quest['type'] == 'catch_rarity':
-                    if caught_fish.rarity == quest['target']:
-                        quest['progress'] += 1
-                        if quest['progress'] >= quest['goal']:
-                            completed.append(quest)
-            
-            for quest in completed:
-                self.money += quest['reward']
-                self.completed_quests += 1
-                self.active_quests.remove(quest)
-                print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
-                # Generate new quest
-                self.active_quests.append(self.generate_quest())
+    def check_quest_completion(self, caught_fish):
+                """Check if any active quests were completed"""
+                completed = []
+                    
+                for quest in self.active_quests:
+                    if quest['type'] == 'catch_species':
+                        if caught_fish.name == quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    elif quest['type'] == 'catch_weight':
+                        if caught_fish.weight >= quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    elif quest['type'] == 'catch_rarity':
+                        if caught_fish.rarity == quest['target']:
+                            quest['progress'] += 1
+                            if quest['progress'] >= quest['goal']:
+                                completed.append(quest)
+                    
+                for quest in completed:
+                    self.money += quest['reward']
+                    self.completed_quests += 1
+                    self.active_quests.remove(quest)
+                    print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
+                        # Generate new quest
+                    self.active_quests.append(self.generate_quest())
 
     def generate_quest(self):
         """Generate a random quest"""
@@ -1523,7 +1641,7 @@ class Game:
     def sell_by_rarity(self):
         self.clear_screen()
         print(Fore.CYAN + "Sell fish by rarity:" + Style.RESET_ALL)
-        rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical"]
+        rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Godly"]
         
         for i, rarity in enumerate(rarities, 1):
             fish_of_rarity = [f for f in self.esky.fish if f.rarity == rarity]
@@ -1559,6 +1677,15 @@ class Game:
                 mutation_info = f" ({fish.mutation})" if fish.mutation != "normal" else ""
                 print(f"{i}. {color}{fish.name}{mutation_info}{Style.RESET_ALL} - {fish.weight:.2f}kg - ${fish.get_sell_price()}")
             
+            keep = input(Fore.CYAN + "Add to trophy room before selling? (y/n): " + Style.RESET_ALL)
+            if keep.lower() == 'y':
+                self.trophy_room.append({
+                    'name': fish.name,
+                    'weight': fish.weight,
+                    'mutation': fish.mutation,
+                    'date': fish.catch_time or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                })
+            print(Fore.LIGHTCYAN_EX + "🏆 Added to trophy room!" + Style.RESET_ALL)
             choice = input(Fore.CYAN + "\nEnter fish number: " + Style.RESET_ALL)
             try:
                 idx = int(choice)
@@ -1576,15 +1703,13 @@ class Game:
                             'mutation': fish.mutation,
                             'date': fish.catch_time or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
-                        print(Fore.LIGHTCYAN_EX + "🏆 Added to trophy room!" + Style.RESET_ALL)
-                    
+                        print(Fore.LIGHTCYAN_EX + "🏆 Added to trophy room!" + Style.RESET_ALL) 
                     # Now sell the fish
                     price = fish.get_sell_price()
                     self.money += price
                     self.esky.fish.pop(idx - 1)
                     print(Fore.GREEN + f"Sold {fish.name} for ${price}!" + Style.RESET_ALL)
                     input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-                    
                     if not self.esky.fish:
                         return
             except ValueError:
@@ -1928,7 +2053,7 @@ if __name__ == "__main__":
     show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         open beta V.0.4.2             ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         open beta V.0.4.3             ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
@@ -1977,4 +2102,3 @@ if __name__ == "__main__":
 
     else:
         print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
-        
