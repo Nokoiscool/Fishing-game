@@ -469,6 +469,11 @@ space_fish = [
 
 ]
 
+# Combine all fish into one master list for tracking
+FISH_DATA = lake_fish + ocean_fish + river_fish + deep_sea_fish + volcanic_lake_fish + arctic_fish + space_fish
+# Get unique fish names (in case any appear in multiple locations)
+UNIQUE_FISH_NAMES = list(set([fish.name for fish in FISH_DATA]))
+
 RODS = [
     Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
     Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
@@ -541,7 +546,7 @@ LOCATIONS = [
              "The abyssal zone. Dark, cold, and full of mysteries."),
     
     Location("Volcanic Lake", 
-             volcanic_fish, 
+             volcanic_lake_fish, 
              WEATHER_BONUSES, 
              20,
              "A crater lake heated by geothermal activity. Strange fish dwell here."),
@@ -557,41 +562,8 @@ LOCATIONS = [
              WEATHER_BONUSES, 
              30,
              "Zero-gravity fishing. The fish float, and so do you.")
-]], 
-             WEATHER_BONUSES, 
-             1,
-             "A peaceful lake surrounded by trees. Perfect for beginners."),
-    
-    Location("Swift River", 
-             [f for f in FISH_DATA if f.rarity in ["Common", "Uncommon", "Rare", "Epic"]], 
-             WEATHER_BONUSES, 
-             1,
-             "A fast-flowing river with rocky shores. Trout thrive here."),
-    
-    Location("Ocean", 
-             [f for f in FISH_DATA if f.rarity in ["Uncommon", "Rare", "Epic", "Legendary"]], 
-             WEATHER_BONUSES, 
-             5,
-             "The vast open ocean. Anything could be lurking in its depths."),
-    
-    Location("Deep Sea", 
-             [f for f in FISH_DATA if f.rarity in ["Rare", "Epic", "Legendary", "Mythical"]], 
-             WEATHER_BONUSES, 
-             10,
-             "The abyssal zone. Dark, cold, and full of mysteries."),
-    
-    Location("Volcanic Lake", 
-             [f for f in FISH_DATA if f.rarity in ["Epic", "Legendary", "Mythical"]], 
-             WEATHER_BONUSES, 
-             20,
-             "A crater lake heated by geothermal activity. Strange fish dwell here."),
-    
-    Location("Space Station Aquarium", 
-             [f for f in FISH_DATA if f.rarity in ["Legendary", "Mythical"]], 
-             WEATHER_BONUSES, 
-             30,
-             "Zero-gravity fishing. The fish float, and so do you.")
 ]
+
 
 
 # ===== INPUT HANDLING =====
@@ -869,16 +841,6 @@ OCEAN_LAYOUT = [
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-],
-    ['~', '~', '~', '⊙', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '⊙', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '⊙', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '⊙', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
 ]
 
 DEEP_SEA_LAYOUT = [
@@ -897,16 +859,6 @@ DEEP_SEA_LAYOUT = [
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
-],
-    ['▓', '.', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '▓'],
-    ['▓', '.', '⊙', '.', '.', '.', '.', '◉', '.', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '.', '.', '.', '.', 'P', '.', '.', '.', '.', '.', '.', '⊙', '.', '▓'],
-    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '.', '.', '▓'],
-    ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
 ]
 
 VOLCANIC_LAYOUT = [
@@ -925,16 +877,6 @@ VOLCANIC_LAYOUT = [
     ['♨', '▓', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
     ['♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '▓', '♨', '♨'],
     ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
-],
-    ['♨', '▓', '▓', '▓', '♨', '♨', '⊙', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
-    ['♨', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
-    ['♨', '▓', '▓', '▓', '♨', '♨', '♨', '◉', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
-    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '♨', '♨'],
-    ['♨', '♨', '⊙', '♨', '♨', 'P', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
-    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
-    ['♨', '▓', '♨', '♨', '♨', '♨', '♨', '⊙', '♨', '♨', '♨', '♨', '▓', '▓', '♨'],
-    ['♨', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
-    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
 ]
 
 SPACE_LAYOUT = [
@@ -953,29 +895,7 @@ SPACE_LAYOUT = [
     ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
     ['⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬'],
     ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
-],
-    ['⌬', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '⌬'],
-    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
-    ['⌬', '⊙', '.', '.', '.', '.', '.', '◉', '.', '.', '.', '.', '.', '⊙', '⌬'],
-    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
-    ['⌬', '.', '.', '.', '.', 'P', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
-    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
-    ['⌬', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '⌬'],
-    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '.', '⌬'],
-    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
 ]
-
-# Add maps to locations
-LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description)
-LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description)
-LOCATIONS[2].map = LocationMap("Ocean", OCEAN_LAYOUT, LOCATIONS[2].description)
-LOCATIONS[3].map = LocationMap("Deep Sea", DEEP_SEA_LAYOUT, LOCATIONS[3].description)
-LOCATIONS[4].map = LocationMap("Volcanic Lake", VOLCANIC_LAYOUT, LOCATIONS[4].description)
-LOCATIONS[5].map = LocationMap("Arctic Waters", ARCTIC_LAYOUT, LOCATIONS[5].description)
-LOCATIONS[6].map = LocationMap("Space Station Aquarium", SPACE_LAYOUT, LOCATIONS[6].description)
-
-
-# ===== QUEST SYSTEM =====
 
 ARCTIC_LAYOUT = [
     ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
@@ -995,6 +915,17 @@ ARCTIC_LAYOUT = [
     ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
 ]
 
+# Add maps to locations
+LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description)
+LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description)
+LOCATIONS[2].map = LocationMap("Ocean", OCEAN_LAYOUT, LOCATIONS[2].description)
+LOCATIONS[3].map = LocationMap("Deep Sea", DEEP_SEA_LAYOUT, LOCATIONS[3].description)
+LOCATIONS[4].map = LocationMap("Volcanic Lake", VOLCANIC_LAYOUT, LOCATIONS[4].description)
+LOCATIONS[5].map = LocationMap("Arctic Waters", ARCTIC_LAYOUT, LOCATIONS[5].description)
+LOCATIONS[6].map = LocationMap("Space Station Aquarium", SPACE_LAYOUT, LOCATIONS[6].description)
+
+
+# ===== QUEST SYSTEM =====
 
 class Quest:
     def __init__(self, title, description, target_fish, target_count, reward_money, reward_xp):
@@ -1850,7 +1781,7 @@ class Game:
         print(Fore.LIGHTBLACK_EX + f"Current Bait: {self.current_bait.name}" + Style.RESET_ALL)
         print(Fore.LIGHTBLACK_EX + f"Rod Durability: {self.rod_durability}/{self.rod_max_durability}" + Style.RESET_ALL)
         print()
-        print(Fore.YELLOW + f"Species Discovered: {len(self.encyclopedia)}/{len(FISH_DATA)}" + Style.RESET_ALL)
+        print(Fore.YELLOW + f"Species Discovered: {len(self.encyclopedia)}/{len(UNIQUE_FISH_NAMES)}" + Style.RESET_ALL)
         print(Fore.MAGENTA + f"Trophy Fish: {len(self.trophy_room)}" + Style.RESET_ALL)
         print()
         print(Fore.WHITE + "Press any key to return..." + Style.RESET_ALL)
