@@ -1,4 +1,4 @@
-# Fishing Game - Enhanced Version (Fixed)
+# Fishing Game - Hub Island Edition
 import os
 import json
 import hashlib
@@ -134,6 +134,10 @@ DID_YOU_KNOW_FACTS = [
     "Ancient Polynesians navigated oceans by watching fish behavior.",
     "Vikings believed certain fish could predict storms and weather changes.",
     "Also try Minecraft!",
+    "Visit the Hub Island shop to upgrade your gear!",
+    "The Aquarium displays all your trophy catches!",
+    "Complete quests for rare rewards and unlock new locations!",
+    "The dock connects you to distant fishing grounds!",
 ]
 
 def get_random_fact():
@@ -179,229 +183,83 @@ class Fish:
     def generate_random_weight(self):
         return round(random.uniform(self.min_weight, self.max_weight), 2)
 
-    def catch(self):
-        self.weight = self.generate_random_weight()
-        self.mutation = self.assign_mutation()
-        self.catch_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    def assign_mutation(self):
-        mutations = ["normal", "albino", "glowing", "spotted", "golden", "shadow", "magical"]
-        weights = [79.99, 5, 5, 5, 3, 2, 0.01]
-        return random.choices(mutations, weights=weights)[0]
-
-    mutation_colors = {
-        "normal": Fore.WHITE,
-        "albino": Fore.LIGHTWHITE_EX, 
-        "glowing": Fore.GREEN,
-        "spotted": Fore.YELLOW,
-        "golden": Fore.LIGHTYELLOW_EX,
-        "shadow": Fore.LIGHTBLACK_EX,
-        "magical": Fore.MAGENTA
-    }
-
-    mutation_multipliers = {
-        "normal": 1.0,
-        "albino": 2.0,
-        "glowing": 2.5,
-        "spotted": 1.5,
-        "golden": 5.0,
-        "shadow": 3.0,
-        "magical": 10.0
-    }
+    def apply_mutation(self):
+        """Rolls for random mutations"""
+        roll = random.random()
+        
+        if roll < 0.0001:  # 0.01% chance for magical
+            self.mutation = "magical"
+            self.sell_price = int(self.sell_price * 10)
+            self.xp_reward = int(self.xp_reward * 5)
+        elif roll < 0.001:  # 0.1% chance for shiny
+            self.mutation = "shiny"
+            self.sell_price = int(self.sell_price * 3)
+            self.xp_reward = int(self.xp_reward * 2)
+        elif roll < 0.01:  # 1% chance for golden
+            self.mutation = "golden"
+            self.sell_price = int(self.sell_price * 5)
+            self.xp_reward = int(self.xp_reward * 3)
+        elif roll < 0.05:  # 5% chance for albino
+            self.mutation = "albino"
+            self.sell_price = int(self.sell_price * 2)
+            self.xp_reward = int(self.xp_reward * 1.5)
 
     def get_color(self):
-        return self.mutation_colors.get(self.mutation, Fore.WHITE)
-
-    def get_sell_price(self):
-        base_price = self.sell_price
-        weight_bonus = self.weight * 2
-        mutation_bonus = base_price * self.mutation_multipliers.get(self.mutation, 1.0)
-        return int(base_price + weight_bonus + mutation_bonus)
+        """Returns colorama color based on rarity and mutation"""
+        mutation_colors = {
+            "magical": Fore.LIGHTMAGENTA_EX,
+            "shiny": Fore.LIGHTCYAN_EX,
+            "golden": Fore.LIGHTYELLOW_EX,
+            "albino": Fore.WHITE
+        }
+        
+        if self.mutation != "normal":
+            return mutation_colors.get(self.mutation, Fore.WHITE)
+        
+        rarity_colors = {
+            "Common": Fore.WHITE,
+            "Uncommon": Fore.GREEN,
+            "Rare": Fore.BLUE,
+            "Epic": Fore.MAGENTA,
+            "Legendary": Fore.YELLOW,
+            "Mythical": Fore.RED
+        }
+        return rarity_colors.get(self.rarity, Fore.WHITE)
 
     def __str__(self):
         color = self.get_color()
-        mutation_str = f" ({self.mutation})" if self.mutation != "normal" else ""
-        return f"{color}{self.name}{mutation_str} (Weight: {self.weight:.2f} kg, Rarity: {self.rarity}, Size: {self.get_size()}){Style.RESET_ALL}"
-
-    def get_size(self):
-        if self.weight > 1000.0:
-            return "Gigantic"
-        elif self.weight > 100.0:
-            return "Huge"
-        elif self.weight > 10.0:
-            return "Medium"
-        else:
-            return "Small"
-
-
-class Bait:
-    def __init__(self, name, cost, rarity_boost, description):
-        self.name = name
-        self.cost = cost
-        self.rarity_boost = rarity_boost
-        self.description = description
+        mutation_prefix = f"[{self.mutation.upper()}] " if self.mutation != "normal" else ""
+        return f"{color}{mutation_prefix}{self.name}{Style.RESET_ALL} ({self.weight} kg)"
 
 
 class Rod:
-    def __init__(self, name, cost, catch_bonus, description):
+    def __init__(self, name, bonus_chance, bonus_weight, price, unlock_level=1, durability_bonus=0):
         self.name = name
-        self.cost = cost
-        self.catch_bonus = catch_bonus
-        self.description = description
+        self.bonus_chance = bonus_chance  # Better fish chance
+        self.bonus_weight = bonus_weight  # Heavier catches
+        self.price = price
+        self.unlock_level = unlock_level
+        self.durability_bonus = durability_bonus
+
+
+class Bait:
+    def __init__(self, name, bonus_xp, bonus_rarity, price, unlock_level=1):
+        self.name = name
+        self.bonus_xp = bonus_xp
+        self.bonus_rarity = bonus_rarity
+        self.price = price
+        self.unlock_level = unlock_level
 
 
 class Location:
-    def __init__(self, name, fish_list, unlock_level=1, weather_affects=True):
+    def __init__(self, name, fish_pool, weather_effects, unlock_level=1, description=""):
         self.name = name
-        self.fish = fish_list
+        self.fish_pool = fish_pool
+        self.weather_effects = weather_effects
         self.unlock_level = unlock_level
-        self.weather_affects = weather_affects
-
-    def get_random_fish(self, weather="sunny", bait_boost=0, time_of_day="day", golden_boost=False):
-        weighted_fish = []
-        for fish in self.fish:
-            weight = int(fish.rarity_weight * (1 + bait_boost))
-            
-            # Weather effects
-            if weather == "rainy":
-                weight = int(weight * 1.2)
-            elif weather == "stormy":
-                if fish.rarity in ["Rare", "Legendary", "Mythical"]:
-                    weight = int(weight * 1.5)
-            
-            # Time effects
-            if time_of_day == "night":
-                if fish.rarity in ["Rare", "Legendary"]:
-                    weight = int(weight * 1.3)
-            elif time_of_day == "dawn" or time_of_day == "dusk":
-                if fish.rarity == "Mythical":
-                    weight = int(weight * 2.0)
-            
-            # Golden spot bonus - 2.5x multiplier for rare fish!
-            if golden_boost:
-                if fish.rarity in ["Rare", "Legendary", "Mythical", "Godly"]:
-                    weight = int(weight * 2.5)
-            
-            weighted_fish.extend([fish] * max(1, weight))
-        
-        return random.choice(weighted_fish) if weighted_fish else None
+        self.description = description
 
 
-class Esky:
-    def __init__(self):
-        self.fish = []
-        self.max_capacity = 50
-
-    def add_fish(self, fish):
-        if len(self.fish) < self.max_capacity:
-            self.fish.append(fish)
-            return True
-        return False
-
-    def is_full(self):
-        return len(self.fish) >= self.max_capacity
-
-
-class Encyclopedia:
-    def __init__(self):
-        self.caught_fish = {}
-
-    def is_new_species(self, fish_name):
-        return fish_name not in self.caught_fish
-
-    def add_fish(self, fish):
-        is_new = fish.name not in self.caught_fish
-        
-        if is_new:
-            self.caught_fish[fish.name] = {
-                'name': fish.name,
-                'min_weight': fish.min_weight,
-                'max_weight': fish.max_weight,
-                'rarity': fish.rarity,
-                'xp_reward': fish.xp_reward,
-                'real_world_info': fish.real_world_info,
-                'times_caught': 1,
-                'heaviest': fish.weight,
-                'mutations_found': [fish.mutation] if fish.mutation != "normal" else [],
-                'location': getattr(fish, 'location', 'Unknown')  # Track location
-            }
-        else:
-            self.caught_fish[fish.name]['times_caught'] += 1
-            if fish.weight > self.caught_fish[fish.name]['heaviest']:
-                self.caught_fish[fish.name]['heaviest'] = fish.weight
-            if fish.mutation != "normal" and fish.mutation not in self.caught_fish[fish.name]['mutations_found']:
-                self.caught_fish[fish.name]['mutations_found'].append(fish.mutation)
-            # Update location if it was missing (for old saves)
-            if 'location' not in self.caught_fish[fish.name]:
-                self.caught_fish[fish.name]['location'] = getattr(fish, 'location', 'Unknown')
-        
-        return is_new  # Return whether it was a new species
-
-    def display(self):
-        if not self.caught_fish:
-            print(Fore.YELLOW + "No fish caught yet! Go fishing to fill your encyclopedia." + Style.RESET_ALL)
-            return
-        
-        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║      FISHING ENCYCLOPEDIA             ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.CYAN + f"Total Species Caught: {len(self.caught_fish)}" + Style.RESET_ALL)
-        print()
-        
-        # Group fish by location
-        location_groups = {}
-        for fish_name, fish_info in self.caught_fish.items():
-            location = fish_info.get('location', 'Unknown')
-            if location not in location_groups:
-                location_groups[location] = []
-            location_groups[location].append((fish_name, fish_info))
-        
-        # Count total fish per location from game data
-        # We need to pass this from the game instance, but for now we'll calculate from caught fish
-        location_totals = {
-            'Lake': len(lake_fish),
-            'River': len(river_fish),
-            'Ocean': len(ocean_fish),
-            'Deep Sea': len(deep_sea_fish),
-            'Volcanic Lake': len(volcanic_lake_fish),
-            'Arctic': len(arctic_fish),
-            'Space': len(space_fish)
-        }
-        
-        # Display by location
-        location_order = ['Lake', 'River', 'Ocean', 'Deep Sea', 'Volcanic Lake', 'Arctic', 'Space', 'Unknown']
-        
-        for location in location_order:
-            if location not in location_groups:
-                # Show locations even if no fish caught there yet
-                if location in location_totals:
-                    total_in_location = location_totals[location]
-                    print(Fore.MAGENTA + f"\n━━━ {location.upper()} (0 of {total_in_location} species) ━━━" + Style.RESET_ALL)
-                    print(Fore.YELLOW + "  No fish discovered yet in this location." + Style.RESET_ALL)
-                continue
-            
-            fish_list = location_groups[location]
-            total_in_location = location_totals.get(location, len(fish_list))
-            completion_pct = (len(fish_list) / total_in_location * 100) if total_in_location > 0 else 0
-            
-            print(Fore.MAGENTA + f"\n━━━ {location.upper()} ({len(fish_list)} of {total_in_location} species - {completion_pct:.1f}%) ━━━" + Style.RESET_ALL)
-            
-            for fish_name, fish_info in sorted(fish_list):
-                print(Fore.GREEN + f"\n{fish_name}:" + Style.RESET_ALL)
-                print(f"  Rarity: {fish_info['rarity']}")
-                print(f"  Weight range: {fish_info['min_weight']}kg - {fish_info['max_weight']}kg")
-                print(f"  Heaviest caught: {fish_info['heaviest']:.2f}kg")
-                print(f"  XP reward: {fish_info['xp_reward']} XP")
-                print(f"  Times caught: {fish_info['times_caught']}")
-                if fish_info['mutations_found']:
-                    print(f"  Mutations found: {', '.join(fish_info['mutations_found'])}")
-                print(f"  Info: {fish_info.get('real_world_info', 'No information available.')}")
-
-    def get_completion_percentage(self, all_fish):
-        return (len(self.caught_fish) / len(all_fish)) * 100 if all_fish else 0
-
-
-# ===== FISH DATA =====
 lake_fish = [
     Fish("Trout", 0.5, 2.5, "Common", 10, 15, "Trout are freshwater fish commonly found in rivers and lakes.", 20),
     Fish("Bass", 4.5, 10.0, "Uncommon", 5, 25, "Bass are popular game fish found in many lakes and rivers.", 50),
@@ -611,8 +469,23 @@ space_fish = [
 
 ]
 
+RODS = [
+    Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
+    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
+    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
+    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
+    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
+    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
+    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
+    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
+    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
+    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
+    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
+    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
+    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
+    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
+]
 
-# ===== EQUIPMENT DATA =====
 BAITS = [ 
     Bait("Worm", 0, 0, "Basic free bait"),
     Bait("Bread", 50, 0.05, "Simple but effective"),
@@ -631,2056 +504,1281 @@ BAITS = [
     Bait("Master Bait", 50000, 0.50, "The ultimate fishing bait")
 ]
 
-RODS =  [
-    Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
-    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
-    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
-    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
-    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
-    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
-    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
-    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
-    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
-    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
-    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
-    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
-    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
-    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
+WEATHERS = ["Sunny", "Cloudy", "Rainy", "Stormy", "Foggy"]
+
+WEATHER_BONUSES = {
+    "Sunny": {"xp": 0, "rarity": 0, "message": "☀️ Clear skies make for pleasant fishing."},
+    "Cloudy": {"xp": 10, "rarity": 5, "message": "☁️ Fish are more active in cloudy weather."},
+    "Rainy": {"xp": 20, "rarity": 10, "message": "🌧️ Rain stirs up the water, attracting fish!"},
+    "Stormy": {"xp": 50, "rarity": 30, "message": "⛈️ Dangerous conditions, but rare fish appear!"},
+    "Foggy": {"xp": 15, "rarity": 15, "message": "🌫️ Mysterious fog blankets the water..."}
+}
+
+# ===== LOCATIONS =====
+LOCATIONS = [
+    Location("Hub Island - Calm Lake", 
+             lake_fish, 
+             WEATHER_BONUSES, 
+             1,
+             "A peaceful lake surrounded by trees. Perfect for beginners."),
+    
+    Location("Hub Island - Swift River", 
+             river_fish, 
+             WEATHER_BONUSES, 
+             1,
+             "A fast-flowing river with rocky shores. Trout and salmon thrive here."),
+    
+    Location("Ocean", 
+             ocean_fish, 
+             WEATHER_BONUSES, 
+             5,
+             "The vast open ocean. Anything could be lurking in its depths."),
+    
+    Location("Deep Sea", 
+             ocean_fish + [fish for fish in ocean_fish if fish.rarity in ["Rare", "Legendary", "Mythical"]], 
+             WEATHER_BONUSES, 
+             10,
+             "The abyssal zone. Dark, cold, and full of mysteries."),
+    
+    Location("Volcanic Lake", 
+             volcanic_fish, 
+             WEATHER_BONUSES, 
+             20,
+             "A crater lake heated by geothermal activity. Strange fish dwell here."),
+    
+    Location("Arctic Waters", 
+             arctic_fish, 
+             WEATHER_BONUSES, 
+             25,
+             "Frozen seas where the ice never melts. Only the hardiest fish survive."),
+    
+    Location("Space Station Aquarium", 
+             space_fish, 
+             WEATHER_BONUSES, 
+             30,
+             "Zero-gravity fishing. The fish float, and so do you.")
+]], 
+             WEATHER_BONUSES, 
+             1,
+             "A peaceful lake surrounded by trees. Perfect for beginners."),
+    
+    Location("Swift River", 
+             [f for f in FISH_DATA if f.rarity in ["Common", "Uncommon", "Rare", "Epic"]], 
+             WEATHER_BONUSES, 
+             1,
+             "A fast-flowing river with rocky shores. Trout thrive here."),
+    
+    Location("Ocean", 
+             [f for f in FISH_DATA if f.rarity in ["Uncommon", "Rare", "Epic", "Legendary"]], 
+             WEATHER_BONUSES, 
+             5,
+             "The vast open ocean. Anything could be lurking in its depths."),
+    
+    Location("Deep Sea", 
+             [f for f in FISH_DATA if f.rarity in ["Rare", "Epic", "Legendary", "Mythical"]], 
+             WEATHER_BONUSES, 
+             10,
+             "The abyssal zone. Dark, cold, and full of mysteries."),
+    
+    Location("Volcanic Lake", 
+             [f for f in FISH_DATA if f.rarity in ["Epic", "Legendary", "Mythical"]], 
+             WEATHER_BONUSES, 
+             20,
+             "A crater lake heated by geothermal activity. Strange fish dwell here."),
+    
+    Location("Space Station Aquarium", 
+             [f for f in FISH_DATA if f.rarity in ["Legendary", "Mythical"]], 
+             WEATHER_BONUSES, 
+             30,
+             "Zero-gravity fishing. The fish float, and so do you.")
 ]
 
 
+# ===== INPUT HANDLING =====
+def get_key():
+    """Cross-platform key input"""
+    if platform.system() == 'Windows':
+        import msvcrt
+        return msvcrt.getch().decode('utf-8').lower()
+    else:
+        import tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch.lower()
+
+
+# ===== CHARACTER CREATION =====
 def create_character():
-    """Character creation at game start"""
-    print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-    print(Fore.CYAN + "║       CHARACTER CREATION              ║" + Style.RESET_ALL)
+    """Create a new player character"""
+    print(Fore.CYAN + "\n╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+    print(Fore.CYAN + "║       CHARACTER CREATION             ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
-    print()
     
-    # Name
-    name = input(Fore.GREEN + "Enter your fisherman's name: " + Style.RESET_ALL).strip()
-    if not name:
-        name = "Angler"
+    name = input(Fore.GREEN + "\nEnter your fisherman's name: " + Style.RESET_ALL)
     
-    print()
-    print(Fore.CYAN + "Choose your starting stats (10 points to distribute):" + Style.RESET_ALL)
-    print(Fore.YELLOW + "Strength: Increases fish catch rate" + Style.RESET_ALL)
-    print(Fore.YELLOW + "Luck: Increases rare fish chances" + Style.RESET_ALL)
-    print(Fore.YELLOW + "Patience: Easier minigames" + Style.RESET_ALL)
-    print()
+    print(Fore.YELLOW + "\nDistribute 15 points among these stats:" + Style.RESET_ALL)
+    print(Fore.WHITE + "  Strength: Catch bigger fish" + Style.RESET_ALL)
+    print(Fore.WHITE + "  Luck: Find rarer fish" + Style.RESET_ALL)
+    print(Fore.WHITE + "  Patience: Easier minigames" + Style.RESET_ALL)
     
-    points_remaining = 10
+    points_left = 15
     stats = {'strength': 0, 'luck': 0, 'patience': 0}
     
-    while points_remaining > 0:
-        print(Fore.GREEN + f"\nPoints remaining: {points_remaining}" + Style.RESET_ALL)
-        print(f"Current stats - Strength: {stats['strength']}, Luck: {stats['luck']}, Patience: {stats['patience']}")
-        
-        stat_choice = input(Fore.CYAN + "Add point to (s)trength, (l)uck, or (p)atience? " + Style.RESET_ALL).lower()
-        
-        if stat_choice == 's' and points_remaining > 0:
-            stats['strength'] += 1
-            points_remaining -= 1
-        elif stat_choice == 'l' and points_remaining > 0:
-            stats['luck'] += 1
-            points_remaining -= 1
-        elif stat_choice == 'p' and points_remaining > 0:
-            stats['patience'] += 1
-            points_remaining -= 1
+    for stat in stats.keys():
+        while True:
+            try:
+                val = int(input(Fore.CYAN + f"{stat.capitalize()} (Points left: {points_left}): " + Style.RESET_ALL))
+                if 0 <= val <= points_left:
+                    stats[stat] = val
+                    points_left -= val
+                    break
+                else:
+                    print(Fore.RED + f"Please enter 0-{points_left}" + Style.RESET_ALL)
+            except ValueError:
+                print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
     
-    print()
-    print(Fore.CYAN + "Choose difficulty:" + Style.RESET_ALL)
-    print(Fore.GREEN + "1. Easy (Relaxed fishing)" + Style.RESET_ALL)
-    print(Fore.YELLOW + "2. Normal (Balanced challenge)" + Style.RESET_ALL)
-    print(Fore.RED + "3. Hard (True fisherman's test)" + Style.RESET_ALL)
-    print(Fore.MAGENTA + "4. Legendary (For the brave)" + Style.RESET_ALL)
-    print(Fore.RED + "5. ??? (Type '5' if you dare...)" + Style.RESET_ALL)
+    print(Fore.YELLOW + "\nChoose difficulty:" + Style.RESET_ALL)
+    print(Fore.GREEN + "1. Easy (1.5x XP, 1.5x Money)" + Style.RESET_ALL)
+    print(Fore.YELLOW + "2. Normal (1x XP, 1x Money)" + Style.RESET_ALL)
+    print(Fore.RED + "3. Hard (0.75x XP, 0.75x Money, but 2x Rarity Chance)" + Style.RESET_ALL)
     
-    difficulty_choice = input(Fore.CYAN + "\nChoose (1-4): " + Style.RESET_ALL)
+    diff_choice = input(Fore.CYAN + "Difficulty: " + Style.RESET_ALL)
     difficulty_map = {
-        '1': ('Easy', 0.8),
+        '1': ('Easy', 1.5),
         '2': ('Normal', 1.0),
-        '3': ('Hard', 1.3),
-        '4': ('Legendary', 1.6),
-        '5': ('IMPOSSIBLE', 10.0)
+        '3': ('Hard', 0.75)
     }
-    difficulty_name, difficulty_mult = difficulty_map.get(difficulty_choice, ('Normal', 1.0))
-    if difficulty_choice == '5':
-        print(Fore.RED + "\n⚠️  WARNING: You have selected IMPOSSIBLE difficulty!" + Style.RESET_ALL)
-        print(Fore.RED + "Minigames will be EXTREMELY difficult with no mercy." + Style.RESET_ALL)
-        time.sleep(2)
-    
-    print()
-    print(Fore.GREEN + f"Welcome, {name}!" + Style.RESET_ALL)
-    print(Fore.YELLOW + f"Stats - Strength: {stats['strength']}, Luck: {stats['luck']}, Patience: {stats['patience']}" + Style.RESET_ALL)
-    print(Fore.YELLOW + f"Difficulty: {difficulty_name}" + Style.RESET_ALL)
-    input(Fore.CYAN + "\nPress Enter to begin your fishing journey..." + Style.RESET_ALL)
+    difficulty_name, difficulty_mult = difficulty_map.get(diff_choice, ('Normal', 1.0))
     
     return name, stats, difficulty_name, difficulty_mult
 
-# ===== MINI GAME =====
-def reaction_minigame(difficulty_modifier=1.0, is_hidden=False):
-    print(Fore.YELLOW + "Get ready... Wait for the signal!" + Style.RESET_ALL)
-    time_to_wait = random.uniform(1.5, 4.0)
+
+# ===== MINIGAMES =====
+def button_mashing_minigame(patience_stat):
+    """Player must press space rapidly"""
+    print(Fore.YELLOW + "\n🎣 Mash SPACE as fast as you can!" + Style.RESET_ALL)
     
-    # Clear buffer during wait
-    start_wait = time.time()
-    while time.time() - start_wait < time_to_wait:
-        if sys.platform == 'win32':
-            import msvcrt
-            while msvcrt.kbhit():
-                msvcrt.getch()
-        time.sleep(0.1)
-    
-    print(Fore.GREEN + ">>> NOW! Press Enter!" + Style.RESET_ALL)
+    target = max(10, 30 - patience_stat)  # Higher patience = lower target
+    presses = 0
     start_time = time.time()
     
-    try:
-        input()
-        reaction_time = time.time() - start_time
-    except:
-        reaction_time = 999
+    print(Fore.CYAN + f"Press SPACE {target} times in 5 seconds!" + Style.RESET_ALL)
     
-    # Hidden difficulty: NO CAP on difficulty scaling
-    if is_hidden:
-        capped_difficulty = difficulty_modifier
-        target_time = max(0.1, 1.5 / difficulty_modifier)  # Gets HARDER as difficulty increases
-        good_time = target_time * 1.3  # Tighter window for hidden
-    else:
-        # Cap difficulty at 1.5x for normal difficulties
-        capped_difficulty = min(difficulty_modifier, 1.5)
-        target_time = 1.5
-        good_time = target_time * capped_difficulty * 1.8
+    while time.time() - start_time < 5:
+        key = get_key()
+        if key == ' ':
+            presses += 1
+            print(Fore.GREEN + f"Presses: {presses}/{target}" + Style.RESET_ALL, end='\r')
+        if presses >= target:
+            print(Fore.GREEN + f"\n✓ Success! ({presses} presses)" + Style.RESET_ALL)
+            return True
     
-    if reaction_time < target_time:
-        print(Fore.GREEN + f"Perfect! ({reaction_time:.3f}s)" + Style.RESET_ALL)
-        return True
-    elif reaction_time < good_time:
-        print(Fore.YELLOW + f"Good! ({reaction_time:.3f}s)" + Style.RESET_ALL)
-        return True
-    else:
-        print(Fore.RED + f"Too slow! ({reaction_time:.3f}s) [Target: <{good_time:.2f}s]" + Style.RESET_ALL)
-        return False
+    print(Fore.RED + f"\n✗ Failed! Only {presses}/{target} presses." + Style.RESET_ALL)
+    return False
 
 
-def sequence_minigame(difficulty_modifier=1.0, is_hidden=False):
-    """Memory sequence game - Hidden difficulty removes cap"""
+def timing_minigame(patience_stat):
+    """Player must press space at the right moment"""
+    print(Fore.YELLOW + "\n🎯 Press SPACE when the bar is in the green zone!" + Style.RESET_ALL)
     
-    # Hidden difficulty: NO CAP and MUCH harder scaling
-    if is_hidden:
-        base_length = 3
-        sequence_length = int(base_length + (difficulty_modifier * 2.0))  # Scales FAST
-        memorize_time = max(0.3, 2.5 - (difficulty_modifier * 0.15))  # Much less time
-    else:
-        # Cap difficulty at 1.5x for normal difficulties
-        capped_difficulty = min(difficulty_modifier, 1.5)
-        base_length = 3
-        sequence_length = int(base_length + (capped_difficulty * 1.5))
-        memorize_time = max(1.5, 2.5 - (difficulty_modifier * 0.3))
+    bar_width = 20
+    green_zone_size = max(3, 8 - patience_stat // 3)
+    green_start = random.randint(0, bar_width - green_zone_size)
+    green_end = green_start + green_zone_size
     
-    symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-    sequence = [random.choice(symbols) for _ in range(sequence_length)]
+    position = 0
+    direction = 1
     
-    print(Fore.CYAN + "Memorize this sequence:" + Style.RESET_ALL)
-    print(Fore.YELLOW + " ".join(sequence) + Style.RESET_ALL)
-    
-    display_time = memorize_time + sequence_length * 0.25
-    
-    # Clear buffer during memorization
-    start_wait = time.time()
-    while time.time() - start_wait < display_time:
-        if sys.platform == 'win32':
-            import msvcrt
-            while msvcrt.kbhit():
-                msvcrt.getch()
-        time.sleep(0.1)
-    
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(Fore.CYAN + "Enter the sequence (separate with spaces):" + Style.RESET_ALL)
-    print(Fore.YELLOW + f"[{sequence_length} items to remember]" + Style.RESET_ALL)
-    user_input = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().upper().split()
-    
-    if user_input == sequence:
-        print(Fore.GREEN + "Perfect memory!" + Style.RESET_ALL)
-        return True
-    else:
-        print(Fore.RED + f"Wrong! It was: {' '.join(sequence)}" + Style.RESET_ALL)
-        return False
-
-
-def pattern_minigame(difficulty_modifier=1.0, is_hidden=False):
-    """Pattern matching game - Hidden difficulty removes cap"""
-    
-    # Hidden difficulty: NO CAP and MUCH harder scaling
-    if is_hidden:
-        base_length = 4
-        length = int(base_length + (difficulty_modifier * 2.0))  # Scales FAST
-        display_speed = max(0.05, 0.5 - (difficulty_modifier * 0.04))  # Gets VERY fast
-    else:
-        # Cap difficulty at 1.5x for normal difficulties
-        capped_difficulty = min(difficulty_modifier, 1.5)
-        base_length = 4
-        length = int(base_length + (capped_difficulty * 1.2))
-        display_speed = max(0.2, 0.5 - (capped_difficulty * 0.08))
-    
-    pattern = ''.join(random.choices(['L', 'R'], k=length))
-    
-    print(Fore.CYAN + "The fish is moving! Follow the pattern:" + Style.RESET_ALL)
-    print(Fore.YELLOW + "Watch carefully..." + Style.RESET_ALL)
-    
-    # Clear buffer before showing pattern
-    if sys.platform == 'win32':
-        import msvcrt
-        while msvcrt.kbhit():
-            msvcrt.getch()
-    
-    time.sleep(0.8)
-    
-    for char in pattern:
-        direction = "LEFT" if char == 'L' else "RIGHT"
-        print(Fore.YELLOW + f"  {direction}" + Style.RESET_ALL)
+    for _ in range(40):  # 40 frames
+        bar = ['░'] * bar_width
+        for i in range(green_start, green_end):
+            bar[i] = '█'
+        bar[position] = '▼'
         
-        # Clear buffer during each display
-        start = time.time()
-        while time.time() - start < display_speed:
-            if sys.platform == 'win32':
-                import msvcrt
-                while msvcrt.kbhit():
-                    msvcrt.getch()
-            time.sleep(0.05)
+        print('\r' + Fore.CYAN + ''.join(bar) + Style.RESET_ALL, end='', flush=True)
+        
+        # Non-blocking input check
+        if platform.system() == 'Windows':
+            import msvcrt
+            if msvcrt.kbhit():
+                key = msvcrt.getch().decode('utf-8')
+                if key == ' ':
+                    if green_start <= position < green_end:
+                        print(Fore.GREEN + "\n✓ Perfect timing!" + Style.RESET_ALL)
+                        return True
+                    else:
+                        print(Fore.RED + "\n✗ Missed!" + Style.RESET_ALL)
+                        return False
+        else:
+            # For Unix-like systems, simplified version
+            import select
+            if select.select([sys.stdin], [], [], 0.05)[0]:
+                key = sys.stdin.read(1)
+                if key == ' ':
+                    if green_start <= position < green_end:
+                        print(Fore.GREEN + "\n✓ Perfect timing!" + Style.RESET_ALL)
+                        return True
+                    else:
+                        print(Fore.RED + "\n✗ Missed!" + Style.RESET_ALL)
+                        return False
+        
+        time.sleep(0.1)
+        position += direction
+        if position >= bar_width or position < 0:
+            direction *= -1
+            position += direction * 2
     
-    time.sleep(0.3)
-    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.RED + "\n✗ Time's up!" + Style.RESET_ALL)
+    return False
+
+
+# ===== LOCATION MAP CLASS =====
+class LocationMap:
+    def __init__(self, name, layout, description=""):
+        self.name = name
+        self.layout = layout  # 2D list of characters
+        self.description = description
+        self.player_x = 1
+        self.player_y = 1
+        self.message = "Use WASD to move around."
+        
+        # Find initial player position (spawn point marked with 'P')
+        for y, row in enumerate(layout):
+            for x, tile in enumerate(row):
+                if tile == 'P':
+                    self.player_x = x
+                    self.player_y = y
+                    self.layout[y][x] = '.'  # Replace P with ground
     
-    print(Fore.CYAN + f"\nEnter the pattern ({length} moves - L for left, R for right, no spaces):" + Style.RESET_ALL)
-    print(Fore.CYAN + "Example: LRRL" + Style.RESET_ALL)
-    user_input = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().upper()
+    def move_player(self, dx, dy):
+        new_x = self.player_x + dx
+        new_y = self.player_y + dy
+        
+        # Check bounds
+        if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
+            tile = self.layout[new_y][new_x]
+            # Allow movement on walkable tiles
+            if tile in ['.', '≈', '≋', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓']:
+                self.player_x = new_x
+                self.player_y = new_y
+                self.message = f"Moved to ({new_x}, {new_y})"
+            elif tile == '█' or tile == '🌳' or tile == '▓':
+                self.message = "Can't walk through that!"
+            else:
+                self.message = "Can't walk there!"
     
-    if user_input == pattern:
-        print(Fore.GREEN + "You followed perfectly!" + Style.RESET_ALL)
-        return True
-    else:
-        print(Fore.RED + f"Wrong! Pattern was: {pattern}" + Style.RESET_ALL)
+    def is_fishing_spot(self, x, y):
+        """Check if location is a fishing spot"""
+        tile = self.layout[y][x]
+        return tile in ['⊙', '◉', '≈', '≋', '~', '♨', '❄', '⌬']
+    
+    def is_golden_spot(self, x, y):
+        """Check if it's a golden fishing spot"""
+        return self.layout[y][x] == '◉'
+    
+    def is_building(self, x, y):
+        """Check if location is a building entrance"""
+        tile = self.layout[y][x]
+        return tile in ['🏪', '🏛️', '📋', '🏠']
+    
+    def get_building_type(self, x, y):
+        """Get the type of building at this position"""
+        tile = self.layout[y][x]
+        building_map = {
+            '🏪': 'shop',
+            '🏛️': 'aquarium',
+            '📋': 'quests',
+            '🏠': 'home',
+            '⚓': 'dock'
+        }
+        return building_map.get(tile, None)
+    
+    def render_tile(self, tile, is_player, is_spot, is_golden):
+        """Render a single tile with appropriate coloring"""
+        if is_player:
+            return Fore.RED + '♦' + Style.RESET_ALL
+        elif is_golden:
+            return Fore.LIGHTYELLOW_EX + '◉' + Style.RESET_ALL
+        elif is_spot or tile == '⊙':
+            return Fore.CYAN + '⊙' + Style.RESET_ALL
+        elif tile == '≈':  # Lake water
+            return Fore.BLUE + '≈' + Style.RESET_ALL
+        elif tile == '≋':  # River water
+            return Fore.LIGHTBLUE_EX + '≋' + Style.RESET_ALL
+        elif tile == '█':  # Wall
+            return Fore.WHITE + '█' + Style.RESET_ALL
+        elif tile == '🌳':  # Tree
+            return Fore.GREEN + '🌳' + Style.RESET_ALL
+        elif tile == '▓':  # Mountain
+            return Fore.LIGHTBLACK_EX + '▓' + Style.RESET_ALL
+        elif tile == '🏪':  # Shop
+            return Fore.YELLOW + '🏪' + Style.RESET_ALL
+        elif tile == '🏛️':  # Aquarium
+            return Fore.MAGENTA + '🏛️' + Style.RESET_ALL
+        elif tile == '📋':  # Quest board
+            return Fore.CYAN + '📋' + Style.RESET_ALL
+        elif tile == '🏠':  # Home
+            return Fore.LIGHTRED_EX + '🏠' + Style.RESET_ALL
+        elif tile == '⚓':  # Dock
+            return Fore.LIGHTCYAN_EX + '⚓' + Style.RESET_ALL
+        elif tile == '.':  # Ground
+            return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
+        else:
+            return tile
+
+
+# Create Hub Island map layout
+HUB_ISLAND_LAYOUT = [
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
+    ['█', '🌳', '🌳', '▓', '▓', '▓', '▓', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🏛️', '.', '.', '▓', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '.', '.', '▓', '▓', '🌳', '≋', '⊙', '≋', '≋', '⊙', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🏠', '.', 'P', '.', '.', '🌳', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '◉', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '.', '.', '.', '🌳', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '⊙', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '📋', '.', '≈', '⊙', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⚓', '.', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '.', '.', '.', '🌳', '🌳', '🌳', '█'],
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
+]
+
+# Create location maps for other locations
+OCEAN_LAYOUT = [
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '⊙', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+],
+    ['~', '~', '~', '⊙', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '⊙', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '⊙', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '⊙', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+]
+
+DEEP_SEA_LAYOUT = [
+    ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
+    ['▓', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
+    ],
+    ['▓', '.', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '▓'],
+    ['▓', '.', '⊙', '.', '.', '.', '.', '◉', '.', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '.', '.', '.', '.', 'P', '.', '.', '.', '.', '.', '.', '⊙', '.', '▓'],
+    ['▓', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '.', '.', '▓'],
+    ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
+]
+
+VOLCANIC_LAYOUT = [
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '⊙', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '♨', '♨'],
+    ['♨', '♨', '⊙', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', 'P', '♨', '♨', '◉', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '⊙', '♨', '♨', '♨', '♨', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '▓', '♨', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+],
+    ['♨', '▓', '▓', '▓', '♨', '♨', '⊙', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '♨', '♨', '♨', '◉', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '♨', '♨'],
+    ['♨', '♨', '⊙', '♨', '♨', 'P', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+    ['♨', '▓', '♨', '♨', '♨', '♨', '♨', '⊙', '♨', '♨', '♨', '♨', '▓', '▓', '♨'],
+    ['♨', '▓', '▓', '▓', '♨', '♨', '♨', '♨', '♨', '♨', '▓', '▓', '▓', '▓', '♨'],
+    ['♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨', '♨'],
+]
+
+SPACE_LAYOUT = [
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', 'P', '⌬', '⌬', '◉', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⊙', '⌬', '⌬', '⌬', '⌬', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+],
+    ['⌬', '.', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '⌬'],
+    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
+    ['⌬', '⊙', '.', '.', '.', '.', '.', '◉', '.', '.', '.', '.', '.', '⊙', '⌬'],
+    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
+    ['⌬', '.', '.', '.', '.', 'P', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
+    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⌬'],
+    ['⌬', '.', '⊙', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '⌬'],
+    ['⌬', '.', '.', '.', '.', '.', '.', '.', '.', '⊙', '.', '.', '.', '.', '⌬'],
+    ['⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬', '⌬'],
+]
+
+# Add maps to locations
+LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description)
+LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description)
+LOCATIONS[2].map = LocationMap("Ocean", OCEAN_LAYOUT, LOCATIONS[2].description)
+LOCATIONS[3].map = LocationMap("Deep Sea", DEEP_SEA_LAYOUT, LOCATIONS[3].description)
+LOCATIONS[4].map = LocationMap("Volcanic Lake", VOLCANIC_LAYOUT, LOCATIONS[4].description)
+LOCATIONS[5].map = LocationMap("Arctic Waters", ARCTIC_LAYOUT, LOCATIONS[5].description)
+LOCATIONS[6].map = LocationMap("Space Station Aquarium", SPACE_LAYOUT, LOCATIONS[6].description)
+
+
+# ===== QUEST SYSTEM =====
+
+ARCTIC_LAYOUT = [
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '⊙', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '▓', '❄'],
+    ['❄', '▓', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '▓', '▓', '❄'],
+    ['❄', '❄', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '▓', '▓', '❄', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '❄', '❄', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '❄', '⊙', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', 'P', '❄', '❄', '◉', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '⊙', '❄', '❄'],
+    ['❄', '❄', '❄', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+    ['❄', '❄', '▓', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '❄', '❄', '❄'],
+    ['❄', '▓', '▓', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '▓', '▓', '▓', '❄', '❄'],
+    ['❄', '▓', '▓', '▓', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '⊙', '❄', '❄', '▓', '▓', '▓', '❄'],
+    ['❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄', '❄'],
+]
+
+
+class Quest:
+    def __init__(self, title, description, target_fish, target_count, reward_money, reward_xp):
+        self.title = title
+        self.description = description
+        self.target_fish = target_fish
+        self.target_count = target_count
+        self.reward_money = reward_money
+        self.reward_xp = reward_xp
+        self.progress = 0
+        self.completed = False
+    
+    def check_progress(self, fish_name):
+        """Update progress when a target fish is caught"""
+        if fish_name == self.target_fish and not self.completed:
+            self.progress += 1
+            if self.progress >= self.target_count:
+                self.completed = True
+                return True
         return False
 
 
-def fishing_mini_game(difficulty_modifier=1.0, fish_name="", is_hidden=False):
-    """Main fishing minigame - randomly selects one of the minigames"""
-    print(Fore.YELLOW + f"You hooked a {fish_name}!" + Style.RESET_ALL)
-    time.sleep(0.5)
-    
-    minigames = [reaction_minigame, sequence_minigame, pattern_minigame]
-    selected_game = random.choice(minigames)
-    
-    success = selected_game(difficulty_modifier, is_hidden)
-    
-    if not success:
-        input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-    
-    return success
+AVAILABLE_QUESTS = [
+    Quest("Beginner's Luck", "Catch 5 Carp to prove yourself", "Carp", 5, 100, 50),
+    Quest("Pike Hunter", "Catch 3 Pike from the river", "Pike", 3, 200, 100),
+    Quest("Sturgeon Master", "Catch a massive Sturgeon", "Sturgeon", 1, 500, 300),
+    Quest("Deep Diver", "Catch 2 fish from the Deep Sea", None, 2, 1000, 500),  # Any fish from Deep Sea
+]
+
 
 # ===== GAME CLASS =====
 class Game:
     def __init__(self, character_data=None):
-        lake = Location("Lake", lake_fish, unlock_level=1)
-        ocean = Location("Ocean", ocean_fish, unlock_level=3)
-        river = Location("River", river_fish, unlock_level=2)
-        deep_sea = Location("Deep Sea", deep_sea_fish, unlock_level=5)
-        volcanic_lake = Location("Volcanic Lake", volcanic_lake_fish, unlock_level=7)
-        arctic = Location("Arctic", arctic_fish, unlock_level=9)
-        space = Location("Space", space_fish, unlock_level=12)
-
-        self.locations = [lake, river, ocean, deep_sea, volcanic_lake, arctic, space]
-        self.esky = Esky()
-        self.level = 1
-        self.xp = 0
-        self.xp_threshold = 100
-        self.money = 100
-        self.encyclopedia = Encyclopedia()
-        
-        # NEW FEATURES - Initialize BEFORE character_data
-        self.skill_points = 0
-        self.skills = {
-            'rare_finder': 0,
-            'quick_reflexes': 0,
-            'master_angler': 0,
-            'lucky_fisherman': 0,
-            'bargain_hunter': 0,
-            'iron_grip': 0,
-        }
-        self.rod_durability = 100
-        self.rod_max_durability = 100
-        self.time_of_day = "day"
-        self.time_counter = 0
-        self.trophy_room = []
-        self.active_quests = []
-        self.completed_quests = 0
-        
-        # Character data (existing code continues...)
+        # Character attributes
         if character_data:
-            self.player_name = character_data['name']
+            self.name = character_data['name']
             self.stats = character_data['stats']
             self.difficulty_name = character_data['difficulty_name']
             self.difficulty_mult = character_data['difficulty_mult']
         else:
-            self.player_name = "Angler"
-            self.stats = {'strength': 3, 'luck': 3, 'patience': 4}
+            self.name = "Fisher"
+            self.stats = {'strength': 5, 'luck': 5, 'patience': 5}
             self.difficulty_name = "Normal"
             self.difficulty_mult = 1.0
-            # Skill tree
-            self.skill_points = 0
-            self.skills = {
-                'rare_finder': 0,  # Max 5: +2% rare chance per level
-                'quick_reflexes': 0,  # Max 5: -5% minigame difficulty per level
-                'master_angler': 0,  # Max 5: +5% catch rate per level
-                'lucky_fisherman': 0,  # Max 5: +10% mutation chance per level
-                'bargain_hunter': 0,  # Max 3: +10% sell price per level
-                'iron_grip': 0,  # Max 3: +15% XP gain per level
-            }
         
-        self.current_rod = RODS[0]
-        self.current_bait = BAITS[0]
+        # Game progress
+        self.level = 1
+        self.xp = 0
+        self.xp_threshold = 100
+        self.money = 100
+        self.skill_points = 0
+        
+        # Inventory
+        self.inventory = []
         self.owned_rods = [RODS[0]]
         self.owned_baits = [BAITS[0]]
+        self.current_rod = RODS[0]
+        self.current_bait = BAITS[0]
         
-        self.weather = self.generate_weather()
-        self.weather_changes = 0
+        # Rod durability
+        self.rod_durability = 100
+        self.rod_max_durability = 100
         
-        # Achievements
-        self.achievements = {
-            'first_catch': False,
-            'first_rare': False,
-            'first_legendary': False,
-            'first_mythical': False,
-            'fisherman': False,
-            'master_fisherman': False,
-            'legendary_angler': False,  # ADD THIS
-            'millionaire': False,
-            'billionaire': False,  # ADD THIS
-            'mutation_hunter': False,
-            'golden_catch': False,
-            'magical_encounter': False,
-            'encyclopedia_25': False,
-            'encyclopedia_50': False,
-            'encyclopedia_75': False,  # ADD THIS
-            'encyclopedia_100': False,
-            'heavyweight': False,  # ADD THIS
-            'titan_hunter': False,  # ADD THIS
-            'leviathan_slayer': False,  # ADD THIS
-            'speed_fisher': False,  # ADD THIS
-            'night_owl': False,  # ADD THIS
-            'storm_chaser': False,  # ADD THIS
-            'explorer': False,  # ADD THIS
-            'master_explorer': False,  # ADD THIS
-            'trophy_collector': False,  # ADD THIS
-            'quest_master': False,  # ADD THIS
-            'skill_master': False,  # ADD THIS
-            'perfect_reflexes': False,  # ADD THIS
-            'lucky_streak': False,  # ADD THIS
-            'deep_diver': False,  # ADD THIS
-            'cosmic_fisher': False,  # ADD THIS
-        }
+        # Collections
+        self.encyclopedia = {}  # {fish_name: count_caught}
+        self.trophy_room = []   # List of Fish objects for display
         
-        # Setup save directory
-        documents_directory = os.path.join(os.path.expanduser("~"), "Documents")
-        self.game_folder = os.path.join(documents_directory, 'FiskeSpill')
-        os.makedirs(self.game_folder, exist_ok=True)
-
-    def generate_weather(self):
-        weathers = ["sunny", "cloudy", "rainy", "stormy"]
-        weights = [50, 30, 15, 5]
-        return random.choices(weathers, weights=weights)[0]
-
-    def advance_time(self):
-        self.time_counter += 1
-        if self.time_counter >= 5:  # Change time every 5 fishing attempts
-            self.time_counter = 0
-            times = ["dawn", "day", "dusk", "night"]
-            current_idx = times.index(self.time_of_day)
-            self.time_of_day = times[(current_idx + 1) % 4]
-            
-            time_colors = {"dawn": Fore.LIGHTYELLOW_EX, "day": Fore.YELLOW, 
-                        "dusk": Fore.LIGHTMAGENTA_EX, "night": Fore.BLUE}
-            color = time_colors.get(self.time_of_day, Fore.WHITE)
-            print(color + f"🌅 Time changed to: {self.time_of_day.upper()}" + Style.RESET_ALL)
-            time.sleep(1)
-
-    def migrate_old_encyclopedia_data(self):
-        """Fix encyclopedia entries from old saves that don't have location data"""
-        # Create a lookup dictionary for fish names to locations
-        fish_to_location = {}
-        for location in self.locations:
-            for fish in location.fish:
-                fish_to_location[fish.name] = location.name
+        # World state
+        self.current_location = LOCATIONS[0]
+        self.current_weather = random.choice(WEATHERS)
         
-        # Update encyclopedia entries that are missing location data
-        for fish_name, fish_info in self.encyclopedia.caught_fish.items():
-            if 'location' not in fish_info or fish_info['location'] == 'Unknown':
-                # Try to find the location from our fish database
-                if fish_name in fish_to_location:
-                    fish_info['location'] = fish_to_location[fish_name]
-                else:
-                    fish_info['location'] = 'Unknown'
-
-    def check_achievements(self):
-        """Enhanced achievement checking system"""
-        total_caught = sum(info['times_caught'] for info in self.encyclopedia.caught_fish.values())
-        species_count = len(self.encyclopedia.caught_fish)
+        # Quests
+        self.active_quests = []
+        self.completed_quests = []
         
-        # Basic catch achievements
-        if total_caught >= 1 and not self.achievements['first_catch']:
-            self.achievements['first_catch'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Catch!" + Style.RESET_ALL)
-        
-        if total_caught >= 50 and not self.achievements['fisherman']:
-            self.achievements['fisherman'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Fisherman (50 fish caught)!" + Style.RESET_ALL)
-            self.money += 500
-        
-        if total_caught >= 200 and not self.achievements['master_fisherman']:
-            self.achievements['master_fisherman'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Master Fisherman (200 fish caught)!" + Style.RESET_ALL)
-            self.money += 2000
-        
-        if total_caught >= 1000 and not self.achievements['legendary_angler']:
-            self.achievements['legendary_angler'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Legendary Angler (1000 fish caught)!" + Style.RESET_ALL)
-            self.money += 10000
-        
-        # Money achievements
-        if self.money >= 1000000 and not self.achievements['millionaire']:
-            self.achievements['millionaire'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Millionaire!" + Style.RESET_ALL)
-        
-        if self.money >= 1000000000 and not self.achievements['billionaire']:
-            self.achievements['billionaire'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Billionaire!" + Style.RESET_ALL)
-            self.skill_points += 5
-        
-        # Mutation achievements
-        all_mutations = set()
-        for fish_info in self.encyclopedia.caught_fish.values():
-            all_mutations.update(fish_info.get('mutations_found', []))
-        
-        mutation_types = ["albino", "glowing", "spotted", "golden", "shadow", "magical"]
-        if all(m in all_mutations for m in mutation_types) and not self.achievements['mutation_hunter']:
-            self.achievements['mutation_hunter'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Mutation Hunter (Found all mutations)!" + Style.RESET_ALL)
-            self.money += 5000
-        
-        if 'golden' in all_mutations and not self.achievements['golden_catch']:
-            self.achievements['golden_catch'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Golden Catch!" + Style.RESET_ALL)
-        
-        if 'magical' in all_mutations and not self.achievements['magical_encounter']:
-            self.achievements['magical_encounter'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Magical Encounter!" + Style.RESET_ALL)
-            self.skill_points += 2
-        
-        # Encyclopedia completion achievements
-        all_fish_species = set()
-        for location in self.locations:
-            for fish in location.fish:
-                all_fish_species.add(fish.name)
-        
-        total_species = len(all_fish_species)
-        completion_percent = (species_count / total_species * 100) if total_species > 0 else 0
-        
-        if completion_percent >= 25 and not self.achievements['encyclopedia_25']:
-            self.achievements['encyclopedia_25'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 25% Complete!" + Style.RESET_ALL)
-            self.money += 1000
-        
-        if completion_percent >= 50 and not self.achievements['encyclopedia_50']:
-            self.achievements['encyclopedia_50'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 50% Complete!" + Style.RESET_ALL)
-            self.money += 3000
-        
-        if completion_percent >= 75 and not self.achievements['encyclopedia_75']:
-            self.achievements['encyclopedia_75'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia 75% Complete!" + Style.RESET_ALL)
-            self.money += 7500
-        
-        if completion_percent >= 100 and not self.achievements['encyclopedia_100']:
-            self.achievements['encyclopedia_100'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Encyclopedia Master (100% Complete)!" + Style.RESET_ALL)
-            self.money += 50000
-            self.skill_points += 10
-        
-        # Weight-based achievements
-        heaviest_weight = 0
-        for fish_info in self.encyclopedia.caught_fish.values():
-            if fish_info['heaviest'] > heaviest_weight:
-                heaviest_weight = fish_info['heaviest']
-        
-        if heaviest_weight >= 100 and not self.achievements['heavyweight']:
-            self.achievements['heavyweight'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Heavyweight (100kg+ fish)!" + Style.RESET_ALL)
-        
-        if heaviest_weight >= 1000 and not self.achievements['titan_hunter']:
-            self.achievements['titan_hunter'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Titan Hunter (1000kg+ fish)!" + Style.RESET_ALL)
-            self.money += 5000
-        
-        if heaviest_weight >= 10000 and not self.achievements['leviathan_slayer']:
-            self.achievements['leviathan_slayer'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Leviathan Slayer (10,000kg+ fish)!" + Style.RESET_ALL)
-            self.money += 25000
-            self.skill_points += 3
-        
-        # Time-based achievements
-        if self.time_of_day == 'night' and len(self.esky.fish) > 0:
-            if any(fish.catch_time for fish in self.esky.fish) and not self.achievements['night_owl']:
-                self.achievements['night_owl'] = True
-                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Night Owl (Fish at night)!" + Style.RESET_ALL)
-        
-        # Weather achievements
-        if self.weather == 'stormy' and len(self.esky.fish) > 0:
-            if not self.achievements['storm_chaser']:
-                self.achievements['storm_chaser'] = True
-                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Storm Chaser (Fish in a storm)!" + Style.RESET_ALL)
-        
-        # Location achievements
-        locations_fished = set()
-        for fish_info in self.encyclopedia.caught_fish.values():
-            locations_fished.add(fish_info.get('location', 'Unknown'))
-        
-        if len(locations_fished) >= 3 and not self.achievements['explorer']:
-            self.achievements['explorer'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Explorer (Fish in 3 locations)!" + Style.RESET_ALL)
-        
-        if len(locations_fished) >= len(self.locations) and not self.achievements['master_explorer']:
-            self.achievements['master_explorer'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Master Explorer (Fish in all locations)!" + Style.RESET_ALL)
-            self.money += 10000
-        
-        # Trophy room achievement
-        if len(self.trophy_room) >= 10 and not self.achievements['trophy_collector']:
-            self.achievements['trophy_collector'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Trophy Collector (10 trophies)!" + Style.RESET_ALL)
-        
-        # Quest achievement
-        if self.completed_quests >= 20 and not self.achievements['quest_master']:
-            self.achievements['quest_master'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Quest Master (20 quests completed)!" + Style.RESET_ALL)
-            self.skill_points += 3
-        
-        # Skill tree achievement
-        total_skill_levels = sum(self.skills.values())
-        if total_skill_levels >= 20 and not self.achievements['skill_master']:
-            self.achievements['skill_master'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Skill Master (20+ skill levels)!" + Style.RESET_ALL)
-        
-        # Deep sea achievement - check if any deep sea fish caught
-        deep_sea_fish_names = [fish.name for fish in deep_sea_fish]
-        if any(name in self.encyclopedia.caught_fish for name in deep_sea_fish_names) and not self.achievements['deep_diver']:
-            self.achievements['deep_diver'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Deep Diver (Catch a deep sea fish)!" + Style.RESET_ALL)
-        
-        # Space achievement
-        space_fish_names = [fish.name for fish in space_fish]
-        if any(name in self.encyclopedia.caught_fish for name in space_fish_names) and not self.achievements['cosmic_fisher']:
-            self.achievements['cosmic_fisher'] = True
-            print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: Cosmic Fisher (Fish in space)!" + Style.RESET_ALL)
-            self.money += 15000
-
+        # Debug
+        self.debug_mode = False
+    
     def clear_screen(self):
-        os.system('cls' if platform.system() == 'Windows' else 'clear')
-
-    def start_game(self):
-        """Main game loop"""
-        self.clear_screen()
-        while True:
-            self.display_menu()
-
-    def print_header(self):
-        # Calculate padding needed for the name
-        name_text = f"🎣 {self.player_name}'s FISHING GAME 🎣"
-        # Minimum width for aesthetics
-        min_width = 47
-        # Calculate required width based on name length
-        content_width = len(name_text) + 8  # 8 for spacing (4 on each side)
-        box_width = max(min_width, content_width)
-        
-        # Create the border
-        top_border = "╔" + "═" * box_width + "╗"
-        bottom_border = "╚" + "═" * box_width + "╝"
-        
-        # Center the name text
-        padding = (box_width - len(name_text)) // 2
-        right_padding = box_width - padding - len(name_text)
-        content_line = "║" + " " * padding + name_text + " " * right_padding + "║"
-        
-        # Print with colors
-        print(Fore.CYAN + top_border + Style.RESET_ALL)
-        print(Fore.CYAN + content_line + Style.RESET_ALL)
-        print(Fore.CYAN + bottom_border + Style.RESET_ALL)
-
-    def display_menu(self):
-        while True:
-            self.clear_screen()
-            
-            weather_colors = {
-                "sunny": Fore.YELLOW,
-                "cloudy": Fore.LIGHTBLACK_EX,
-                "rainy": Fore.BLUE,
-                "stormy": Fore.RED
-            }
-            weather_color = weather_colors.get(self.weather, Fore.WHITE)
-
-            self.print_header()
-            print(Fore.YELLOW + "💡 DID YOU KNOW? " + Style.RESET_ALL + get_random_fact())
-            print(Fore.YELLOW + f"Level: {self.level} | XP: {self.xp}/{self.xp_threshold} | 💰: ${self.money}" + Style.RESET_ALL)
-            print(weather_color + f"Weather: {self.weather.capitalize()}" + Style.RESET_ALL)
-            print(Fore.MAGENTA + f"Difficulty: {self.difficulty_name}" + Style.RESET_ALL)
-            print(Fore.GREEN + f"Rod: {self.current_rod.name} | Bait: {self.current_bait.name}" + Style.RESET_ALL)
-            print(Fore.MAGENTA + f"Esky: {len(self.esky.fish)}/{self.esky.max_capacity}" + Style.RESET_ALL)
-            print()
-            print(Fore.YELLOW + "1. Fish" + Style.RESET_ALL)
-            print(Fore.YELLOW + "2. View Inventory" + Style.RESET_ALL)
-            print(Fore.YELLOW + "3. Sell Fish" + Style.RESET_ALL)
-            print(Fore.YELLOW + "4. Shop" + Style.RESET_ALL)
-            print(Fore.YELLOW + "5. View Encyclopedia" + Style.RESET_ALL)
-            print(Fore.YELLOW + "6. Quests" + Style.RESET_ALL)
-            print(Fore.YELLOW + "7. Trophy Room" + Style.RESET_ALL)
-            print(Fore.YELLOW + "8. View Achievements" + Style.RESET_ALL)
-            print(Fore.YELLOW + "9. Stats" + Style.RESET_ALL)
-            print(Fore.YELLOW + "10. Skill Tree" + Style.RESET_ALL)
-            print(Fore.CYAN + "----------------------------------------" + Style.RESET_ALL)
-            print(Fore.YELLOW + "11. Save Game" + Style.RESET_ALL)
-            print(Fore.YELLOW + "12. Load Game" + Style.RESET_ALL)
-            print(Fore.YELLOW + "13. Exit" + Style.RESET_ALL)
-
-            menu_actions = {
-                '1': self.choose_location,
-                '2': self.view_inventory,
-                '3': self.sell_fish_menu,
-                '4': self.shop_menu,
-                '5': lambda: (self.clear_screen(), self.encyclopedia.display(), input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)),
-                '6': self.quest_menu,  # NEW
-                '7': self.trophy_room_menu,  # was 6
-                '8': self.view_achievements,  # was 7
-                '9': self.view_stats,  # was 8
-                '10': self.skill_tree_menu,  # was 9
-                '11': lambda: (self.save_game(), print(Fore.GREEN + "Game saved successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),  # was 10
-                '12': lambda: (self.load_game(), print(Fore.GREEN + "Game loaded successfully!" + Style.RESET_ALL), input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)),  # was 11
-                '13': lambda: (print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL), sys.exit()),  # was 12
-            }
-            # Add debug menu conditionally
-            if getattr(self, 'debug_mode', False):
-                menu_actions['99'] = self.debug_menu
-            
-            choice = input(Fore.GREEN + "Choose an option: " + Style.RESET_ALL)
-            if choice in menu_actions:
-                menu_actions[choice]()
-            else:
-                print(Fore.RED + "Invalid choice. Please select a valid option." + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-    def add_xp(self, amount):
-    # Apply difficulty multiplier to XP (harder = more XP)
-        difficulty_bonus = self.difficulty_mult  # 0.8x for Easy, 1.6x for Legendary
-        skill_bonus = (1 + self.skills['iron_grip'] * 0.15)
-        
-        amount = int(amount * difficulty_bonus * skill_bonus)
-        self.xp += amount
-        
-        # Show bonus indicator for hard difficulties
-        if self.difficulty_mult > 1.0:
-            bonus_pct = int((self.difficulty_mult - 1.0) * 100)
-            print(Fore.LIGHTGREEN_EX + f"You gained {amount} XP! (+{bonus_pct}% difficulty bonus)" + Style.RESET_ALL)
-        else:
-            print(Fore.LIGHTGREEN_EX + f"You gained {amount} XP!" + Style.RESET_ALL)
-        
-        while self.xp >= self.xp_threshold:
-            self.xp -= self.xp_threshold
-            self.level_up()
-
+        os.system('cls' if os.name == 'nt' else 'clear')
+    
     def save_game(self):
-        save_path = os.path.join(self.game_folder, "game_save.json")
-        game_data = {
+        """Save game to JSON file"""
+        save_data = {
+            'name': self.name,
+            'stats': self.stats,
+            'difficulty_name': self.difficulty_name,
+            'difficulty_mult': self.difficulty_mult,
             'level': self.level,
             'xp': self.xp,
             'xp_threshold': self.xp_threshold,
             'money': self.money,
-            'player_name': self.player_name,
-            'stats': self.stats,
-            'difficulty_name': self.difficulty_name,
-            'difficulty_mult': self.difficulty_mult,
-            'weather': self.weather,
-            'achievements': self.achievements,
             'skill_points': self.skill_points,
-            'skills': self.skills,
-            'rod_durability': self.rod_durability,
-            'rod_max_durability': self.rod_max_durability,
-            'time_of_day': self.time_of_day,
-            'time_counter': self.time_counter,
-            'trophy_room': self.trophy_room,
-            'active_quests': self.active_quests,
-            'completed_quests': self.completed_quests,
-            'encyclopedia': self.encyclopedia.caught_fish,
-            'current_rod': self.current_rod.name,
-            'current_bait': self.current_bait.name,
+            'inventory': [fish.to_dict() for fish in self.inventory],
             'owned_rods': [rod.name for rod in self.owned_rods],
             'owned_baits': [bait.name for bait in self.owned_baits],
-            'fish': [fish.to_dict() for fish in self.esky.fish]
+            'current_rod': self.current_rod.name,
+            'current_bait': self.current_bait.name,
+            'rod_durability': self.rod_durability,
+            'rod_max_durability': self.rod_max_durability,
+            'encyclopedia': self.encyclopedia,
+            'trophy_room': [fish.to_dict() for fish in self.trophy_room],
+            'current_location': self.current_location.name,
+            'current_weather': self.current_weather,
         }
-    
-        with open(save_path, "w") as f:
-            json.dump({'data': game_data}, f, indent=4)
+        
+        # Create hash-based filename
+        name_hash = hashlib.md5(self.name.encode()).hexdigest()[:8]
+        filename = f"save_{name_hash}.json"
+        
+        with open(filename, 'w') as f:
+            json.dump(save_data, f, indent=2)
+        
+        print(Fore.GREEN + f"Game saved to {filename}!" + Style.RESET_ALL)
     
     def load_game(self):
-        load_path = os.path.join(self.game_folder, "game_save.json")
+        """Load game from JSON file"""
+        saves = [f for f in os.listdir('.') if f.startswith('save_') and f.endswith('.json')]
+        
+        if not saves:
+            print(Fore.RED + "No save files found!" + Style.RESET_ALL)
+            return False
+        
+        print(Fore.CYAN + "\n═══ SAVED GAMES ═══" + Style.RESET_ALL)
+        for i, save_file in enumerate(saves, 1):
+            try:
+                with open(save_file, 'r') as f:
+                    data = json.load(f)
+                print(f"{Fore.GREEN}{i}. {data['name']} (Lvl {data['level']}){Style.RESET_ALL}")
+            except:
+                print(f"{Fore.RED}{i}. {save_file} (Corrupted){Style.RESET_ALL}")
+        
+        choice = input(Fore.CYAN + "\nSelect save file: " + Style.RESET_ALL)
+        
         try:
-            with open(load_path, "r") as f:
-                saved_data = json.load(f)
-                game_data = saved_data['data']
-                
-                self.level = game_data['level']
-                self.xp = game_data['xp']
-                self.xp_threshold = game_data['xp_threshold']
-                self.money = game_data.get('money', 100)
-                self.player_name = game_data.get('player_name', 'Angler')
-                self.stats = game_data.get('stats', {'strength': 3, 'luck': 3, 'patience': 4})
-                self.difficulty_name = game_data.get('difficulty_name', 'Normal')
-                self.difficulty_mult = game_data.get('difficulty_mult', 1.0)
-                self.weather = game_data.get('weather', 'sunny')
-                self.achievements = game_data.get('achievements', self.achievements)
-                self.encyclopedia.caught_fish = game_data.get('encyclopedia', {})
-                self.migrate_old_encyclopedia_data()
-                
-                # NEW FEATURES - Use .get(d) with defaults for backwards compatibility
-                self.skill_points = game_data.get('skill_points', 0)
-                self.skills = game_data.get('skills', {
-                    'rare_finder': 0,
-                    'quick_reflexes': 0,
-                    'master_angler': 0,
-                    'lucky_fisherman': 0,
-                    'bargain_hunter': 0,
-                    'iron_grip': 0,
-                })
-                self.rod_durability = game_data.get('rod_durability', 100)
-                self.rod_max_durability = game_data.get('rod_max_durability', 100)
-                self.time_of_day = game_data.get('time_of_day', 'day')
-                self.time_counter = game_data.get('time_counter', 0)
-                self.trophy_room = game_data.get('trophy_room', [])
-                self.active_quests = game_data.get('active_quests', [])
-                self.completed_quests = game_data.get('completed_quests', 0)
-                # Load encyclopedia
-                self.encyclopedia.caught_fish = game_data.get('encyclopedia', {})
-                
-                # Load equipment
-                rod_name = game_data.get('current_rod', 'Bamboo Rod')
-                self.current_rod = next((r for r in RODS if r.name == rod_name), RODS[0])
-                
-                bait_name = game_data.get('current_bait', 'Worm')
-                self.current_bait = next((b for b in BAITS if b.name == bait_name), BAITS[0])
-                
-                owned_rod_names = game_data.get('owned_rods', ['Bamboo Rod'])
-                self.owned_rods = [r for r in RODS if r.name in owned_rod_names]
-                
-                owned_bait_names = game_data.get('owned_baits', ['Worm'])
-                self.owned_baits = [b for b in BAITS if b.name in owned_bait_names]
-                
-                # Load fish
-                self.esky.fish = []
-                for fish_data in game_data.get('fish', []):
-                    fish = Fish(
-                        fish_data['name'],
-                        fish_data['min_weight'],
-                        fish_data['max_weight'],
-                        fish_data['rarity'],
-                        fish_data['rarity_weight'],
-                        fish_data['xp_reward'],
-                        fish_data.get('real_world_info', ""),
-                        fish_data.get('sell_price', 10)
-                    )
-                    fish.weight = fish_data['weight']
-                    fish.mutation = fish_data['mutation']
-                    fish.catch_time = fish_data.get('catch_time')
-                    self.esky.fish.append(fish)
-                
-                print(Fore.GREEN + "Game loaded successfully!" + Style.RESET_ALL)
-        except FileNotFoundError:
-            print(Fore.RED + "No saved game found." + Style.RESET_ALL)
-        except Exception as e:
-            print(Fore.RED + f"Error loading game: {e}" + Style.RESET_ALL)
-
-    def choose_location(self):
-        """Replaced with Zelda-style map exploration"""
-        map_based_fishing(self)
-
-    def fish(self, location=None, golden_spot=False):
-        # Use current_location if no location specified
-        if location is None:
-            location = getattr(self, 'current_location', self.locations[0])
-        if self.esky.is_full():
-            print(Fore.RED + "Your esky is full! Sell some fish first." + Style.RESET_ALL)
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-            return
-        
-        # Golden spot notification
-        if golden_spot:
-            print(Fore.LIGHTYELLOW_EX + "✨ Fishing at a GOLDEN SPOT! Better odds for rare fish! ✨" + Style.RESET_ALL)
-            time.sleep(0.5)
-        
-        # Weather might change
-        if random.random() < 0.15:
-            self.weather = self.generate_weather()
-            print(Fore.CYAN + f"The weather changed to {self.weather}!" + Style.RESET_ALL)
+            save_file = saves[int(choice) - 1]
+            with open(save_file, 'r') as f:
+                data = json.load(f)
+            
+            # Load character data
+            self.name = data['name']
+            self.stats = data['stats']
+            self.difficulty_name = data['difficulty_name']
+            self.difficulty_mult = data['difficulty_mult']
+            self.level = data['level']
+            self.xp = data['xp']
+            self.xp_threshold = data['xp_threshold']
+            self.money = data['money']
+            self.skill_points = data['skill_points']
+            
+            # Load inventory
+            self.inventory = []
+            # Inventory loading skipped for simplicity
+            
+            # Load rods and baits
+            self.owned_rods = [rod for rod in RODS if rod.name in data['owned_rods']]
+            self.owned_baits = [bait for bait in BAITS if bait.name in data['owned_baits']]
+            self.current_rod = next((rod for rod in RODS if rod.name == data['current_rod']), RODS[0])
+            self.current_bait = next((bait for bait in BAITS if bait.name == data['current_bait']), BAITS[0])
+            
+            # Load durability
+            self.rod_durability = data.get('rod_durability', 100)
+            self.rod_max_durability = data.get('rod_max_durability', 100)
+            
+            # Load encyclopedia
+            self.encyclopedia = data.get('encyclopedia', {})
+            
+            # Load trophy room
+            self.trophy_room = []
+            # Trophy loading skipped for simplicity
+            
+            # Load location
+            loc_name = data.get('current_location', 'Calm Lake')
+            self.current_location = next((loc for loc in LOCATIONS if loc.name == loc_name), LOCATIONS[0])
+            
+            self.current_weather = data.get('current_weather', random.choice(WEATHERS))
+            
+            print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
+            return True
         
-        # Get the fish template first - with golden spot boost
-        fish_template = location.get_random_fish(
-            self.weather, 
-            self.current_bait.rarity_boost, 
-            self.time_of_day,
-            golden_boost=golden_spot  # Pass golden spot info
-        )
-        if not fish_template:
-            print(Fore.RED + "No fish were available to catch!" + Style.RESET_ALL)
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-            return
-        
-        # Calculate difficulty based on multiple factors
-        rarity_difficulty = {
-            "Common": 1.0,
-            "Uncommon": 1.3,
-            "Rare": 1.6,
-            "Legendary": 2.0,
-            "Mythical": 2.5,
-            "Godly": 4.0
-        }
-        
-        base_difficulty = 1 + (self.level * 0.05)  # Scales with level
-        fish_difficulty = rarity_difficulty.get(fish_template.rarity, 1.0)
-        player_difficulty = self.difficulty_mult
-        patience_reduction = (1 - self.stats['patience'] * 0.03)  # Max 30% reduction
-        skill_reduction = (1 - self.skills.get('quick_reflexes', 0) * 0.05)  # Max 25% reduction
-        
-        # Combined difficulty
-        total_difficulty = base_difficulty * fish_difficulty * player_difficulty * patience_reduction * skill_reduction
-        
-        success_chance = self.current_rod.catch_bonus * (1 + self.stats['strength'] * 0.02)
-        success_chance *= (1 + self.skills.get('master_angler', 0) * 0.05)
-        
-        if random.random() > success_chance:
-            print(Fore.RED + "The fish got away before you could react!" + Style.RESET_ALL)
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-            return
-        
-        # Create a NEW instance of the fish
-        caught_fish = Fish(
-            fish_template.name,
-            fish_template.min_weight,
-            fish_template.max_weight,
-            fish_template.rarity,
-            fish_template.rarity_weight,
-            fish_template.xp_reward,
-            fish_template.real_world_info,
-            fish_template.sell_price
-        )
-        
-        # Check if hidden difficulty (difficulty_mult >= 10)
-        is_hidden = self.difficulty_mult >= 10
-        
-        # Pass the calculated difficulty AND is_hidden flag to minigame
-        if fishing_mini_game(total_difficulty, caught_fish.name, is_hidden):
-            caught_fish.catch()
-            caught_fish.location = location.name  # Add location tracking
-            
-            # Check if new species BEFORE adding to encyclopedia
-            is_new_discovery = self.encyclopedia.is_new_species(caught_fish.name)
-            
-            self.esky.add_fish(caught_fish)
-            self.encyclopedia.add_fish(caught_fish)
-            
-            print(Fore.GREEN + f"Caught: {caught_fish}" + Style.RESET_ALL)
-            print(Fore.LIGHTGREEN_EX + f"Sell value: ${caught_fish.get_sell_price()}" + Style.RESET_ALL)
-
-            if is_new_discovery:
-                print()
-                print(Fore.LIGHTCYAN_EX + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-                print(Fore.LIGHTCYAN_EX + "║     🎉 NEW SPECIES DISCOVERED! 🎉     ║" + Style.RESET_ALL)
-                print(Fore.LIGHTCYAN_EX + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
-                print(Fore.YELLOW + f"   {caught_fish.name} added to encyclopedia!" + Style.RESET_ALL)
-                print(Fore.GREEN + f"   Bonus: +{caught_fish.xp_reward * 2} XP" + Style.RESET_ALL)
-                print()
-                self.add_xp(caught_fish.xp_reward * 2)  # Double XP for new species!
-                time.sleep(1.5)
-            else:
-                self.add_xp(caught_fish.xp_reward)
-
-            # Achievement checks
-            if caught_fish.rarity == "Rare" and not self.achievements['first_rare']:
-                self.achievements['first_rare'] = True
-                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Rare Fish!" + Style.RESET_ALL)
-            elif caught_fish.rarity == "Legendary" and not self.achievements['first_legendary']:
-                self.achievements['first_legendary'] = True
-                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Legendary Fish!" + Style.RESET_ALL)
-            elif caught_fish.rarity == "Mythical" and not self.achievements['first_mythical']:
-                self.achievements['first_mythical'] = True
-                print(Fore.LIGHTCYAN_EX + "🏆 Achievement Unlocked: First Mythical Fish!" + Style.RESET_ALL)
-            
-            self.check_achievements()
-        else:
-            print(Fore.RED + "The fish escaped during the struggle!" + Style.RESET_ALL)
-        
-        # Rod durability
-        durability_loss = random.randint(1, 3)
-        self.rod_durability = max(0, self.rod_durability - durability_loss)
-        if self.rod_durability < 20:
-            print(Fore.RED + f"⚠️ Rod condition low: {self.rod_durability}%" + Style.RESET_ALL)
-        if self.rod_durability == 0:
-            print(Fore.RED + "💥 Your rod broke! Reverting to Bamboo Rod." + Style.RESET_ALL)
-            self.current_rod = RODS[0]
-            self.rod_durability = 100
-        
-        input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-
-    def debug_menu(self):
-        while True:
-            self.clear_screen()
-            print(Fore.MAGENTA + "=== DEBUG MENU ===" + Style.RESET_ALL)
-            print("1. Add $10,000")
-            print("2. Level up instantly")
-            print("3. Spawn random fish")
-            print("4. Change weather")
-            print("5. Unlock all achievements")
-            print("6. Back to main menu")
-            choice = input(Fore.CYAN + "\nChoose: " + Style.RESET_ALL)
-
-            if choice == '1':
-                self.money += 10000
-                print(Fore.GREEN + "Added $10,000" + Style.RESET_ALL)
-            elif choice == '2':
-                self.level_up()
-            elif choice == '3':
-                loc = random.choice(self.locations)
-                fish = random.choice(loc.fish)
-                caught = Fish(
-                    fish.name, fish.min_weight, fish.max_weight,
-                    fish.rarity, fish.rarity_weight, fish.xp_reward,
-                    fish.real_world_info, fish.sell_price
-                )
-                caught.catch()
-                self.esky.add_fish(caught)
-                self.encyclopedia.add_fish(caught)
-                print(Fore.GREEN + f"Spawned {caught.name} ({caught.weight}kg)" + Style.RESET_ALL)
-            elif choice == '4':
-                self.weather = random.choice(["sunny", "cloudy", "rainy", "stormy"])
-                print(Fore.YELLOW + f"Weather changed to {self.weather}" + Style.RESET_ALL)
-            elif choice == '5':
-                for key in self.achievements.keys():
-                    self.achievements[key] = True
-                print(Fore.LIGHTCYAN_EX + "All achievements unlocked!" + Style.RESET_ALL)
-            elif choice == '6':
-                break
-
-            input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
+        except (IndexError, ValueError, FileNotFoundError):
+            print(Fore.RED + "Invalid selection!" + Style.RESET_ALL)
+            return False
     
-    def view_inventory(self):
-        self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║         YOUR INVENTORY              ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
+    def gain_xp(self, amount):
+        """Award XP and handle level-ups"""
+        amount = int(amount * self.difficulty_mult)
+        self.xp += amount
         
-        if not self.esky.fish:
-            print(Fore.YELLOW + "Your inventory is empty. Go catch some fish!" + Style.RESET_ALL)
-        else:
-            total_weight = 0
-            total_value = 0
-            
-            # Sort fish by rarity
-            rarity_order = {"godly": 0, "Mythical": 1, "Legendary": 2, "Rare": 3, "Uncommon": 4, "Common": 5}
-            sorted_fish = sorted(self.esky.fish, key=lambda f: (rarity_order.get(f.rarity, 5), f.name))
-            
-            for i, fish in enumerate(sorted_fish, 1):
-                color = fish.get_color()
-                mutation_info = f" ({fish.mutation})" if fish.mutation != "normal" else ""
-                sell_price = fish.get_sell_price()
-                print(f"{i}. {color}{fish.name}{mutation_info}{Style.RESET_ALL} - {fish.weight:.2f}kg - ${sell_price}")
-                total_weight += fish.weight
-                total_value += sell_price
-            
-            print(Fore.GREEN + f"\nTotal Fish: {len(self.esky.fish)}/{self.esky.max_capacity}" + Style.RESET_ALL)
-            print(Fore.GREEN + f"Total Weight: {total_weight:.2f} kg" + Style.RESET_ALL)
-            print(Fore.GREEN + f"Total Value: ${total_value}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"Gained {amount} XP!" + Style.RESET_ALL)
         
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
-    def quest_menu(self):
+        while self.xp >= self.xp_threshold:
+            self.level_up()
+    
+    def level_up(self):
+        """Handle level-up logic"""
+        self.level += 1
+        self.xp -= self.xp_threshold
+        self.xp_threshold = int(self.xp_threshold * 1.5)
+        self.skill_points += 3
+        
+        print(Fore.LIGHTYELLOW_EX + f"\n🎉 LEVEL UP! You are now level {self.level}! 🎉" + Style.RESET_ALL)
+        print(Fore.GREEN + f"Earned 3 skill points! Total: {self.skill_points}" + Style.RESET_ALL)
+        time.sleep(2)
+    
+    def choose_fish(self):
+        """Weighted random fish selection from current location"""
+        fish_pool = self.current_location.fish_pool[:]
+        
+        # Apply rod and bait bonuses
+        rarity_bonus = self.current_rod.bonus_chance + self.current_bait.bonus_rarity
+        rarity_bonus += self.stats['luck'] * 2
+        
+        # Weather bonus
+        weather_bonus = WEATHER_BONUSES[self.current_weather]['rarity']
+        rarity_bonus += weather_bonus
+        
+        # Adjust rarity if Hard difficulty
+        if self.difficulty_name == "Hard":
+            rarity_bonus *= 2
+        
+        # Shift weights toward rarer fish
+        weights = []
+        for fish in fish_pool:
+            weight = fish.rarity_weight * (1 + rarity_bonus / 100)
+            weights.append(weight)
+        
+        return random.choices(fish_pool, weights=weights, k=1)[0]
+    
+    def fish(self, golden_spot=False):
+        """Main fishing action"""
         self.clear_screen()
-        print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            QUESTS                 ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Completed Quests: {self.completed_quests}" + Style.RESET_ALL)
+        
+        # Durability check
+        if self.rod_durability <= 0:
+            print(Fore.RED + "⚠️ Your rod is broken! Repair it at the shop first!" + Style.RESET_ALL)
+            time.sleep(2)
+            return
+        
+        print(Fore.CYAN + f"╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + f"║  🎣 FISHING AT {self.current_location.name.upper().center(23)} ║" + Style.RESET_ALL)
+        print(Fore.CYAN + f"╚═══════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
-        if not self.active_quests:
-            print(Fore.GREEN + "No active quests. Generating new quest..." + Style.RESET_ALL)
-            self.active_quests.append(self.generate_quest())
+        print(Fore.YELLOW + f"Weather: {self.current_weather}" + Style.RESET_ALL)
+        print(WEATHER_BONUSES[self.current_weather]['message'])
         
-        for i, quest in enumerate(self.active_quests, 1):
-            if quest['type'] == 'catch_species':
-                print(f"{i}. Catch a {quest['target']} ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
-            elif quest['type'] == 'catch_weight':
-                print(f"{i}. Catch a fish weighing {quest['target']}kg+ ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
-            elif quest['type'] == 'catch_rarity':
-                print(f"{i}. Catch {quest['goal']} {quest['target']} fish ({quest['progress']}/{quest['goal']}) - Reward: ${quest['reward']}")
+        if golden_spot:
+            print(Fore.LIGHTYELLOW_EX + "✨ You're at a GOLDEN SPOT! Better chances!" + Style.RESET_ALL)
         
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
-    def check_quest_completion(self, caught_fish):
-                """Check if any active quests were completed"""
-                completed = []
-                    
-                for quest in self.active_quests:
-                    if quest['type'] == 'catch_species':
-                        if caught_fish.name == quest['target']:
-                            quest['progress'] += 1
-                            if quest['progress'] >= quest['goal']:
-                                completed.append(quest)
-                    elif quest['type'] == 'catch_weight':
-                        if caught_fish.weight >= quest['target']:
-                            quest['progress'] += 1
-                            if quest['progress'] >= quest['goal']:
-                                completed.append(quest)
-                    elif quest['type'] == 'catch_rarity':
-                        if caught_fish.rarity == quest['target']:
-                            quest['progress'] += 1
-                            if quest['progress'] >= quest['goal']:
-                                completed.append(quest)
-                    
-                for quest in completed:
-                    self.money += quest['reward']
-                    self.completed_quests += 1
-                    self.active_quests.remove(quest)
-                    print(Fore.LIGHTCYAN_EX + f"🎉 Quest Completed! Earned ${quest['reward']}" + Style.RESET_ALL)
-                        # Generate new quest
-                    self.active_quests.append(self.generate_quest())
-
-    def generate_quest(self):
-        """Generate a random quest"""
-        all_fish_names = []
-        for location in self.locations:
-            for fish in location.fish:
-                all_fish_names.append(fish.name)
+        print()
+        print(Fore.WHITE + "Casting line..." + Style.RESET_ALL)
+        time.sleep(1)
         
-        quest_types = [
-            {
-                "type": "catch_species", 
-                "target": random.choice(all_fish_names), 
-                "reward": 500,
-                "progress": 0,
-                "goal": 1
-            },
-            {
-                "type": "catch_weight", 
-                "target": random.randint(10, 100), 
-                "reward": 300,
-                "progress": 0,
-                "goal": 1
-            },
-            {
-                "type": "catch_rarity", 
-                "target": random.choice(["Rare", "Legendary"]), 
-                "count": random.randint(1, 3), 
-                "reward": 800,
-                "progress": 0,
-                "goal": random.randint(1, 3)
-            },
-        ]
-        return random.choice(quest_types)
-
-    def trophy_room_menu(self):
+        # Choose fish
+        caught_fish = self.choose_fish()
+        
+        # Create a fresh instance
+        caught_fish = Fish(
+            caught_fish.name, 
+            caught_fish.min_weight, 
+            caught_fish.max_weight,
+            caught_fish.rarity,
+            caught_fish.rarity_weight,
+            caught_fish.xp_reward,
+            caught_fish.real_world_info,
+            caught_fish.sell_price
+        )
+        
+        # Apply golden spot bonus
+        if golden_spot:
+            caught_fish.sell_price = int(caught_fish.sell_price * 1.5)
+            caught_fish.xp_reward = int(caught_fish.xp_reward * 1.5)
+        
+        # Apply mutation
+        caught_fish.apply_mutation()
+        
+        # Weight bonus from rod and strength
+        weight_mult = 1 + (self.current_rod.bonus_weight + self.stats['strength'] * 3) / 100
+        caught_fish.weight = round(caught_fish.weight * weight_mult, 2)
+        
+        # Minigame
+        print(Fore.YELLOW + "\n🎣 Something's biting!" + Style.RESET_ALL)
+        time.sleep(0.5)
+        
+        minigame_choice = random.choice([button_mashing_minigame, timing_minigame])
+        success = minigame_choice(self.stats['patience'])
+        
+        if not success:
+            print(Fore.RED + "\n❌ The fish got away!" + Style.RESET_ALL)
+            # Reduce rod durability even on failure
+            self.rod_durability -= 2
+            time.sleep(2)
+            return
+        
+        # Successfully caught!
         self.clear_screen()
-        print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║         TROPHY ROOM               ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
+        print(Fore.GREEN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.GREEN + "║          🎣 FISH CAUGHT! 🎣           ║" + Style.RESET_ALL)
+        print(Fore.GREEN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
         
-        if not self.trophy_room:
-            print(Fore.YELLOW + "No trophies yet! Catch memorable fish to display them here." + Style.RESET_ALL)
+        print(f"You caught a {caught_fish}!")
+        print(Fore.LIGHTBLACK_EX + f"Rarity: {caught_fish.rarity}" + Style.RESET_ALL)
+        
+        if caught_fish.real_world_info:
+            print(Fore.CYAN + f"ℹ️  {caught_fish.real_world_info}" + Style.RESET_ALL)
+        
+        # Add to inventory and encyclopedia
+        self.inventory.append(caught_fish)
+        
+        if caught_fish.name in self.encyclopedia:
+            self.encyclopedia[caught_fish.name] += 1
         else:
-            for i, trophy in enumerate(self.trophy_room, 1):
-                mutation_str = f" ({trophy['mutation']})" if trophy['mutation'] != "normal" else ""
-                print(Fore.GREEN + f"{i}. {trophy['name']}{mutation_str}" + Style.RESET_ALL)
-                print(f"   Weight: {trophy['weight']:.2f}kg | Caught: {trophy['date']}")
+            self.encyclopedia[caught_fish.name] = 1
+            print(Fore.LIGHTYELLOW_EX + f"🆕 NEW species discovered! Added to encyclopedia!" + Style.RESET_ALL)
         
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
-    def sell_fish_menu(self):
+        # XP reward
+        xp_bonus = self.current_bait.bonus_xp + WEATHER_BONUSES[self.current_weather]['xp']
+        total_xp = int(caught_fish.xp_reward * (1 + xp_bonus / 100))
+        self.gain_xp(total_xp)
+        
+        # Reduce rod durability
+        self.rod_durability -= 5
+        if self.rod_durability < 0:
+            self.rod_durability = 0
+        
+        # Quest progress check
+        for quest in self.active_quests:
+            if quest.check_progress(caught_fish.name):
+                print(Fore.LIGHTYELLOW_EX + f"✓ Quest '{quest.title}' completed!" + Style.RESET_ALL)
+        
+        print()
+        print(Fore.LIGHTBLACK_EX + f"Rod Durability: {self.rod_durability}/{self.rod_max_durability}" + Style.RESET_ALL)
+        print()
+        print(Fore.WHITE + "Press any key to continue..." + Style.RESET_ALL)
+        get_key()
+    
+    def view_inventory(self):
+        """Display player inventory"""
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║             INVENTORY                 ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        if not self.inventory:
+            print(Fore.YELLOW + "Your inventory is empty. Go fishing!" + Style.RESET_ALL)
+        else:
+            for i, fish in enumerate(self.inventory, 1):
+                print(f"{i}. {fish} - ${fish.sell_price}")
+        
+        print()
+        print(Fore.GREEN + f"Total value: ${sum(f.sell_price for f in self.inventory)}" + Style.RESET_ALL)
+        print()
+        print(Fore.WHITE + "1. Sell all fish" + Style.RESET_ALL)
+        print(Fore.WHITE + "2. Add a trophy fish to aquarium" + Style.RESET_ALL)
+        print(Fore.WHITE + "3. Back" + Style.RESET_ALL)
+        
+        choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+        
+        if choice == '1':
+            total = sum(f.sell_price for f in self.inventory)
+            total = int(total * self.difficulty_mult)
+            self.money += total
+            print(Fore.GREEN + f"Sold all fish for ${total}!" + Style.RESET_ALL)
+            self.inventory = []
+            time.sleep(1)
+        elif choice == '2':
+            if self.inventory:
+                print(Fore.CYAN + "Select fish to add to aquarium (number): " + Style.RESET_ALL)
+                try:
+                    idx = int(input()) - 1
+                    trophy_fish = self.inventory.pop(idx)
+                    self.trophy_room.append(trophy_fish)
+                    print(Fore.GREEN + f"Added {trophy_fish.name} to your aquarium!" + Style.RESET_ALL)
+                    time.sleep(1)
+                except:
+                    print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                    time.sleep(1)
+    
+    def visit_shop(self):
+        """Shop menu"""
         while True:
             self.clear_screen()
-            print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + "║           FISH MARKET               ║" + Style.RESET_ALL)
-            print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-            print(Fore.YELLOW + f"Current Money: ${self.money}" + Style.RESET_ALL)
+            print(Fore.YELLOW + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.YELLOW + "║            🏪 SHOP 🏪                  ║" + Style.RESET_ALL)
+            print(Fore.YELLOW + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            print(Fore.GREEN + f"💰 Money: ${self.money}" + Style.RESET_ALL)
             print()
             
-            if not self.esky.fish:
-                print(Fore.RED + "No fish to sell!" + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-                return
+            print(Fore.CYAN + "1. Buy Rods" + Style.RESET_ALL)
+            print(Fore.CYAN + "2. Buy Bait" + Style.RESET_ALL)
+            print(Fore.CYAN + "3. Repair Rod (${})".format(max(10, (100 - self.rod_durability) * 2)) + Style.RESET_ALL)
+            print(Fore.CYAN + "4. Back" + Style.RESET_ALL)
             
-            print(Fore.GREEN + "1. Sell all fish" + Style.RESET_ALL)
-            print(Fore.GREEN + "2. Sell by rarity" + Style.RESET_ALL)
-            print(Fore.GREEN + "3. Sell individual fish" + Style.RESET_ALL)
-            print(Fore.GREEN + "4. Back to menu" + Style.RESET_ALL)
-            
-            choice = input(Fore.CYAN + "\nChoose an option: " + Style.RESET_ALL)
+            choice = input(Fore.YELLOW + "\nChoice: " + Style.RESET_ALL)
             
             if choice == '1':
-                total = sum(fish.get_sell_price() for fish in self.esky.fish)
-                count = len(self.esky.fish)
-                self.money += total
-                self.esky.fish = []
-                print(Fore.GREEN + f"Sold {count} fish for ${total}!" + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-                return
+                self.shop_rods()
             elif choice == '2':
-                self.sell_by_rarity()
+                self.shop_baits()
             elif choice == '3':
-                self.sell_individual()
-            elif choice == '4':
-                return
-
-    def sell_by_rarity(self):
-        self.clear_screen()
-        print(Fore.CYAN + "Sell fish by rarity:" + Style.RESET_ALL)
-        rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Godly"]
-        
-        for i, rarity in enumerate(rarities, 1):
-            fish_of_rarity = [f for f in self.esky.fish if f.rarity == rarity]
-            value = sum(f.get_sell_price() for f in fish_of_rarity)
-            print(f"{i}. {rarity}: {len(fish_of_rarity)} fish (${value})")
-        
-        print("6. Cancel")
-        
-        choice = input(Fore.CYAN + "\nChoose rarity to sell: " + Style.RESET_ALL)
-        try:
-            idx = int(choice) - 1
-            if 0 <= idx < 5:
-                target_rarity = rarities[idx]
-                fish_to_sell = [f for f in self.esky.fish if f.rarity == target_rarity]
-                if fish_to_sell:
-                    total = sum(f.get_sell_price() for f in fish_to_sell)
-                    self.money += total
-                    self.esky.fish = [f for f in self.esky.fish if f.rarity != target_rarity]
-                    print(Fore.GREEN + f"Sold {len(fish_to_sell)} {target_rarity} fish for ${total}!" + Style.RESET_ALL)
+                repair_cost = max(10, (100 - self.rod_durability) * 2)
+                if self.money >= repair_cost:
+                    self.money -= repair_cost
+                    self.rod_durability = 100
+                    print(Fore.GREEN + "Rod repaired to 100%!" + Style.RESET_ALL)
+                    time.sleep(1)
                 else:
-                    print(Fore.RED + f"No {target_rarity} fish to sell!" + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-        except ValueError:
-            pass
-
-    def sell_individual(self):
-        while True:
-            self.clear_screen()
-            print(Fore.CYAN + "Select fish to sell (0 to cancel):" + Style.RESET_ALL)
-            
-            for i, fish in enumerate(self.esky.fish, 1):
-                color = fish.get_color()
-                mutation_info = f" ({fish.mutation})" if fish.mutation != "normal" else ""
-                print(f"{i}. {color}{fish.name}{mutation_info}{Style.RESET_ALL} - {fish.weight:.2f}kg - ${fish.get_sell_price()}")
-            
-            keep = input(Fore.CYAN + "Add to trophy room before selling? (y/n): " + Style.RESET_ALL)
-            if keep.lower() == 'y':
-                self.trophy_room.append({
-                    'name': fish.name,
-                    'weight': fish.weight,
-                    'mutation': fish.mutation,
-                    'date': fish.catch_time or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                })
-            print(Fore.LIGHTCYAN_EX + "🏆 Added to trophy room!" + Style.RESET_ALL)
-            choice = input(Fore.CYAN + "\nEnter fish number: " + Style.RESET_ALL)
-            try:
-                idx = int(choice)
-                if idx == 0:
-                    return
-                if 1 <= idx <= len(self.esky.fish):
-                    fish = self.esky.fish[idx - 1]
-                    
-                    # Ask about trophy BEFORE any other operations
-                    keep = input(Fore.CYAN + f"Add {fish.name} to trophy room before selling? (y/n): " + Style.RESET_ALL)
-                    if keep.lower() == 'y':
-                        self.trophy_room.append({
-                            'name': fish.name,
-                            'weight': fish.weight,
-                            'mutation': fish.mutation,
-                            'date': fish.catch_time or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        })
-                        print(Fore.LIGHTCYAN_EX + "🏆 Added to trophy room!" + Style.RESET_ALL) 
-                    # Now sell the fish
-                    price = fish.get_sell_price()
-                    self.money += price
-                    self.esky.fish.pop(idx - 1)
-                    print(Fore.GREEN + f"Sold {fish.name} for ${price}!" + Style.RESET_ALL)
-                    input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-                    if not self.esky.fish:
-                        return
-            except ValueError:
-                pass
-
-    def shop_menu(self):
-        while True:
-            self.clear_screen()
-            print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + "║          FISHING SHOP               ║" + Style.RESET_ALL)
-            print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-            print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
-            print()
-            print(Fore.GREEN + "1. Buy Rods" + Style.RESET_ALL)
-            print(Fore.GREEN + "2. Buy Bait" + Style.RESET_ALL)
-            print(Fore.GREEN + "3. Upgrade Esky Capacity" + Style.RESET_ALL)
-            print(Fore.GREEN + "4. Repair Rod" + Style.RESET_ALL)
-            print(Fore.GREEN + "5. Back" + Style.RESET_ALL)
-            
-            choice = input(Fore.CYAN + "\nChoose an option: " + Style.RESET_ALL)
-            
-            if choice == '1':
-                self.buy_rods()
-            elif choice == '2':
-                self.buy_bait()
-            elif choice == '3':
-                self.upgrade_esky()
+                    print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                    time.sleep(1)
             elif choice == '4':
-                self.repair_rod()
-                input(Fore.YELLOW + "Press Enter..." + Style.RESET_ALL)
-            elif choice == '5':
-                return
-
-    def buy_rods(self):
+                break
+    
+    def shop_rods(self):
+        """Rod shop"""
         self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            ROD SHOP                 ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Current: {self.current_rod.name}" + Style.RESET_ALL)
+        print(Fore.CYAN + "═══ RODS ═══" + Style.RESET_ALL)
         print()
         
         for i, rod in enumerate(RODS, 1):
-            owned = " (OWNED)" if rod in self.owned_rods else ""
-            current = " [EQUIPPED]" if rod == self.current_rod else ""
-            color = Fore.GREEN if rod in self.owned_rods else Fore.YELLOW
-            print(color + f"{i}. {rod.name} - ${rod.cost} - Catch Rate: {rod.catch_bonus*100:.0f}%{owned}{current}" + Style.RESET_ALL)
-            print(f"   {rod.description}")
+            owned = "✓ Owned" if rod in self.owned_rods else f"${rod.price}"
+            locked = "" if self.level >= rod.unlock_level else f"🔒 Lvl{rod.unlock_level}"
+            print(f"{i}. {rod.name} - {owned} {locked}")
+            print(f"   Chance: +{rod.bonus_chance}% | Weight: +{rod.bonus_weight}% | Durability: +{rod.durability_bonus}")
         
-        print(f"\n{len(RODS)+1}. Back")
+        print()
+        choice = input(Fore.CYAN + "Buy rod (number) or 0 to cancel: " + Style.RESET_ALL)
         
-        choice = input(Fore.CYAN + "\nBuy or equip rod: " + Style.RESET_ALL)
         try:
             idx = int(choice) - 1
             if 0 <= idx < len(RODS):
                 rod = RODS[idx]
-                if rod in self.owned_rods:
-                    self.current_rod = rod
-                    print(Fore.GREEN + f"Equipped {rod.name}!" + Style.RESET_ALL)
-                elif self.money >= rod.cost:
-                    self.money -= rod.cost
+                if self.level < rod.unlock_level:
+                    print(Fore.RED + f"Requires level {rod.unlock_level}!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif rod in self.owned_rods:
+                    print(Fore.YELLOW + "You already own this rod!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif self.money >= rod.price:
+                    self.money -= rod.price
                     self.owned_rods.append(rod)
-                    self.current_rod = rod
-                    print(Fore.GREEN + f"Purchased and equipped {rod.name}!" + Style.RESET_ALL)
+                    print(Fore.GREEN + f"Bought {rod.name}!" + Style.RESET_ALL)
+                    time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
+                    time.sleep(1)
         except ValueError:
             pass
-
-    def buy_bait(self):
+    
+    def shop_baits(self):
+        """Bait shop"""
         self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            BAIT SHOP                ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Current: {self.current_bait.name}" + Style.RESET_ALL)
+        print(Fore.CYAN + "═══ BAIT ═══" + Style.RESET_ALL)
         print()
         
         for i, bait in enumerate(BAITS, 1):
-            owned = " (OWNED)" if bait in self.owned_baits else ""
-            current = " [EQUIPPED]" if bait == self.current_bait else ""
-            color = Fore.GREEN if bait in self.owned_baits else Fore.YELLOW
-            boost_pct = bait.rarity_boost * 100
-            print(color + f"{i}. {bait.name} - ${bait.cost} - Rarity Boost: +{boost_pct:.0f}%{owned}{current}" + Style.RESET_ALL)
-            print(f"   {bait.description}")
+            owned = "✓ Owned" if bait in self.owned_baits else f"${bait.price}"
+            locked = "" if self.level >= bait.unlock_level else f"🔒 Lvl{bait.unlock_level}"
+            print(f"{i}. {bait.name} - {owned} {locked}")
+            print(f"   XP Bonus: +{bait.bonus_xp}% | Rarity Bonus: +{bait.bonus_rarity}%")
         
-        print(f"\n{len(BAITS)+1}. Back")
+        print()
+        choice = input(Fore.CYAN + "Buy bait (number) or 0 to cancel: " + Style.RESET_ALL)
         
-        choice = input(Fore.CYAN + "\nBuy or equip bait: " + Style.RESET_ALL)
         try:
             idx = int(choice) - 1
             if 0 <= idx < len(BAITS):
                 bait = BAITS[idx]
-                if bait in self.owned_baits:
-                    self.current_bait = bait
-                    print(Fore.GREEN + f"Equipped {bait.name}!" + Style.RESET_ALL)
-                elif self.money >= bait.cost:
-                    self.money -= bait.cost
+                if self.level < bait.unlock_level:
+                    print(Fore.RED + f"Requires level {bait.unlock_level}!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif bait in self.owned_baits:
+                    print(Fore.YELLOW + "You already own this bait!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif self.money >= bait.price:
+                    self.money -= bait.price
                     self.owned_baits.append(bait)
-                    self.current_bait = bait
-                    print(Fore.GREEN + f"Purchased and equipped {bait.name}!" + Style.RESET_ALL)
+                    print(Fore.GREEN + f"Bought {bait.name}!" + Style.RESET_ALL)
+                    time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
-                input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
+                    time.sleep(1)
         except ValueError:
             pass
-
-    def upgrade_esky(self):
+    
+    def visit_aquarium(self):
+        """Trophy room / aquarium"""
         self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║        ESKY UPGRADE                 ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Current Capacity: {self.esky.max_capacity}" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "║          🏛️ AQUARIUM 🏛️                ║" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
-        upgrade_cost = self.esky.max_capacity * 10
-        print(f"Upgrade to {self.esky.max_capacity + 10} capacity for ${upgrade_cost}?")
-        print("1. Yes")
-        print("2. No")
-        
-        choice = input(Fore.CYAN + "\nChoose: " + Style.RESET_ALL)
-        if choice == '1':
-            if self.money >= upgrade_cost:
-                self.money -= upgrade_cost
-                self.esky.max_capacity += 10
-                print(Fore.GREEN + f"Upgraded! New capacity: {self.esky.max_capacity}" + Style.RESET_ALL)
-            else:
-                print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
-            input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-
-    def view_achievements(self):
-        self.clear_screen()
-        print(Fore.CYAN + "╔══════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║          ACHIEVEMENTS               ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚══════════════════════════════════════╝" + Style.RESET_ALL)
-        print()
-        
-        achievement_descriptions = {
-            'first_catch': "Catch your first fish",
-            'first_rare': "Catch a rare fish",
-            'first_legendary': "Catch a legendary fish",
-            'first_mythical': "Catch a mythical fish",
-            'fisherman': "Catch 50 fish total",
-            'master_fisherman': "Catch 200 fish total",
-            'legendary_angler': "Catch 1000 fish total",
-            'millionaire': "Earn $1,000,000",
-            'billionaire': "Earn $1,000,000,000",
-            'mutation_hunter': "Find all mutation types",
-            'golden_catch': "Catch a golden mutation",
-            'magical_encounter': "Catch a magical mutation",
-            'encyclopedia_25': "Discover 25% of all species",
-            'encyclopedia_50': "Discover 50% of all species",
-            'encyclopedia_75': "Discover 75% of all species",
-            'encyclopedia_100': "Discover 100% of all species",
-            'heavyweight': "Catch a fish weighing 100kg+",
-            'titan_hunter': "Catch a fish weighing 1000kg+",
-            'leviathan_slayer': "Catch a fish weighing 10,000kg+",
-            'speed_fisher': "Complete a minigame in under 3 seconds",
-            'night_owl': "Fish at night",
-            'storm_chaser': "Fish during a storm",
-            'explorer': "Fish in 3 different locations",
-            'master_explorer': "Fish in all locations",
-            'trophy_collector': "Collect 10 trophies",
-            'quest_master': "Complete 20 quests",
-            'skill_master': "Reach 20+ total skill levels",
-            'perfect_reflexes': "Complete 10 minigames perfectly",
-            'lucky_streak': "Catch 5 rare+ fish in a row",
-            'deep_diver': "Catch a deep sea fish",
-            'cosmic_fisher': "Catch a fish in space",
-        }
-        
-        # Display ALL achievements from self.achievements, even if not in descriptions
-        for name in self.achievements.keys():
-            if name not in achievement_descriptions:
-                achievement_descriptions[name] = name.replace('_', ' ').title()
-        
-        unlocked = sum(1 for v in self.achievements.values() if v)
-        total = len(self.achievements)
-        
-        print(Fore.YELLOW + f"Progress: {unlocked}/{total} achievements unlocked\n" + Style.RESET_ALL)
-        
-        # Group achievements by category
-        categories = {
-            'Fishing': ['first_catch', 'first_rare', 'first_legendary', 'first_mythical', 
-                    'fisherman', 'master_fisherman', 'legendary_angler', 'speed_fisher', 
-                    'perfect_reflexes', 'lucky_streak'],
-            'Wealth': ['millionaire', 'billionaire'],
-            'Discovery': ['encyclopedia_25', 'encyclopedia_50', 'encyclopedia_75', 'encyclopedia_100'],
-            'Mutations': ['mutation_hunter', 'golden_catch', 'magical_encounter'],
-            'Size': ['heavyweight', 'titan_hunter', 'leviathan_slayer'],
-            'Exploration': ['explorer', 'master_explorer', 'deep_diver', 'cosmic_fisher'],
-            'Conditions': ['night_owl', 'storm_chaser'],
-            'Progress': ['trophy_collector', 'quest_master', 'skill_master'],
-        }
-        
-        for category, achievement_list in categories.items():
-            print(Fore.MAGENTA + f"\n{category}:" + Style.RESET_ALL)
-            for name in achievement_list:
-                if name in self.achievements:
-                    unlocked = self.achievements[name]
-                    status = Fore.GREEN + "✓" if unlocked else Fore.RED + "✗"
-                    desc = achievement_descriptions.get(name, name)
-                    print(f"{status} {desc}{Style.RESET_ALL}")
-        
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-        
-    def view_stats(self):
-        self.clear_screen()
-        print(Fore.CYAN + "╔═════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║            STATISTICS               ║" + Style.RESET_ALL)
-        print(Fore.CYAN + "╚═════════════════════════════════════╝" + Style.RESET_ALL)
-        print()
-        
-        total_caught = sum(info['times_caught'] for info in self.encyclopedia.caught_fish.values())
-        species_count = len(self.encyclopedia.caught_fish)
-        
-        # Count all possible fish
-        all_fish_species = set()
-        for location in self.locations:
-            for fish in location.fish:
-                all_fish_species.add(fish.name)
-        
-        completion = (species_count / len(all_fish_species) * 100) if all_fish_species else 0
-        
-        # Find heaviest fish
-        heaviest_name = "None"
-        heaviest_weight = 0
-        for name, info in self.encyclopedia.caught_fish.items():
-            if info['heaviest'] > heaviest_weight:
-                heaviest_weight = info['heaviest']
-                heaviest_name = name
-        
-        print(Fore.YELLOW + f"Level: {self.level}" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Total XP: {self.xp}" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Money: ${self.money}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"\nTotal Fish Caught: {total_caught}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Species Discovered: {species_count}/{len(all_fish_species)}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Encyclopedia Completion: {completion:.1f}%" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Heaviest Fish: {heaviest_name} ({heaviest_weight:.2f}kg)" + Style.RESET_ALL)
-        print(Fore.CYAN + f"\nCurrent Rod: {self.current_rod.name}" + Style.RESET_ALL)
-        print(Fore.CYAN + f"Current Bait: {self.current_bait.name}" + Style.RESET_ALL)
-        print(Fore.CYAN + f"Esky Capacity: {self.esky.max_capacity}" + Style.RESET_ALL)
-        
-        input(Fore.YELLOW + "\nPress Enter to continue..." + Style.RESET_ALL)
-
-    def skill_tree_menu(self):
-        while True:
-            self.clear_screen()
-            print(Fore.CYAN + "╔═══════════════════════════════════╗" + Style.RESET_ALL)
-            print(Fore.CYAN + "║           SKILL TREE              ║" + Style.RESET_ALL)
-            print(Fore.CYAN + "╚═══════════════════════════════════╝" + Style.RESET_ALL)
-            print(Fore.YELLOW + f"Skill Points Available: {self.skill_points}" + Style.RESET_ALL)
+        if not self.trophy_room:
+            print(Fore.YELLOW + "Your aquarium is empty. Add trophy fish from your inventory!" + Style.RESET_ALL)
+        else:
+            print(Fore.CYAN + "Your Trophy Collection:" + Style.RESET_ALL)
             print()
-            
-            skill_info = {
-                'rare_finder': ('Rare Finder', 5, '+2% rare fish chance per level'),
-                'quick_reflexes': ('Quick Reflexes', 5, '-5% minigame difficulty per level'),
-                'master_angler': ('Master Angler', 5, '+5% catch rate per level'),
-                'lucky_fisherman': ('Lucky Fisherman', 5, '+10% mutation chance per level'),
-                'bargain_hunter': ('Bargain Hunter', 3, '+10% sell price per level'),
-                'iron_grip': ('Iron Grip', 3, '+15% XP gain per level'),
-            }
-            
-            i = 1
-            for skill_key, (name, max_level, desc) in skill_info.items():
-                current_level = self.skills.get(skill_key, 0)
-                color = Fore.GREEN if current_level < max_level else Fore.LIGHTBLACK_EX
-                status = f"[{current_level}/{max_level}]"
-                print(color + f"{i}. {name} {status}" + Style.RESET_ALL)
-                print(f"   {desc}")
-                i += 1
-            
-            print(f"\n{i}. Back to menu")
-            
-            choice = input(Fore.CYAN + "\nUpgrade skill (or back): " + Style.RESET_ALL)
-            
-            try:
-                choice_idx = int(choice) - 1
-                if choice_idx == len(skill_info):
-                    return
-                
-                skill_keys = list(skill_info.keys())
-                if 0 <= choice_idx < len(skill_keys):
-                    skill_key = skill_keys[choice_idx]
-                    skill_name, max_level, _ = skill_info[skill_key]
-                    current_level = self.skills.get(skill_key, 0)
-                    
-                    if current_level >= max_level:
-                        print(Fore.RED + f"{skill_name} is already maxed out!" + Style.RESET_ALL)
-                    elif self.skill_points > 0:
-                        self.skills[skill_key] = current_level + 1
-                        self.skill_points -= 1
-                        print(Fore.GREEN + f"Upgraded {skill_name} to level {self.skills[skill_key]}!" + Style.RESET_ALL)
-                    else:
-                        print(Fore.RED + "Not enough skill points!" + Style.RESET_ALL)
-                    
-                    input(Fore.YELLOW + "Press Enter to continue..." + Style.RESET_ALL)
-            except ValueError:
-                pass
-
-
-    def level_up(self):
-        self.level += 1
-        self.xp_threshold = int(100 * (self.level ** 1.5))
-        print(Fore.LIGHTCYAN_EX + f"🎉 Congratulations! You've reached level {self.level}!" + Style.RESET_ALL)
+            for i, fish in enumerate(self.trophy_room, 1):
+                print(f"{i}. {fish}")
         
-        # Bonus rewards for leveling
-        bonus_money = self.level * 50
-        self.money += bonus_money
-        print(Fore.YELLOW + f"Level up bonus: ${bonus_money}" + Style.RESET_ALL)
-        # Skill point reward
-        self.skill_points += 1
-        print(Fore.LIGHTCYAN_EX + "🌟 Gained 1 Skill Point!" + Style.RESET_ALL)
-
-    def repair_rod(self):
-        repair_cost = int((self.rod_max_durability - self.rod_durability) * 5)
-        if repair_cost == 0:
-            print(Fore.GREEN + "Your rod is already in perfect condition!" + Style.RESET_ALL)
-            return
-        
-        print(Fore.YELLOW + f"Rod condition: {self.rod_durability}/{self.rod_max_durability}" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Repair cost: ${repair_cost}" + Style.RESET_ALL)
-        print("1. Repair")
-        print("2. Cancel")
-        
-        choice = input(Fore.CYAN + "Choose an option (1-12): " + Style.RESET_ALL)
-        if choice == '1' and self.money >= repair_cost:
-            self.money -= repair_cost
-            self.rod_durability = self.rod_max_durability
-            print(Fore.GREEN + "Rod repaired!" + Style.RESET_ALL)
-        elif choice == '1':
-            print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
-            return
-
-
-
-
-
-# ===== ZELDA-STYLE MAP SYSTEM =====
-import sys
-import os
-from colorama import Fore, Back, Style
-
-# Keyboard input functions
-if os.name == 'nt':
-    import msvcrt
-else:
-    import tty
-    import termios
-
-def get_key():
-    """Get a single keypress from the user"""
-    if os.name == 'nt':
-        try:
-            key = msvcrt.getch().decode('utf-8').lower()
-            return key
-        except:
-            return ''
-    else:
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            key = sys.stdin.read(1).lower()
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return key
-
-
-class LocationMap:
-    """A specific fishing location with its own internal map"""
-    def __init__(self, name, game_location_index, layout, fishing_spots, description, randomize_spots=False):
-        self.name = name
-        self.game_location_index = game_location_index
-        self.layout = layout  # 2D map array
-        self.description = description
-        self.player_x = 1
-        self.player_y = 1
-        self.message = f"Welcome to {name}! Find a fishing spot (⊙) and press E to fish."
-        
-        # Fishing spot system
-        if randomize_spots:
-            self.fishing_spots = self._generate_random_spots(layout)
-        else:
-            self.fishing_spots = fishing_spots  # List of (x, y) coordinates
-        
-        # Golden spots - 10% chance for each spot to be golden
-        self.golden_spots = set()
-        for spot in self.fishing_spots:
-            if random.random() < 0.10:  # 10% chance
-                self.golden_spots.add(spot)
-        
-        # Set player to first valid position
-        for y, row in enumerate(layout):
-            for x, tile in enumerate(row):
-                if tile in ['.', '·', 'F']:
-                    self.player_x = x
-                    self.player_y = y
-                    break
-            if self.player_x != 1 or self.player_y != 1:
-                break
+        print()
+        print(Fore.WHITE + "Press any key to return..." + Style.RESET_ALL)
+        get_key()
     
-    def _generate_random_spots(self, layout):
-        """Generate random fishing spots on water tiles"""
-        water_tiles = []
-        for y, row in enumerate(layout):
-            for x, tile in enumerate(row):
-                if tile in ['~', 'w', 'L', 'V', 'S']:  # Water-type tiles
-                    water_tiles.append((x, y))
-        
-        # Select 30-50% of water tiles as fishing spots
-        num_spots = max(3, int(len(water_tiles) * random.uniform(0.3, 0.5)))
-        return random.sample(water_tiles, min(num_spots, len(water_tiles)))
-    
-    def get_tile(self, x, y):
-        if 0 <= y < len(self.layout) and 0 <= x < len(self.layout[y]):
-            return self.layout[y][x]
-        return '#'
-    
-    def can_move_to(self, x, y):
-        tile = self.get_tile(x, y)
-        return tile in ['.', '·', 'F', '~', 'w', 'L', 'T']  # walkable tiles
-    
-    def is_fishing_spot(self, x, y):
-        return (x, y) in self.fishing_spots
-    
-    def is_golden_spot(self, x, y):
-        """Check if this is a rare golden fishing spot"""
-        return (x, y) in self.golden_spots
-    
-    def move_player(self, dx, dy):
-        new_x = self.player_x + dx
-        new_y = self.player_y + dy
-        
-        if self.can_move_to(new_x, new_y):
-            self.player_x = new_x
-            self.player_y = new_y
-            
-            if self.is_fishing_spot(self.player_x, self.player_y):
-                if self.is_golden_spot(self.player_x, self.player_y):
-                    self.message = "✨ GOLDEN SPOT! ✨ Rare fish more likely here! Press E to fish."
-                else:
-                    self.message = "🎣 Fishing spot! Press E to cast your line."
-            else:
-                self.message = "Move around to find fishing spots."
-        else:
-            self.message = "Can't go that way!"
-    
-    def render_tile(self, tile, is_player, is_fishing_spot, is_golden=False):
-        if is_player:
-            return Fore.YELLOW + "☻" + Style.RESET_ALL
-        
-        if is_fishing_spot:
-            if is_golden:
-                return Fore.LIGHTYELLOW_EX + "◉" + Style.RESET_ALL  # Golden spot
-            else:
-                return Fore.CYAN + "⊙" + Style.RESET_ALL  # Regular spot
-        
-        tile_colors = {
-            '#': Fore.WHITE + "█" + Style.RESET_ALL,  # walls (old style)
-            '~': Fore.BLUE + "≈" + Style.RESET_ALL,  # water
-            'w': Fore.CYAN + "≋" + Style.RESET_ALL,  # water
-            'L': Fore.LIGHTBLUE_EX + "≈" + Style.RESET_ALL,  # lake water
-            'T': Fore.GREEN + "♣" + Style.RESET_ALL,  # trees
-            '.': Fore.LIGHTBLACK_EX + "·" + Style.RESET_ALL,  # ground (old style)
-            '·': Fore.LIGHTBLACK_EX + "·" + Style.RESET_ALL,  # ground
-            'V': Fore.RED + "♨" + Style.RESET_ALL,  # volcano
-            'S': Fore.MAGENTA + "⌬" + Style.RESET_ALL,  # space
-            '^': Fore.WHITE + "▲" + Style.RESET_ALL,  # mountain
-            '*': Fore.YELLOW + "✦" + Style.RESET_ALL,  # stars/special
-            # Unicode borders
-            '┏': Fore.CYAN + "┏" + Style.RESET_ALL,
-            '━': Fore.CYAN + "━" + Style.RESET_ALL,
-            '┓': Fore.CYAN + "┓" + Style.RESET_ALL,
-            '┃': Fore.CYAN + "┃" + Style.RESET_ALL,
-            '┗': Fore.CYAN + "┗" + Style.RESET_ALL,
-            '┛': Fore.CYAN + "┛" + Style.RESET_ALL,
-        }
-        
-        return tile_colors.get(tile, tile)
-
-
-class OverworldMap:
-    """Main overworld map - Zelda style"""
-    def __init__(self, game_instance):
-        self.game = game_instance
-        self.player_x = 18
-        self.player_y = 10
-        self.message = "Welcome to the fishing world! Walk to a location and press E to enter it."
-        
-        # Overworld map - smaller, Zelda-like
-        self.map_layout = [
-            "╔════════════════════════╗",
-            "║........................║",
-            "║...MMM..................║",
-            "║..MMMMM.................║",
-            "║...MMM..................║",
-            "║........................║",
-            "║.LLLL.....RRRR..........║",
-            "║LLLLLL...RRRRRR.........║",
-            "║.LLLL.....RRRR..........║",
-            "║........................║",
-            "║........~~~~~~~~~~......║",
-            "║.......~~~~~~~~~~~~.....║",
-            "║......~~~~~~~~~~~~~~....║",
-            "║......~~~~~~~~~~~~~~.VVV║",
-            "║.......~~~~~~~~~~~~.VVVV║",
-            "║........~~~~~~~~~~...VVV║",
-            "║........................║",
-            "║............SSS.........║",
-            "║............SSS.........║",
-            "║........................║",
-            "╚════════════════════════╝",
-        ]
-        
-        # Location definitions - which tiles represent which locations
-        self.locations = {
-            'L': {
-                'name': 'Freshwater Lake',
-                'color': Fore.LIGHTBLUE_EX,
-                'char': 'L',
-                'game_index': 0,  # Lake in game.locations[0]
-                'unlock_level': 1,
-                'map': self.create_lake_map()
-            },
-            'R': {
-                'name': 'River',
-                'color': Fore.CYAN,
-                'char': 'R',
-                'game_index': 1,  # River in game.locations[1]
-                'unlock_level': 2,
-                'map': self.create_river_map()
-            },
-            '~': {
-                'name': 'Deep Ocean',
-                'color': Fore.BLUE,
-                'char': '~',
-                'game_index': 2,  # Ocean in game.locations[2]
-                'unlock_level': 3,
-                'map': self.create_ocean_map()
-            },
-            'V': {
-                'name': 'Volcanic Waters',
-                'color': Fore.RED,
-                'char': 'V',
-                'game_index': 4,  # Volcanic Lake in game.locations[4]
-                'unlock_level': 7,
-                'map': self.create_volcano_map()
-            },
-            'S': {
-                'name': 'Space Station',
-                'color': Fore.MAGENTA,
-                'char': 'S',
-                'game_index': 6,  # Space in game.locations[6]
-                'unlock_level': 12,
-                'map': self.create_space_map()
-            }
-        }
-    
-    def create_lake_map(self):
-        """Lake location - peaceful, lots of fishing spots"""
-        layout = [
-            "┏━━━━━━━━━━━━━━━━━━━━┓",
-            "┃··········LLLLLL····┃",
-            "┃·········LLLLLLLL···┃",
-            "┃TTTT····LLLLLLLLLL··┃",
-            "┃TTTT····LLLLLLLLLL··┃",
-            "┃········LLLLLLLLLL··┃",
-            "┃·········LLLLLLLL···┃",
-            "┃··········LLLLLL····┃",
-            "┃··············· ····┃",
-            "┃·TTT················┃",
-            "┗━━━━━━━━━━━━━━━━━━━━┛",
-        ]
-        # Enable randomized fishing spots for more variety!
-        return LocationMap("Freshwater Lake", 0, layout, [], "A peaceful lake surrounded by trees", randomize_spots=True)
-    
-    def create_river_map(self):
-        """River location - flowing water with multiple spots"""
-        layout = [
-            "┏━━━━━━━━━━━━━━━━━━━━━━━━┓",
-            "┃························┃",
-            "┃···RRRR·················┃",
-            "┃··RRRRRR················┃",
-            "┃···RRRRRR···············┃",
-            "┃····RRRRRR··············┃",
-            "┃·····RRRRRR·············┃",
-            "┃······RRRRRR············┃",
-            "┃·······RRRRRR···········┃",
-            "┃········RRRRRR··········┃",
-            "┃·········RRRR···········┃",
-            "┃························┃",
-            "┗━━━━━━━━━━━━━━━━━━━━━━━━┛",
-        ]
-        return LocationMap("River", 1, layout, [], "A flowing river with strong currents", randomize_spots=True)
-    
-    def create_ocean_map(self):
-        """Ocean location - massive, many fishing spots"""
-        layout = [
-            "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓",
-            "┃····························┃",
-            "┃·····~~~~~~~~~~~~~~~~~~~~~~·┃",
-            "┃····~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃···~~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃···~~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃···~~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃···~~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃····~~~~~~~~~~~~~~~~~~~~~~~~┃",
-            "┃·····~~~~~~~~~~~~~~~~~~~~~~·┃",
-            "┃····························┃",
-            "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛",
-        ]
-        return LocationMap("Deep Ocean", 2, layout, [], "The vast deep sea", randomize_spots=True)
-    
-    def create_volcano_map(self):
-        """Volcanic waters - dangerous, fewer spots"""
-        layout = [
-            "┏━━━━━━━━━━━━━━━━┓",
-            "┃················┃",
-            "┃···VV··VVV······┃",
-            "┃··VVVVVVVVV·····┃",
-            "┃···VVVVVVV······┃",
-            "┃····VVVVV·······┃",
-            "┃·····VVV········┃",
-            "┃················┃",
-            "┗━━━━━━━━━━━━━━━━┛",
-        ]
-        return LocationMap("Volcanic Waters", 4, layout, [], "Dangerous heated waters near the volcano", randomize_spots=True)
-    
-    def create_space_map(self):
-        """Space station - sci-fi themed"""
-        layout = [
-            "┏━━━━━━━━━━━━━━━━━━┓",
-            "┃SSSSSSSSSSSSSSSSSS┃",
-            "┃S················S┃",
-            "┃S·····****·······S┃",
-            "┃S·····****·······S┃",
-            "┃S················S┃",
-            "┃S················S┃",
-            "┃SSSSSSSSSSSSSSSSSS┃",
-            "┗━━━━━━━━━━━━━━━━━━┛",
-        ]
-        return LocationMap("Space Station", 6, layout, [], "A mysterious space station orbiting Earth", randomize_spots=True)
-    
-    def get_tile(self, x, y):
-        if 0 <= y < len(self.map_layout) and 0 <= x < len(self.map_layout[y]):
-            return self.map_layout[y][x]
-        return '#'
-    
-    def can_move_to(self, x, y):
-        tile = self.get_tile(x, y)
-        return tile != '#'  # Can walk on everything except walls
-    
-    def get_location_at(self, x, y):
-        """Check if player is standing on a location"""
-        tile = self.get_tile(x, y)
-        if tile in self.locations:
-            return self.locations[tile]
-        return None
-    
-    def is_location_unlocked(self, location):
-        """Check if a location is unlocked based on player level"""
-        if location is None:
-            return False
-        return self.game.level >= location['unlock_level']
-    
-    def move_player(self, dx, dy):
-        new_x = self.player_x + dx
-        new_y = self.player_y + dy
-        
-        if self.can_move_to(new_x, new_y):
-            self.player_x = new_x
-            self.player_y = new_y
-            
-            location = self.get_location_at(self.player_x, self.player_y)
-            if location:
-                if self.is_location_unlocked(location):
-                    self.message = f"📍 {location['name']} - Press E to enter!"
-                else:
-                    self.message = f"🔒 {location['name']} - Unlocks at level {location['unlock_level']} (You: Lvl {self.game.level})"
-            else:
-                self.message = "Explore the world and find fishing locations!"
-        else:
-            self.message = "Can't go that way!"
-    
-    def render_overworld(self, clear_func):
-        clear_func()
-        
+    def view_quests(self):
+        """Quest board"""
+        self.clear_screen()
         print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + "║         FISHING WORLD MAP             ║" + Style.RESET_ALL)
-        print(Fore.CYAN + f"║         Level {self.game.level} Angler{' ' * (26 - len(str(self.game.level)))}║" + Style.RESET_ALL)
+        print(Fore.CYAN + "║          📋 QUEST BOARD 📋            ║" + Style.RESET_ALL)
         print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
         print()
         
-        for y, row in enumerate(self.map_layout):
-            line = ""
-            for x, tile in enumerate(row):
-                if x == self.player_x and y == self.player_y:
-                    line += Fore.YELLOW + "☻" + Style.RESET_ALL
-                elif tile == '#':
-                    line += Fore.WHITE + "█" + Style.RESET_ALL
-                elif tile in self.locations:
-                    # Check if this location is unlocked
-                    location = self.locations[tile]
-                    if self.is_location_unlocked(location):
-                        # Unlocked - show in full color
-                        if tile == 'L':
-                            line += Fore.LIGHTBLUE_EX + "≈" + Style.RESET_ALL
-                        elif tile == 'R':
-                            line += Fore.CYAN + "≋" + Style.RESET_ALL
-                        elif tile == '~':
-                            line += Fore.BLUE + "~" + Style.RESET_ALL
-                        elif tile == 'V':
-                            line += Fore.RED + "♨" + Style.RESET_ALL
-                        elif tile == 'S':
-                            line += Fore.MAGENTA + "⌬" + Style.RESET_ALL
-                    else:
-                        # Locked - show dimmed
-                        if tile == 'L':
-                            line += Fore.LIGHTBLACK_EX + "≈" + Style.RESET_ALL
-                        elif tile == 'R':
-                            line += Fore.LIGHTBLACK_EX + "≋" + Style.RESET_ALL
-                        elif tile == '~':
-                            line += Fore.LIGHTBLACK_EX + "~" + Style.RESET_ALL
-                        elif tile == 'V':
-                            line += Fore.LIGHTBLACK_EX + "♨" + Style.RESET_ALL
-                        elif tile == 'S':
-                            line += Fore.LIGHTBLACK_EX + "⌬" + Style.RESET_ALL
-                elif tile == 'M':
-                    line += Fore.GREEN + "♠" + Style.RESET_ALL
-                else:
-                    line += Fore.LIGHTBLACK_EX + "·" + Style.RESET_ALL
-            print(line)
+        print(Fore.YELLOW + "Active Quests:" + Style.RESET_ALL)
+        if not self.active_quests:
+            print(Fore.LIGHTBLACK_EX + "  No active quests" + Style.RESET_ALL)
+        else:
+            for quest in self.active_quests:
+                status = f"{quest.progress}/{quest.target_count}"
+                print(f"  • {quest.title} - {status}")
+                print(f"    {quest.description}")
         
-        print("\n" + "=" * 50)
-        print(f"{Fore.GREEN}Position: ({self.player_x}, {self.player_y}) | Level: {self.game.level}")
-        print(f"{Fore.CYAN}{self.message}")
-        print("=" * 50)
+        print()
+        print(Fore.GREEN + "Available Quests:" + Style.RESET_ALL)
+        available = [q for q in AVAILABLE_QUESTS if q not in self.active_quests and q not in self.completed_quests]
         
-        # Location legend
-        print(f"\n{Fore.CYAN}Locations:{Style.RESET_ALL}")
-        for tile_char, loc in self.locations.items():
-            is_unlocked = self.is_location_unlocked(loc)
-            status = f"{Fore.GREEN}✓" if is_unlocked else f"{Fore.RED}🔒 Lvl{loc['unlock_level']}"
-            color = loc['color'] if is_unlocked else Fore.LIGHTBLACK_EX
-            
-            if tile_char == 'L':
-                symbol = "≈"
-            elif tile_char == 'R':
-                symbol = "≋"
-            elif tile_char == '~':
-                symbol = "~"
-            elif tile_char == 'V':
-                symbol = "♨"
-            elif tile_char == 'S':
-                symbol = "⌬"
+        if not available:
+            print(Fore.LIGHTBLACK_EX + "  No quests available" + Style.RESET_ALL)
+        else:
+            for i, quest in enumerate(available, 1):
+                print(f"{i}. {quest.title}")
+                print(f"   {quest.description}")
+                print(f"   Reward: ${quest.reward_money}, {quest.reward_xp} XP")
+        
+        print()
+        print(Fore.WHITE + "1. Accept a quest" + Style.RESET_ALL)
+        print(Fore.WHITE + "2. Claim completed quest rewards" + Style.RESET_ALL)
+        print(Fore.WHITE + "3. Back" + Style.RESET_ALL)
+        
+        choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+        
+        if choice == '1' and available:
+            try:
+                idx = int(input(Fore.CYAN + "Quest number: " + Style.RESET_ALL)) - 1
+                quest = available[idx]
+                self.active_quests.append(quest)
+                print(Fore.GREEN + f"Quest '{quest.title}' accepted!" + Style.RESET_ALL)
+                time.sleep(1)
+            except:
+                pass
+        elif choice == '2':
+            completed = [q for q in self.active_quests if q.completed]
+            if completed:
+                for quest in completed:
+                    self.money += quest.reward_money
+                    self.gain_xp(quest.reward_xp)
+                    self.active_quests.remove(quest)
+                    self.completed_quests.append(quest)
+                    print(Fore.GREEN + f"Quest '{quest.title}' rewards claimed!" + Style.RESET_ALL)
+                time.sleep(2)
             else:
-                symbol = tile_char
-                
-            print(f"  {color}{symbol}{Style.RESET_ALL} {loc['name']:20s} {status}{Style.RESET_ALL}")
-        
-        print(f"\n{Fore.WHITE}[WASD] Move | [E] Enter Location | [Q] Exit{Style.RESET_ALL}")
+                print(Fore.YELLOW + "No completed quests to claim." + Style.RESET_ALL)
+                time.sleep(1)
     
-    def render_location(self, location_map, clear_func):
-        clear_func()
-        
-        print(Fore.CYAN + f"╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-        print(Fore.CYAN + f"║  {location_map.name.center(37)}  ║" + Style.RESET_ALL)
-        print(Fore.CYAN + f"╚═══════════════════════════════════════╝" + Style.RESET_ALL)
-        print(Fore.YELLOW + location_map.description + Style.RESET_ALL)
+    def visit_dock(self):
+        """Dock - travel to other locations"""
+        self.clear_screen()
+        print(Fore.LIGHTCYAN_EX + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.LIGHTCYAN_EX + "║             ⚓ DOCK ⚓                  ║" + Style.RESET_ALL)
+        print(Fore.LIGHTCYAN_EX + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + "Travel to distant fishing grounds:" + Style.RESET_ALL)
         print()
         
-        for y, row in enumerate(location_map.layout):
-            line = ""
-            for x, tile in enumerate(row):
-                is_player = (x == location_map.player_x and y == location_map.player_y)
-                is_spot = location_map.is_fishing_spot(x, y)
-                is_golden = location_map.is_golden_spot(x, y)
-                line += location_map.render_tile(tile, is_player, is_spot, is_golden)
-            print(line)
+        for i, loc in enumerate(LOCATIONS[2:], 1):  # Skip hub island locations
+            locked = f"🔒 Lvl{loc.unlock_level}" if self.level < loc.unlock_level else "✓"
+            print(f"{i}. {loc.name} - {locked}")
+            print(f"   {loc.description}")
         
-        print("\n" + "=" * 50)
-        print(f"{Fore.GREEN}Position: ({location_map.player_x}, {location_map.player_y})")
-        print(f"{Fore.CYAN}{location_map.message}")
-        print("=" * 50)
-        print(f"{Fore.CYAN}⊙{Style.RESET_ALL} Regular Spot | {Fore.LIGHTYELLOW_EX}◉{Style.RESET_ALL} Golden Spot (Better loot!)")
-        print(f"{Fore.WHITE}[WASD] Move | [E] Fish at spot | [Q] Return to overworld{Style.RESET_ALL}")
+        print()
+        print(Fore.WHITE + "Select destination (number) or 0 to cancel: " + Style.RESET_ALL)
+        
+        choice = input(Fore.CYAN + "Choice: " + Style.RESET_ALL)
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(LOCATIONS[2:]):
+                destination = LOCATIONS[2 + idx]
+                if self.level >= destination.unlock_level:
+                    self.current_location = destination
+                    print(Fore.GREEN + f"Traveling to {destination.name}..." + Style.RESET_ALL)
+                    time.sleep(1)
+                    # Enter that location's map
+                    return destination
+                else:
+                    print(Fore.RED + f"Requires level {destination.unlock_level}!" + Style.RESET_ALL)
+                    time.sleep(1)
+        except ValueError:
+            pass
+        
+        return None
     
-    def run(self):
-        """Main map navigation loop"""
-        current_location_map = None  # None means we're on overworld
+    def hub_island_interaction(self, building_type):
+        """Handle interactions with buildings on hub island"""
+        if building_type == 'shop':
+            self.visit_shop()
+        elif building_type == 'aquarium':
+            self.visit_aquarium()
+        elif building_type == 'quests':
+            self.view_quests()
+        elif building_type == 'home':
+            self.clear_screen()
+            print(Fore.LIGHTRED_EX + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.LIGHTRED_EX + "║              🏠 HOME 🏠                 ║" + Style.RESET_ALL)
+            print(Fore.LIGHTRED_EX + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            print(Fore.GREEN + "A cozy place to rest and save your progress." + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Save Game" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. View Stats" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Back" + Style.RESET_ALL)
+            
+            choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                self.save_game()
+                time.sleep(1)
+            elif choice == '2':
+                self.view_character_stats()
+        elif building_type == 'dock':
+            return self.visit_dock()  # May return a new location
+        
+        return None
+    
+    def view_character_stats(self):
+        """Display character information"""
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║          CHARACTER STATS              ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        print(Fore.GREEN + f"Name: {self.name}" + Style.RESET_ALL)
+        print(Fore.YELLOW + f"Level: {self.level}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"XP: {self.xp}/{self.xp_threshold}" + Style.RESET_ALL)
+        print(Fore.GREEN + f"Money: ${self.money}" + Style.RESET_ALL)
+        print(Fore.MAGENTA + f"Skill Points: {self.skill_points}" + Style.RESET_ALL)
+        print()
+        print(Fore.WHITE + f"Strength: {self.stats['strength']}" + Style.RESET_ALL)
+        print(Fore.WHITE + f"Luck: {self.stats['luck']}" + Style.RESET_ALL)
+        print(Fore.WHITE + f"Patience: {self.stats['patience']}" + Style.RESET_ALL)
+        print()
+        print(Fore.LIGHTBLACK_EX + f"Difficulty: {self.difficulty_name}" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + f"Current Rod: {self.current_rod.name}" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + f"Current Bait: {self.current_bait.name}" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + f"Rod Durability: {self.rod_durability}/{self.rod_max_durability}" + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + f"Species Discovered: {len(self.encyclopedia)}/{len(FISH_DATA)}" + Style.RESET_ALL)
+        print(Fore.MAGENTA + f"Trophy Fish: {len(self.trophy_room)}" + Style.RESET_ALL)
+        print()
+        print(Fore.WHITE + "Press any key to return..." + Style.RESET_ALL)
+        get_key()
+    
+    def start_game(self):
+        """Main game loop using hub island"""
+        hub_map = LOCATIONS[0].map  # Hub island map
         
         while True:
-            if current_location_map is None:
-                # Overworld mode
-                self.render_overworld(self.game.clear_screen)
-                
-                key = get_key()
-                
-                if key == 'w':
-                    self.move_player(0, -1)
-                elif key == 's':
-                    self.move_player(0, 1)
-                elif key == 'a':
-                    self.move_player(-1, 0)
-                elif key == 'd':
-                    self.move_player(1, 0)
-                elif key == 'e':
-                    # Try to enter a location
-                    location = self.get_location_at(self.player_x, self.player_y)
-                    if location:
-                        if self.is_location_unlocked(location):
-                            current_location_map = location['map']
-                            self.game.current_location = self.game.locations[location['game_index']]
-                        else:
-                            self.message = f"🔒 {location['name']} is locked! Requires level {location['unlock_level']} (You: Lvl {self.game.level})"
-                    else:
-                        self.message = "Nothing to enter here. Find a location!"
-                elif key == 'q':
-                    return 'QUIT'
+            # Render hub island
+            self.clear_screen()
             
-            else:
-                # Inside a location
-                self.render_location(current_location_map, self.game.clear_screen)
-                
-                key = get_key()
-                
-                if key == 'w':
-                    current_location_map.move_player(0, -1)
-                elif key == 's':
-                    current_location_map.move_player(0, 1)
-                elif key == 'a':
-                    current_location_map.move_player(-1, 0)
-                elif key == 'd':
-                    current_location_map.move_player(1, 0)
-                elif key == 'e':
-                    # Try to fish
-                    if current_location_map.is_fishing_spot(
-                        current_location_map.player_x, 
-                        current_location_map.player_y
-                    ):
-                        # Check if this is a golden spot
-                        is_golden = current_location_map.is_golden_spot(
-                            current_location_map.player_x,
-                            current_location_map.player_y
-                        )
-                        # Fish right here without returning!
-                        self.game.fish(golden_spot=is_golden)
-                        current_location_map.message = "🎣 Cast your line again, or move to explore!"
-                    else:
-                        current_location_map.message = "You need to be at a fishing spot (⊙) to fish!"
-                elif key == 'q':
-                    # Return to overworld
-                    current_location_map = None
-                    self.message = "Returned to overworld. Explore more locations!"
-
-
-# This replaces the choose_location method in the Game class
-def map_based_fishing(game_instance):
-    """Replace the location selection menu with map exploration"""
-    overworld = OverworldMap(game_instance)
-    overworld.run()
-    # Player either quit or finished their session
+            print(Fore.CYAN + f"╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.CYAN + f"║        🏝️ HUB ISLAND 🏝️               ║" + Style.RESET_ALL)
+            print(Fore.CYAN + f"╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            
+            # Render the map
+            for y, row in enumerate(hub_map.layout):
+                line = ""
+                for x, tile in enumerate(row):
+                    is_player = (x == hub_map.player_x and y == hub_map.player_y)
+                    is_spot = hub_map.is_fishing_spot(x, y)
+                    is_golden = hub_map.is_golden_spot(x, y)
+                    line += hub_map.render_tile(tile, is_player, is_spot, is_golden)
+                print(line)
+            
+            print()
+            print(Fore.GREEN + f"Level: {self.level} | XP: {self.xp}/{self.xp_threshold} | Money: ${self.money}" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + f"Rod: {self.rod_durability}/{self.rod_max_durability} | Weather: {self.current_weather}" + Style.RESET_ALL)
+            print()
+            print(Fore.YELLOW + hub_map.message + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            print(Fore.WHITE + "[WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
+            
+            # Get input
+            key = get_key()
+            
+            if key == 'w':
+                hub_map.move_player(0, -1)
+            elif key == 's':
+                hub_map.move_player(0, 1)
+            elif key == 'a':
+                hub_map.move_player(-1, 0)
+            elif key == 'd':
+                hub_map.move_player(1, 0)
+            elif key == 'e':
+                # Check for interactions
+                if hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
+                    is_golden = hub_map.is_golden_spot(hub_map.player_x, hub_map.player_y)
+                    self.fish(golden_spot=is_golden)
+                elif hub_map.is_building(hub_map.player_x, hub_map.player_y):
+                    building_type = hub_map.get_building_type(hub_map.player_x, hub_map.player_y)
+                    new_location = self.hub_island_interaction(building_type)
+                    
+                    # If dock returns a location, enter that location's map
+                    if new_location:
+                        self.explore_remote_location(new_location)
+                else:
+                    hub_map.message = "Nothing to interact with here."
+            elif key == 'i':
+                self.view_inventory()
+            elif key == 'c':
+                self.view_character_stats()
+            elif key == 'q':
+                print(Fore.YELLOW + "\nThanks for playing! 🎣" + Style.RESET_ALL)
+                break
+    
+    def explore_remote_location(self, location):
+        """Explore a remote location (Ocean, Deep Sea, etc.)"""
+        location_map = location.map
+        
+        while True:
+            self.clear_screen()
+            
+            print(Fore.CYAN + f"╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.CYAN + f"║  {location.name.center(37)}  ║" + Style.RESET_ALL)
+            print(Fore.CYAN + f"╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+            print(Fore.YELLOW + location.description + Style.RESET_ALL)
+            print()
+            
+            # Render the map
+            for y, row in enumerate(location_map.layout):
+                line = ""
+                for x, tile in enumerate(row):
+                    is_player = (x == location_map.player_x and y == location_map.player_y)
+                    is_spot = location_map.is_fishing_spot(x, y)
+                    is_golden = location_map.is_golden_spot(x, y)
+                    line += location_map.render_tile(tile, is_player, is_spot, is_golden)
+                print(line)
+            
+            print()
+            print(Fore.GREEN + f"Level: {self.level} | XP: {self.xp}/{self.xp_threshold} | Money: ${self.money}" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + f"Rod: {self.rod_durability}/{self.rod_max_durability} | Weather: {self.current_weather}" + Style.RESET_ALL)
+            print()
+            print(Fore.YELLOW + location_map.message + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "[WASD] Move | [E] Fish | [Q] Return to Hub Island" + Style.RESET_ALL)
+            
+            # Get input
+            key = get_key()
+            
+            if key == 'w':
+                location_map.move_player(0, -1)
+            elif key == 's':
+                location_map.move_player(0, 1)
+            elif key == 'a':
+                location_map.move_player(-1, 0)
+            elif key == 'd':
+                location_map.move_player(1, 0)
+            elif key == 'e':
+                if location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
+                    is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
+                    self.fish(golden_spot=is_golden)
+                else:
+                    location_map.message = "You need to be at a fishing spot (⊙) to fish!"
+            elif key == 'q':
+                # Return to hub island
+                self.current_location = LOCATIONS[0]
+                break
 
 
 # ===== MAIN =====
@@ -2688,7 +1786,8 @@ if __name__ == "__main__":
     show_intro()
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         open beta V.0.4.3             ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║       Hub Island Edition              ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         V.0.5.0 BETA                  ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
