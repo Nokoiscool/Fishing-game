@@ -1067,38 +1067,74 @@ def pattern_minigame(patience_stat):
         return False
     
 def stardew_valley_minigame(patience_stat):
-    """A more complex minigame inspired by Stardew Valley's fishing game"""
     print(Fore.YELLOW + "\n🎣 Stardew Valley Fishing Minigame!" + Style.RESET_ALL)
-    
-    bar_width = 20
-    fish_position = random.randint(0, bar_width - 1)
-    player_position = bar_width // 2
-    tension = 0
-    
-    for _ in range(60):  # 60 frames
-        bar = ['░'] * bar_width
-        bar[fish_position] = '🐟'
-        bar[player_position] = '▼'
-        
-        print('\r' + Fore.CYAN + ''.join(bar) + Style.RESET_ALL, end='', flush=True)
-        
+    print("Use A / D to move\n")
+
+    bar_width = 30
+    frames = 120
+
+    # Positions
+    fish_pos = random.uniform(5, bar_width - 5)
+    fish_vel = 0
+
+    player_pos = bar_width / 2
+    player_vel = 0
+
+    # Catch meter
+    catch_meter = 0.3
+    catch_speed = 0.015 + patience_stat * 0.002
+    decay_speed = 0.02
+
+    for _ in range(frames):
+        # --- Fish movement (wiggly, unpredictable) ---
+        fish_vel += random.uniform(-0.6, 0.6)
+        fish_vel *= 0.9
+        fish_pos += fish_vel
+        fish_pos = max(0, min(bar_width - 1, fish_pos))
+
+        # --- Player input ---
         key = get_key()
-        if key == 'a' and player_position > 0:
-            player_position -= 1
-        elif key == 'd' and player_position < bar_width - 1:
-            player_position += 1
-        
-        if player_position == fish_position:
-            tension += 1
-            if tension >= 5:
-                print(Fore.GREEN + "\n✓ Caught the fish!" + Style.RESET_ALL)
-                return True
+        if key == 'a':
+            player_vel -= 0.5
+        elif key == 'd':
+            player_vel += 0.5
+
+        # Inertia & damping
+        player_vel *= 0.85
+        player_pos += player_vel
+        player_pos = max(0, min(bar_width - 1, player_pos))
+
+        # --- Catch logic ---
+        if abs(player_pos - fish_pos) < 1.2:
+            catch_meter += catch_speed
         else:
-            tension = max(0, tension - 1)
-        
-        time.sleep(0.1)
-    
-    print(Fore.RED + "\n✗ The fish got away!" + Style.RESET_ALL)
+            catch_meter -= decay_speed
+
+        catch_meter = max(0, min(1, catch_meter))
+
+        # --- Render bar ---
+        bar = ['░'] * bar_width
+        bar[int(fish_pos)] = '🐟'
+        bar[int(player_pos)] = '█'
+
+        meter = int(catch_meter * 10)
+        meter_bar = Fore.GREEN + '█' * meter + Fore.RED + '░' * (10 - meter)
+
+        print(
+            '\r' +
+            Fore.CYAN + ''.join(bar) + Style.RESET_ALL +
+            f"  [{meter_bar}{Style.RESET_ALL}]",
+            end='',
+            flush=True
+        )
+
+        if catch_meter >= 1:
+            print(Fore.GREEN + "\n\n✓ Fish caught!" + Style.RESET_ALL)
+            return True
+
+        time.sleep(0.08)
+
+    print(Fore.RED + "\n\n✗ The fish escaped!" + Style.RESET_ALL)
     return False
 
 
