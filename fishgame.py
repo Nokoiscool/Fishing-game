@@ -88,6 +88,7 @@ init(autoreset=True)
 
 DID_YOU_KNOW_FACTS = [
     "Real blobfish don't look blobby underwater – they only deform at low pressure!",
+    "The coelacanth is a 'living fossil' fish that was thought extinct for 66 million years.",
     "Sturgeon are older than dinosaurs and can live for over 100 years.",
     "The Kraken myth likely began after sailors spotted giant squid.",
     "Pike are known as 'water wolves' because of their sudden ambush attacks.",
