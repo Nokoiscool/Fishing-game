@@ -840,7 +840,7 @@ class LocationMap:
     def render_tile(self, tile, is_player, is_spot, is_golden):
         """Render a single tile with appropriate coloring"""
         if is_player:
-            return Fore.RED + '☻' + Style.RESET_ALL
+            return Fore.YELLOW + '☻' + Style.RESET_ALL
         elif is_golden:
             return Fore.LIGHTYELLOW_EX + '◉' + Style.RESET_ALL
         elif is_spot or tile == '⊙':
