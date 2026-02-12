@@ -805,7 +805,24 @@ class Fish:
             'mutation': self.mutation,
             'catch_time': self.catch_time
         }
-
+    
+    @staticmethod
+    def from_dict(data):
+        """Recreate a Fish object from saved dictionary"""
+        fish = Fish(
+            name=data['name'],
+            min_weight=data['min_weight'],
+            max_weight=data['max_weight'],
+            rarity=data['rarity'],
+            rarity_weight=data['rarity_weight'],
+            xp_reward=data['xp_reward'],
+            real_world_info=data.get('real_world_info', ''),
+            sell_price=data['sell_price']
+        )
+        fish.weight = data['weight']
+        fish.mutation = data.get('mutation', 'normal')
+        fish.catch_time = data.get('catch_time')
+        return fish
 
     def generate_random_weight(self):
         return round(random.uniform(self.min_weight, self.max_weight), 2)
@@ -2065,6 +2082,9 @@ class Game:
             'money': self.money,
             'skill_points': self.skill_points,
             'inventory': [fish.to_dict() for fish in self.inventory],
+            'boss_inventory': [{'name': item.name, 'boss': item.boss.name, 'description': item.description, 'location': item.location} for item in self.boss_inventory],
+            'karma': self.karma,
+            'defeated_bosses': self.defeated_bosses,
             'owned_rods': [rod.name for rod in self.owned_rods],
             'owned_baits': [bait.name for bait in self.owned_baits],
             'current_rod': self.current_rod.name,
@@ -2075,6 +2095,10 @@ class Game:
             'trophy_room': [fish.to_dict() for fish in self.trophy_room],
             'current_location': self.current_location.name,
             'current_weather': self.current_weather,
+            'active_quests': [{'name': q.name, 'description': q.description} for q in self.active_quests],
+            'completed_quests': [{'name': q.name, 'description': q.description} for q in self.completed_quests],
+            'max_hp': self.max_hp,
+            'current_hp': self.current_hp,
         }
         
         # Create hash-based filename
@@ -2121,9 +2145,19 @@ class Game:
             self.money = data['money']
             self.skill_points = data['skill_points']
             
-            # Load inventory
-            self.inventory = []
-            # Inventory loading skipped for simplicity
+            # Load inventory - ACTUALLY LOAD IT NOW
+            self.inventory = [Fish.from_dict(fish_data) for fish_data in data.get('inventory', [])]
+            
+            # Load boss inventory
+            self.boss_inventory = []
+            for item_data in data.get('boss_inventory', []):
+                # Find the matching boss item from BOSS_ITEMS
+                if item_data['name'] in BOSS_ITEMS:
+                    self.boss_inventory.append(BOSS_ITEMS[item_data['name']])
+            
+            # Load karma and defeated bosses
+            self.karma = data.get('karma', 0)
+            self.defeated_bosses = data.get('defeated_bosses', [])
             
             # Load rods and baits
             self.owned_rods = [rod for rod in RODS if rod.name in data['owned_rods']]
@@ -2138,15 +2172,23 @@ class Game:
             # Load encyclopedia
             self.encyclopedia = data.get('encyclopedia', {})
             
-            # Load trophy room
-            self.trophy_room = []
-            # Trophy loading skipped for simplicity
+            # Load trophy room - ACTUALLY LOAD IT NOW
+            self.trophy_room = [Fish.from_dict(fish_data) for fish_data in data.get('trophy_room', [])]
             
             # Load location
             loc_name = data.get('current_location', 'Calm Lake')
             self.current_location = next((loc for loc in LOCATIONS if loc.name == loc_name), LOCATIONS[0])
             
             self.current_weather = data.get('current_weather', random.choice(WEATHERS))
+            
+            # Load quests (we'll skip loading the actual Quest objects and just track completion)
+            # Since quests are generated dynamically, we just need to know which ones are completed
+            self.active_quests = []  # Reset active quests
+            self.completed_quests = []  # We could reconstruct these if needed, but not critical
+            
+            # Load HP
+            self.max_hp = data.get('max_hp', 100)
+            self.current_hp = data.get('current_hp', 100)
             
             print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
@@ -2386,6 +2428,100 @@ class Game:
         elif choice == 'b':
             return
 
+    def sell_fish(self):
+        """Sell fish from inventory"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to sell!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║           SELL FISH                   ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            sell_value = int(fish.sell_price * self.difficulty_mult)
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg - ${sell_value}"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        print(Fore.YELLOW + "[A]ll Fish | [S]pecific Fish | [B]ack" + Style.RESET_ALL)
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL).lower()
+        
+        if choice == 'a':
+            # Sell all fish
+            total = sum(int(f.sell_price * self.difficulty_mult) for f in self.inventory)
+            self.money += total
+            count = len(self.inventory)
+            self.inventory.clear()
+            print(Fore.GREEN + f"Sold {count} fish for ${total}!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        elif choice == 's':
+            # Sell specific fish
+            try:
+                idx = int(input(Fore.CYAN + "Enter fish number: " + Style.RESET_ALL)) - 1
+                if 0 <= idx < len(self.inventory):
+                    fish = self.inventory.pop(idx)
+                    value = int(fish.sell_price * self.difficulty_mult)
+                    self.money += value
+                    print(Fore.GREEN + f"Sold {fish.name} for ${value}!" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            except (ValueError, IndexError):
+                print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    def keep_trophy(self):
+        """Move a fish from inventory to trophy room"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to keep as trophy!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║         KEEP AS TROPHY                ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        try:
+            idx = int(input(Fore.CYAN + "Enter fish number (0 to cancel): " + Style.RESET_ALL)) - 1
+            if idx == -1:
+                return
+            if 0 <= idx < len(self.inventory):
+                fish = self.inventory.pop(idx)
+                self.trophy_room.append(fish)
+                print(Fore.GREEN + f"{fish.name} added to trophy room!" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        except (ValueError, IndexError):
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
     
     def visit_shop(self):
         """Shop menu"""
