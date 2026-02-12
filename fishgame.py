@@ -89,7 +89,7 @@ init(autoreset=True)
 
 DID_YOU_KNOW_FACTS = [
     "Real blobfish don't look blobby underwater – they only deform at low pressure!",
-    "The coelacanth is a 'living fossil' fish that was thought extinct for 67 million years.",
+    "The coelacanth is a 'living fossil' fish that was thought extinct for 66 million years.",
     "Sturgeon are older than dinosaurs and can live for over 100 years.",
     "The Kraken myth likely began after sailors spotted giant squid.",
     "Pike are known as 'water wolves' because of their sudden ambush attacks.",
@@ -136,7 +136,6 @@ DID_YOU_KNOW_FACTS = [
     "Ancient Polynesians navigated oceans by watching fish behavior.",
     "Vikings believed certain fish could predict storms and weather changes.",
     "Also try Minecraft!",
-    "Also try civ game https://github.com/Nokoiscool/Civ-spill-Skibidi",
     "Visit the Hub Island shop to upgrade your gear!",
     "The Aquarium displays all your trophy catches!",
     "Complete quests for rare rewards and unlock new locations!",
@@ -973,9 +972,8 @@ ocean_fish = [
     Fish("Plumber's Tuna", 1, 3, "Uncommon", 2.5, 9, "A red-and-blue tuna that looks like it jumps higher than it swims.", 30),
     Fish("Glow Reef Angelfish", 3, 6, "Rare", 1.4, 20, "An elegant neon fish that drifts like it's in zero-gravity water.", 90),
     #TODO: make the german fish say a random number of fishes in german
-    Fish("Ein kleiner Fisch", 0.1, 0.5, "Common", 0.1, 10, 'A tiny fish that seems to be singing in German. its saying "Fünf kleine Fische, die schwammen im Meer, blub blub blub blub"', 10),
-    Fish("Ein großer Hai", 10, 50, "Rare", 0.5, 50, 'A large shark that seems to be singing in German. its saying "Ein großer Hai, der schwamm im Meer, blub blub blub blub"', 100),
-    
+    Fish("Ein kleiner Fisch", 0.1, 0.5, "Common", 0.5, 10, 'A tiny fish that seems to be singing in German. its saying "Fünf kleine Fische, die schwammen im Meer, blub blub blub blub"', 10),
+    Fish("Ein großer Hai", 10, 50, "Rare", 0.1, 50, 'A large shark that seems to be singing in German. its saying "Ein großer Hai, der schwamm im Meer, blub blub blub blub"', 100),
 
 ]
 
@@ -1548,8 +1546,8 @@ class LocationMap:
         # Check bounds
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
-            # Allow movement on walkable tiles (including all water types)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓']:
+            # Allow movement on walkable tiles (including all water types and NPC)
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
@@ -1601,6 +1599,10 @@ class LocationMap:
             return 'space'
         return None
     
+    def is_npc_fisherman(self, x, y):
+        """Check if location has the NPC fisherman"""
+        return self.layout[y][x] == 'F'
+    
     def render_tile(self, tile, is_player, is_spot, is_golden):
         """Render a single tile with appropriate coloring"""
         if is_player:
@@ -1637,6 +1639,8 @@ class LocationMap:
             return Fore.LIGHTRED_EX + '🏠' + Style.RESET_ALL
         elif tile == '⚓':  # Dock
             return Fore.LIGHTCYAN_EX + '⚓' + Style.RESET_ALL
+        elif tile == 'F':  # NPC Fisherman
+            return Fore.GREEN + '🎣' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -1655,7 +1659,7 @@ HUB_ISLAND_LAYOUT = [
     ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '≈', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '.', '.', '.',  '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '.', '.',  '.', 'F', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '🌳', '🌳', '🌳', '🌳', '█'],
@@ -2726,6 +2730,52 @@ class Game:
         world_map = WorldMap(self)
         return world_map.run()
     
+    def interact_with_npc_fisherman(self):
+        """Talk to the NPC fisherman and get a random fact"""
+        self.clear_screen()
+        
+        # Display ASCII art of fisherman
+        fisherman_art = """
+        
+            🎣 Old Fisherman by the Lake 🎣
+        
+               ,@@@@@@@,
+         ,,,.   ,@@@@@@/@@,  .oo8888o.
+      ,&%%&%&&%,@@@@@/@@@@@@,8888\\88/8o
+     ,%&\\%&&%&&%,@@@\\@@@/@@@88\\88888/88'
+     %&&%&%&/%&&%@@\\@@/ /@@@88888\\88888'
+     %&&%/ %&%%&&@@\\ V /@@' `88\\8 `/88'
+     `&%\\ ` /%&'    |.|        \\ '|8'
+         |o|        | |         | |
+         |.|        | |         | |
+      \\/ ._\\//_/__/  ,\\_//__\\/.  \\_//__/_
+        """
+        
+        print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+        print()
+        
+        # Random greeting
+        greetings = [
+            "Ahoy there, young angler!",
+            "Well, well... Another fisher visits my spot!",
+            "Greetings, friend! Beautiful day for fishing, eh?",
+            "Ah, a fellow fisher! Come, sit a spell.",
+        ]
+        
+        print(Fore.YELLOW + random.choice(greetings) + Style.RESET_ALL)
+        print()
+        time.sleep(1)
+        
+        # Share a random fact
+        fact = get_random_fact()
+        print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+        print(Fore.WHITE + f"\"Did you know? {fact}\"" + Style.RESET_ALL)
+        print()
+        time.sleep(2)
+        
+        print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+        get_key()
+    
     def hub_island_interaction(self, building_type):
         """Handle interactions with buildings on hub island"""
         if building_type == 'shop':
@@ -2816,7 +2866,7 @@ class Game:
             print()
             print(Fore.YELLOW + hub_map.message + Style.RESET_ALL)
             print()
-            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                     print(Fore.MAGENTA + "[DEV] [B]oss Menu | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             else:
@@ -2837,7 +2887,10 @@ class Game:
                 hub_map.move_player(1, 0)
             elif key == 'e':
                 # Check for interactions
-                if hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
+                if hub_map.is_npc_fisherman(hub_map.player_x, hub_map.player_y):
+                    # Talk to the NPC fisherman
+                    self.interact_with_npc_fisherman()
+                elif hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
                     is_golden = hub_map.is_golden_spot(hub_map.player_x, hub_map.player_y)
                     
                     # Determine which location based on water type
@@ -3394,4 +3447,4 @@ if __name__ == "__main__":
         game.start_game()
 
     else:
-        print(Fore.RED + "Invalid choice." + Style.RESET_ALL)  
+        print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
