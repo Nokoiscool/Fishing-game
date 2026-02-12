@@ -10,6 +10,9 @@ import subprocess
 from colorama import Fore, Style, init
 from datetime import datetime
 
+# Game version for save file compatibility
+GAME_VERSION = "0.6.0"
+
 # Music system - cross-platform support
 current_music = None
 music_enabled = True
@@ -3799,6 +3802,7 @@ class Game:
     def save_game(self):
         """Save game to JSON file"""
         save_data = {
+            'version': GAME_VERSION,
             'name': self.name,
             'stats': self.stats,
             'difficulty_name': self.difficulty_name,
@@ -3861,7 +3865,9 @@ class Game:
             try:
                 with open(save_file, 'r') as f:
                     data = json.load(f)
-                print(f"{Fore.GREEN}{i}. {data['name']} (Lvl {data['level']}){Style.RESET_ALL}")
+                save_version = data.get('version', 'Unknown')
+                version_text = f" [v{save_version}]" if save_version != GAME_VERSION else ""
+                print(f"{Fore.GREEN}{i}. {data['name']} (Lvl {data['level']}){version_text}{Style.RESET_ALL}")
             except:
                 print(f"{Fore.RED}{i}. {save_file} (Corrupted){Style.RESET_ALL}")
         
@@ -3871,6 +3877,43 @@ class Game:
             save_file = saves[int(choice) - 1]
             with open(save_file, 'r') as f:
                 data = json.load(f)
+            
+            # Check version compatibility
+            save_version = data.get('version', 'Pre-0.6.0')
+            if save_version != GAME_VERSION:
+                print(Fore.YELLOW + "\n╔════════════════════════════════════════════════╗" + Style.RESET_ALL)
+                print(Fore.YELLOW + "║          ⚠️  VERSION WARNING  ⚠️               ║" + Style.RESET_ALL)
+                print(Fore.YELLOW + "╚════════════════════════════════════════════════╝" + Style.RESET_ALL)
+                print(Fore.WHITE + f"\nThis save file is from version: {Fore.CYAN}{save_version}{Style.RESET_ALL}")
+                print(Fore.WHITE + f"Current game version: {Fore.GREEN}{GAME_VERSION}{Style.RESET_ALL}")
+                print()
+                print(Fore.YELLOW + "Loading this save might cause issues:" + Style.RESET_ALL)
+                print(Fore.WHITE + "  • Missing features from newer versions" + Style.RESET_ALL)
+                print(Fore.WHITE + "  • Potential bugs or crashes" + Style.RESET_ALL)
+                print(Fore.WHITE + "  • Corrupted data" + Style.RESET_ALL)
+                print()
+                print(Fore.CYAN + "What would you like to do?" + Style.RESET_ALL)
+                print(Fore.GREEN + "1. Load anyway (may have issues)" + Style.RESET_ALL)
+                print(Fore.GREEN + "2. Start a new game" + Style.RESET_ALL)
+                print(Fore.GREEN + "3. Return to main menu" + Style.RESET_ALL)
+                
+                version_choice = input(Fore.CYAN + "\nYour choice: " + Style.RESET_ALL)
+                
+                if version_choice == '2':
+                    print(Fore.YELLOW + "\nReturning to start a new game..." + Style.RESET_ALL)
+                    time.sleep(1)
+                    return False
+                elif version_choice == '3':
+                    print(Fore.YELLOW + "\nReturning to main menu..." + Style.RESET_ALL)
+                    time.sleep(1)
+                    return False
+                elif version_choice != '1':
+                    print(Fore.RED + "Invalid choice! Returning to main menu..." + Style.RESET_ALL)
+                    time.sleep(1)
+                    return False
+                
+                print(Fore.YELLOW + "\nAttempting to load save file..." + Style.RESET_ALL)
+                time.sleep(1)
             
             # Load character data
             self.name = data['name']
