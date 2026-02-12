@@ -3858,13 +3858,44 @@ class Game:
             print(Fore.YELLOW + "║            🏪 SHOP 🏪                  ║" + Style.RESET_ALL)
             print(Fore.YELLOW + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
             print()
+            
+            # Karma-based shopkeeper greeting
+            if self.karma >= 50:
+                greeting = Fore.GREEN + "🌟 Shopkeeper: 'Ah, the Guardian Protector! Everything's 10% off for you, hero!'" + Style.RESET_ALL
+                discount = 0.9
+            elif self.karma >= 10:
+                greeting = Fore.CYAN + "😊 Shopkeeper: 'Good to see you again! What can I get you today?'" + Style.RESET_ALL
+                discount = 1.0
+            elif self.karma >= -10:
+                greeting = Fore.WHITE + "😐 Shopkeeper: 'Welcome. Browse as you like.'" + Style.RESET_ALL
+                discount = 1.0
+            elif self.karma >= -50:
+                greeting = Fore.YELLOW + "😟 Shopkeeper: '*nervously* Y-yes? What do you need?'" + Style.RESET_ALL
+                discount = 1.0
+            else:
+                greeting = Fore.RED + "😠 Shopkeeper: '*coldly* Your money better be good... slayer.'" + Style.RESET_ALL
+                discount = 1.2  # 20% markup for bad karma!
+            
+            print(greeting)
+            print()
+            
+            if discount < 1.0:
+                print(Fore.GREEN + f"✨ HERO DISCOUNT: {int((1-discount)*100)}% off all items! ✨" + Style.RESET_ALL)
+            elif discount > 1.0:
+                print(Fore.RED + f"⚠️ BAD REPUTATION MARKUP: {int((discount-1)*100)}% increase on all prices! ⚠️" + Style.RESET_ALL)
+            
+            print()
             print(Fore.GREEN + f"💰 Money: ${self.money}" + Style.RESET_ALL)
             print()
+            
+            # Store discount for shop functions
+            self.shop_discount = discount
             
             print(Fore.CYAN + "1. Buy Rods" + Style.RESET_ALL)
             print(Fore.CYAN + "2. Buy Bait" + Style.RESET_ALL)
             print(Fore.CYAN + "3. Buy Combat Items ⚔️🛡️❤️" + Style.RESET_ALL)
-            print(Fore.CYAN + "4. Repair Rod (${})".format(max(10, (100 - self.rod_durability) * 2)) + Style.RESET_ALL)
+            repair_cost = int(max(10, (100 - self.rod_durability) * 2) * discount)
+            print(Fore.CYAN + f"4. Repair Rod (${repair_cost})" + Style.RESET_ALL)
             print(Fore.CYAN + "5. Back" + Style.RESET_ALL)
             
             choice = input(Fore.YELLOW + "\nChoice: " + Style.RESET_ALL)
@@ -3876,7 +3907,7 @@ class Game:
             elif choice == '3':
                 self.shop_combat_items()
             elif choice == '4':
-                repair_cost = max(10, (100 - self.rod_durability) * 2)
+                repair_cost = int(max(10, (100 - self.rod_durability) * 2) * discount)
                 if self.money >= repair_cost:
                     self.money -= repair_cost
                     self.rod_durability = 100
@@ -3894,8 +3925,16 @@ class Game:
         print(Fore.CYAN + "═══ RODS ═══" + Style.RESET_ALL)
         print()
         
+        discount = getattr(self, 'shop_discount', 1.0)
+        
         for i, rod in enumerate(RODS, 1):
-            owned = "✓ Owned" if rod in self.owned_rods else f"${rod.price}"
+            if rod in self.owned_rods:
+                owned = "✓ Owned"
+            else:
+                discounted_price = int(rod.price * discount)
+                owned = f"${discounted_price}"
+                if discount != 1.0:
+                    owned += f" (was ${rod.price})"
             locked = "" if self.level >= rod.unlock_level else f"🔒 Lvl{rod.unlock_level}"
             print(f"{i}. {rod.name} - {owned} {locked}")
             print(f"   Chance: +{rod.bonus_chance}% | Weight: +{rod.bonus_weight}% | Durability: +{rod.durability_bonus}")
@@ -3907,16 +3946,17 @@ class Game:
             idx = int(choice) - 1
             if 0 <= idx < len(RODS):
                 rod = RODS[idx]
+                actual_price = int(rod.price * discount)
                 if self.level < rod.unlock_level:
                     print(Fore.RED + f"Requires level {rod.unlock_level}!" + Style.RESET_ALL)
                     time.sleep(1)
                 elif rod in self.owned_rods:
                     print(Fore.YELLOW + "You already own this rod!" + Style.RESET_ALL)
                     time.sleep(1)
-                elif self.money >= rod.price:
-                    self.money -= rod.price
+                elif self.money >= actual_price:
+                    self.money -= actual_price
                     self.owned_rods.append(rod)
-                    print(Fore.GREEN + f"Bought {rod.name}!" + Style.RESET_ALL)
+                    print(Fore.GREEN + f"Bought {rod.name} for ${actual_price}!" + Style.RESET_ALL)
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -3930,8 +3970,16 @@ class Game:
         print(Fore.CYAN + "═══ BAIT ═══" + Style.RESET_ALL)
         print()
         
+        discount = getattr(self, 'shop_discount', 1.0)
+        
         for i, bait in enumerate(BAITS, 1):
-            owned = "✓ Owned" if bait in self.owned_baits else f"${bait.price}"
+            if bait in self.owned_baits:
+                owned = "✓ Owned"
+            else:
+                discounted_price = int(bait.price * discount)
+                owned = f"${discounted_price}"
+                if discount != 1.0:
+                    owned += f" (was ${bait.price})"
             locked = "" if self.level >= bait.unlock_level else f"🔒 Lvl{bait.unlock_level}"
             print(f"{i}. {bait.name} - {owned} {locked}")
             print(f"   XP Bonus: +{bait.bonus_xp}% | Rarity Bonus: +{bait.bonus_rarity}%")
@@ -3943,16 +3991,17 @@ class Game:
             idx = int(choice) - 1
             if 0 <= idx < len(BAITS):
                 bait = BAITS[idx]
+                actual_price = int(bait.price * discount)
                 if self.level < bait.unlock_level:
                     print(Fore.RED + f"Requires level {bait.unlock_level}!" + Style.RESET_ALL)
                     time.sleep(1)
                 elif bait in self.owned_baits:
                     print(Fore.YELLOW + "You already own this bait!" + Style.RESET_ALL)
                     time.sleep(1)
-                elif self.money >= bait.price:
-                    self.money -= bait.price
+                elif self.money >= actual_price:
+                    self.money -= actual_price
                     self.owned_baits.append(bait)
-                    print(Fore.GREEN + f"Bought {bait.name}!" + Style.RESET_ALL)
+                    print(Fore.GREEN + f"Bought {bait.name} for ${actual_price}!" + Style.RESET_ALL)
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -3993,8 +4042,16 @@ class Game:
         print(Fore.GREEN + f"💰 Money: ${self.money}" + Style.RESET_ALL)
         print()
         
+        discount = getattr(self, 'shop_discount', 1.0)
+        
         for i, item in enumerate(items_list, 1):
-            owned = "✓ Owned" if item in self.owned_combat_items[category] else f"${item.price}"
+            if item in self.owned_combat_items[category]:
+                owned = "✓ Owned"
+            else:
+                discounted_price = int(item.price * discount)
+                owned = f"${discounted_price}"
+                if discount != 1.0:
+                    owned += f" (was ${item.price})"
             equipped = "⭐ EQUIPPED" if item == self.equipped_combat_items[category] else ""
             locked = "" if self.level >= item.unlock_level else f"🔒 Lvl{item.unlock_level}"
             print(f"{i}. {item.name} - {owned} {locked} {equipped}")
@@ -4007,16 +4064,17 @@ class Game:
             idx = int(choice) - 1
             if 0 <= idx < len(items_list):
                 item = items_list[idx]
+                actual_price = int(item.price * discount)
                 if self.level < item.unlock_level:
                     print(Fore.RED + f"Requires level {item.unlock_level}!" + Style.RESET_ALL)
                     time.sleep(1)
                 elif item in self.owned_combat_items[category]:
                     print(Fore.YELLOW + "You already own this item!" + Style.RESET_ALL)
                     time.sleep(1)
-                elif self.money >= item.price:
-                    self.money -= item.price
+                elif self.money >= actual_price:
+                    self.money -= actual_price
                     self.owned_combat_items[category].append(item)
-                    print(Fore.GREEN + f"Bought {item.name}!" + Style.RESET_ALL)
+                    print(Fore.GREEN + f"Bought {item.name} for ${actual_price}!" + Style.RESET_ALL)
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -4229,15 +4287,48 @@ class Game:
             print(Fore.RED + pirate_art + Style.RESET_ALL)
             print()
             
+            # Karma-based greeting
             if random.random() < 0.3:
-                greetings = [
-                    "Ahoy, matey! Welcome aboard!",
-                    "Well met, friend! Ready to strike back at AquaTech?",
-                    "Aye, there ye are! Our rebel ally!",
-                    "Welcome to the Crimson Tide, comrade!",
-                    "Good to see ye! The seas need more like you.",
-                ]
-                print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+                if self.karma >= 50:
+                    greetings = [
+                        "Ahoy, legendary protector! The seas sing of your deeds!",
+                        "The great Guardian Savior! Welcome aboard, hero!",
+                        "Aye! If it isn't the Champion of the Guardians!",
+                        "Every creature in these waters owes you a debt! Welcome, friend!",
+                        "The oceans are blessed by your mercy! Come aboard!",
+                    ]
+                    print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= 10:
+                    greetings = [
+                        "Ahoy, matey! Welcome aboard!",
+                        "Well met, friend! Ready to strike back at AquaTech?",
+                        "Aye, there ye are! Our rebel ally!",
+                        "Welcome to the Crimson Tide, comrade!",
+                        "Good to see ye! The seas need more like you.",
+                    ]
+                    print(Fore.CYAN + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= -10:
+                    greetings = [
+                        "Ahoy. What brings ye here?",
+                        "Welcome aboard, I suppose.",
+                        "Aye. Come to talk?",
+                    ]
+                    print(Fore.WHITE + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= -50:
+                    greetings = [
+                        "Hmm. Word of your... deeds... has reached us.",
+                        "*Eyes narrow* The guardians' blood is on your hands.",
+                        "Ye may have spared us, but we know what ye've done elsewhere.",
+                    ]
+                    print(Fore.YELLOW + random.choice(greetings) + Style.RESET_ALL)
+                else:
+                    greetings = [
+                        "*Spits* Slayer. Why are ye here?",
+                        "Guardian killer. We spared ye. Don't make us regret it.",
+                        "*Draws cutlass slightly* Speak quick, executioner.",
+                        "The ancient ones cry out for vengeance... State yer business.",
+                    ]
+                    print(Fore.RED + random.choice(greetings) + Style.RESET_ALL)
                 print()
             
             print(Fore.YELLOW + "What would you like to discuss?" + Style.RESET_ALL)
@@ -4351,6 +4442,55 @@ class Game:
                 get_key()
                 
             elif choice == '5':
+                # Leave - karma-based farewell
+                self.clear_screen()
+                print(Fore.RED + pirate_art + Style.RESET_ALL)
+                print()
+                print(Fore.RED + "Captain Redbeard:" + Style.RESET_ALL)
+                
+                if self.karma >= 50:
+                    farewell = [
+                        "\"Fair winds and followin' seas, hero! The guardians protect ye!\"",
+                        "\"Sail safe, champion! The rebellion owes ye everything!\"",
+                        "\"May the ancient ones guide yer path! Until we meet again!\"",
+                        "\"Aye, the seas are safer with ye on 'em! Come back anytime!\"",
+                    ]
+                    print(Fore.GREEN + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= 10:
+                    farewell = [
+                        "\"Fair winds to ye, matey! Come back anytime!\"",
+                        "\"Sail safe, friend! The rebellion stands with ye!\"",
+                        "\"May the seas be kind to ye! Until next time!\"",
+                        "\"Tight lines and high tides! We'll be here when ye return!\"",
+                    ]
+                    print(Fore.CYAN + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= -10:
+                    farewell = [
+                        "\"Aye. Safe travels.\"",
+                        "\"Watch yerself out there.\"",
+                        "\"Until next time.\"",
+                    ]
+                    print(Fore.WHITE + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= -50:
+                    farewell = [
+                        "\"The guardians are watching ye. Remember that.\"",
+                        "\"*Nods coldly* Don't make us regret sparing ye.\"",
+                        "\"Aye... just go.\"",
+                    ]
+                    print(Fore.YELLOW + random.choice(farewell) + Style.RESET_ALL)
+                else:
+                    farewell = [
+                        "\"*Spits* Get off me ship, slayer.\"",
+                        "\"The only reason yer alive is we spared ye once. Don't test us.\"",
+                        "\"*Turns away in disgust*\"",
+                        "\"May the drowned guardians haunt yer every step...\"",
+                    ]
+                    print(Fore.RED + random.choice(farewell) + Style.RESET_ALL)
+                
+                print()
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
                 break
             else:
                 print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
@@ -4381,18 +4521,51 @@ class Game:
             print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
             print()
             
-            # Greeting only on first interaction (or randomly)
+            # Karma-based greeting
             if random.random() < 0.3:
-                greetings = [
-                    "Ahoy there, young angler!",
-                    "Well, well… another fisher visits my spot!",
-                    "Greetings, friend! Beautiful day for fishing, eh?",
-                    "Ah, a fellow fisher! Come, sit a spell.",
-                    "Welcome to my humble fishing spot.",
-                    "The water speaks to those patient enough to listen.",
-                    "Fish aren't caught with strength alone — calm hands matter more.",
-                ]
-                print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+                if self.karma >= 50:
+                    greetings = [
+                        "Ahoy there, hero of the seas! Your kindness is legendary!",
+                        "The guardian spirits speak well of you, friend!",
+                        "Ah, the protector returns! The waters are blessed by your presence!",
+                        "Welcome, champion! The guardians celebrate your mercy!",
+                        "The ancient ones smile upon you, noble fisher!",
+                    ]
+                    print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= 10:
+                    greetings = [
+                        "Ahoy there, young angler!",
+                        "Greetings, friend! Beautiful day for fishing, eh?",
+                        "Ah, a fellow fisher! Come, sit a spell.",
+                        "Welcome to my humble fishing spot.",
+                        "The water speaks to those patient enough to listen.",
+                    ]
+                    print(Fore.CYAN + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= -10:
+                    greetings = [
+                        "Well, well… another fisher visits my spot.",
+                        "Oh. It's you again.",
+                        "Back already?",
+                        "Hmm. Hello.",
+                    ]
+                    print(Fore.WHITE + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= -50:
+                    greetings = [
+                        "*The old man eyes you warily* ...What do you want?",
+                        "I heard what you did. The guardians won't forget.",
+                        "*Doesn't look up from his fishing* ...You again.",
+                        "Word travels fast on these waters. Your deeds have been noted.",
+                    ]
+                    print(Fore.YELLOW + random.choice(greetings) + Style.RESET_ALL)
+                else:
+                    greetings = [
+                        "*The old man's face hardens* Slayer. What brings you here?",
+                        "The water recoils from your presence... and so do I.",
+                        "*Spits* Executioner. Your hands are stained with ancient blood.",
+                        "The guardians cry out in their graves. What more do you want?",
+                        "*Looks away in disgust* Monster hunter. I have nothing to say to you.",
+                    ]
+                    print(Fore.RED + random.choice(greetings) + Style.RESET_ALL)
                 print()
             
             # Dialog menu
@@ -4507,18 +4680,51 @@ class Game:
                 get_key()
                 
             elif choice == '5':
-                # Leave
+                # Leave - karma-based farewell
                 self.clear_screen()
                 print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
                 print()
-                farewell = [
-                    "\"Tight lines, friend. May the waters be kind to you.\"",
-                    "\"Be safe out there. The guardians remember kindness.\"",
-                    "\"Come back anytime. These old bones enjoy the company.\"",
-                    "\"Fish well, and respect the waters. They're watching.\"",
-                ]
                 print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
-                print(Fore.WHITE + random.choice(farewell) + Style.RESET_ALL)
+                
+                if self.karma >= 50:
+                    farewell = [
+                        "\"May the ancient spirits guide your path, hero. You honor us all.\"",
+                        "\"The guardians are in your debt. Safe travels, protector.\"",
+                        "\"Tight lines, champion. The waters sing of your compassion.\"",
+                        "\"Go with the blessings of the deep. You've earned them.\"",
+                    ]
+                    print(Fore.GREEN + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= 10:
+                    farewell = [
+                        "\"Tight lines, friend. May the waters be kind to you.\"",
+                        "\"Be safe out there. The guardians remember kindness.\"",
+                        "\"Come back anytime. These old bones enjoy the company.\"",
+                        "\"Fish well, and respect the waters. They're watching.\"",
+                    ]
+                    print(Fore.CYAN + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= -10:
+                    farewell = [
+                        "\"...Be careful out there.\"",
+                        "\"The waters are watching. Always watching.\"",
+                        "\"*Nods curtly* Safe travels.\"",
+                    ]
+                    print(Fore.WHITE + random.choice(farewell) + Style.RESET_ALL)
+                elif self.karma >= -50:
+                    farewell = [
+                        "\"The guardians don't forget. Think on that.\"",
+                        "\"*Turns back to fishing without another word*\"",
+                        "\"Every action has consequences, fisher. Remember that.\"",
+                    ]
+                    print(Fore.YELLOW + random.choice(farewell) + Style.RESET_ALL)
+                else:
+                    farewell = [
+                        "\"*Doesn't look at you* Just... go.\"",
+                        "\"The blood on your hands won't wash off. Ever.\"",
+                        "\"*Whispers* May the drowned ones haunt your dreams...\"",
+                        "\"*Cold silence*\"",
+                    ]
+                    print(Fore.RED + random.choice(farewell) + Style.RESET_ALL)
+                
                 print()
                 time.sleep(1.5)
                 print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
@@ -4620,7 +4826,7 @@ class Game:
             print()
             print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
-                    print(Fore.MAGENTA + "[DEV] [B]oss Menu | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
+                    print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             else:
                 print(Fore.WHITE + "[WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             
@@ -4686,6 +4892,8 @@ class Game:
             elif key == 'q':
                 print(Fore.YELLOW + "\nThanks for playing! 🎣" + Style.RESET_ALL)
                 break
+            elif key == 'm' and self.debug_mode:
+                self.dev_menu()
             elif key == 'b' and self.debug_mode:
                 self.dev_boss_menu()
     
@@ -4721,7 +4929,10 @@ class Game:
             print()
             print(Fore.YELLOW + location_map.message + Style.RESET_ALL)
             print()
-            print(Fore.WHITE + "[WASD] Move | [E] Fish | [Q] Return to Hub Island" + Style.RESET_ALL)
+            if self.debug_mode:
+                print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Fish | [Q] Return to Hub" + Style.RESET_ALL)
+            else:
+                print(Fore.WHITE + "[WASD] Move | [E] Fish | [Q] Return to Hub Island" + Style.RESET_ALL)
             
             # Get input
             key = get_key()
@@ -4761,6 +4972,10 @@ class Game:
                     self.current_location = location
                 else:
                     location_map.message = "You need to be in water to fish!"
+            elif key == 'm' and self.debug_mode:
+                self.dev_menu()
+            elif key == 'b' and self.debug_mode:
+                self.dev_boss_menu()
             elif key == 'q':
                 # Return to previous location
                 self.current_location = old_location
@@ -5037,32 +5252,38 @@ class Game:
             damage_taken = attack.execute()
             
             if damage_taken > 0:
-                # Apply defense reduction
-                defense_bonus = self.get_defense_bonus()
-                damage_taken = max(1, damage_taken - defense_bonus)  # Minimum 1 damage
-                
-                self.current_hp -= damage_taken
-                print()
-                
-                # Screen shake effect
-                shake_frames = ["💔", "  💔", "    💔", "  💔", "💔"]
-                for frame in shake_frames:
-                    sys.stdout.write("\r" + Fore.RED + frame + Style.RESET_ALL)
-                    sys.stdout.flush()
-                    time.sleep(0.08)
-                
-                print()
-                
-                # Flash damage
-                for _ in range(3):
-                    print(Fore.RED + f"    YOU TOOK {damage_taken} DAMAGE!" + Style.RESET_ALL)
-                    time.sleep(0.1)
-                    sys.stdout.write("\r" + " " * 40 + "\r")
-                    sys.stdout.flush()
-                    time.sleep(0.1)
-                
-                print(Fore.RED + f"You took {damage_taken} damage!" + Style.RESET_ALL)
-                time.sleep(0.5)
+                # Check for god mode
+                if hasattr(self, 'god_mode') and self.god_mode:
+                    print()
+                    print(Fore.MAGENTA + "⚡ [GOD MODE] - No damage taken! ⚡" + Style.RESET_ALL)
+                    time.sleep(1)
+                else:
+                    # Apply defense reduction
+                    defense_bonus = self.get_defense_bonus()
+                    damage_taken = max(1, damage_taken - defense_bonus)  # Minimum 1 damage
+                    
+                    self.current_hp -= damage_taken
+                    print()
+                    
+                    # Screen shake effect
+                    shake_frames = ["💔", "  💔", "    💔", "  💔", "💔"]
+                    for frame in shake_frames:
+                        sys.stdout.write("\r" + Fore.RED + frame + Style.RESET_ALL)
+                        sys.stdout.flush()
+                        time.sleep(0.08)
+                    
+                    print()
+                    
+                    # Flash damage
+                    for _ in range(3):
+                        print(Fore.RED + f"    YOU TOOK {damage_taken} DAMAGE!" + Style.RESET_ALL)
+                        time.sleep(0.1)
+                        sys.stdout.write("\r" + " " * 40 + "\r")
+                        sys.stdout.flush()
+                        time.sleep(0.1)
+                    
+                    print(Fore.RED + f"You took {damage_taken} damage!" + Style.RESET_ALL)
+                    time.sleep(0.5)
             
             # Check low HP dialogue
             hp_percent = (boss.hp / boss.max_hp) * 100
@@ -5168,6 +5389,349 @@ class Game:
             self.start_boss_fight(PIRATE_SHIP)
         elif choice == '4':
             self.start_boss_fight(KRAKEN)
+    
+    def dev_menu(self):
+        """DEV MODE: Comprehensive testing and stat editing menu"""
+        while True:
+            self.clear_screen()
+            print(Fore.MAGENTA + "╔════════════════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.MAGENTA + "║         🔧 DEVELOPER MENU 🔧                   ║" + Style.RESET_ALL)
+            print(Fore.MAGENTA + "╚════════════════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            print(Fore.YELLOW + f"Current Stats:" + Style.RESET_ALL)
+            print(Fore.WHITE + f"  Level: {self.level} | XP: {self.xp}/{self.xp_threshold}" + Style.RESET_ALL)
+            print(Fore.WHITE + f"  Money: ${self.money} | Karma: {self.karma}" + Style.RESET_ALL)
+            print(Fore.WHITE + f"  HP: {self.current_hp}/{self.max_hp}" + Style.RESET_ALL)
+            print(Fore.WHITE + f"  Skill Points: {self.skill_points}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"  Defeated Bosses: {len(self.defeated_bosses)}/4" + Style.RESET_ALL)
+            if self.defeated_bosses:
+                print(Fore.LIGHTBLACK_EX + f"    {', '.join(self.defeated_bosses)}" + Style.RESET_ALL)
+            god_mode_status = "ON" if hasattr(self, 'god_mode') and self.god_mode else "OFF"
+            print(Fore.MAGENTA + f"  God Mode: {god_mode_status}" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "═══ Player Stats ═══" + Style.RESET_ALL)
+            print(Fore.GREEN + "1. Edit Money" + Style.RESET_ALL)
+            print(Fore.GREEN + "2. Edit Level & XP" + Style.RESET_ALL)
+            print(Fore.GREEN + "3. Edit Karma" + Style.RESET_ALL)
+            print(Fore.GREEN + "4. Edit HP/Max HP" + Style.RESET_ALL)
+            print(Fore.GREEN + "5. Edit Skill Points" + Style.RESET_ALL)
+            print(Fore.GREEN + "6. Edit Character Stats (STR/LUCK/PAT)" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "═══ Inventory & Items ═══" + Style.RESET_ALL)
+            print(Fore.GREEN + "7. Unlock All Rods & Baits" + Style.RESET_ALL)
+            print(Fore.GREEN + "8. Unlock All Combat Items" + Style.RESET_ALL)
+            print(Fore.GREEN + "9. Add Specific Fish to Inventory" + Style.RESET_ALL)
+            print(Fore.GREEN + "10. Clear Inventory" + Style.RESET_ALL)
+            print(Fore.GREEN + "11. Add All Boss Items" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "═══ Progression & World ═══" + Style.RESET_ALL)
+            print(Fore.GREEN + "12. Unlock All Locations (+ Karma)" + Style.RESET_ALL)
+            print(Fore.GREEN + "13. Reset Defeated Bosses" + Style.RESET_ALL)
+            print(Fore.GREEN + "14. Mark All Bosses as Defeated (+ Karma)" + Style.RESET_ALL)
+            print(Fore.GREEN + "15. Complete All Encyclopedia Entries" + Style.RESET_ALL)
+            print(Fore.GREEN + "16. Reset Encyclopedia" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "═══ Testing Tools ═══" + Style.RESET_ALL)
+            print(Fore.GREEN + "17. Spawn Boss (Boss Menu)" + Style.RESET_ALL)
+            print(Fore.GREEN + "18. Test Fishing (Instant Catch)" + Style.RESET_ALL)
+            print(Fore.GREEN + "19. Set Rod Durability" + Style.RESET_ALL)
+            print(Fore.GREEN + "20. Toggle God Mode (Infinite HP)" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "0. Exit Dev Menu" + Style.RESET_ALL)
+            print()
+            
+            choice = input(Fore.MAGENTA + "Select option: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                self.dev_edit_money()
+            elif choice == '2':
+                self.dev_edit_level_xp()
+            elif choice == '3':
+                self.dev_edit_karma()
+            elif choice == '4':
+                self.dev_edit_hp()
+            elif choice == '5':
+                self.dev_edit_skill_points()
+            elif choice == '6':
+                self.dev_edit_character_stats()
+            elif choice == '7':
+                self.dev_unlock_rods_baits()
+            elif choice == '8':
+                self.dev_unlock_combat_items()
+            elif choice == '9':
+                self.dev_add_fish()
+            elif choice == '10':
+                self.dev_clear_inventory()
+            elif choice == '11':
+                self.dev_add_boss_items()
+            elif choice == '12':
+                self.dev_unlock_locations()
+            elif choice == '13':
+                self.dev_reset_bosses()
+            elif choice == '14':
+                self.dev_mark_all_bosses()
+            elif choice == '15':
+                self.dev_complete_encyclopedia()
+            elif choice == '16':
+                self.dev_reset_encyclopedia()
+            elif choice == '17':
+                self.dev_boss_menu()
+            elif choice == '18':
+                self.dev_test_fishing()
+            elif choice == '19':
+                self.dev_set_durability()
+            elif choice == '20':
+                self.dev_toggle_god_mode()
+            elif choice == '0':
+                break
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
+    
+    def dev_edit_money(self):
+        """Edit money amount"""
+        print(Fore.YELLOW + f"\nCurrent Money: ${self.money}" + Style.RESET_ALL)
+        try:
+            amount = int(input(Fore.GREEN + "New amount: $" + Style.RESET_ALL))
+            self.money = max(0, amount)
+            print(Fore.GREEN + f"✓ Money set to ${self.money}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_edit_level_xp(self):
+        """Edit level and XP"""
+        print(Fore.YELLOW + f"\nCurrent Level: {self.level} | XP: {self.xp}/{self.xp_threshold}" + Style.RESET_ALL)
+        try:
+            new_level = int(input(Fore.GREEN + "New level: " + Style.RESET_ALL))
+            self.level = max(1, new_level)
+            self.xp_threshold = 100 + (self.level - 1) * 50
+            self.xp = 0
+            print(Fore.GREEN + f"✓ Level set to {self.level}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_edit_karma(self):
+        """Edit karma"""
+        print(Fore.YELLOW + f"\nCurrent Karma: {self.karma}" + Style.RESET_ALL)
+        print(Fore.WHITE + "Karma ranges: <-50 (Villain), -50 to -10 (Bad), -10 to 10 (Neutral), 10 to 50 (Good), >50 (Hero)" + Style.RESET_ALL)
+        try:
+            new_karma = int(input(Fore.GREEN + "New karma: " + Style.RESET_ALL))
+            self.karma = new_karma
+            print(Fore.GREEN + f"✓ Karma set to {self.karma}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_edit_hp(self):
+        """Edit HP and Max HP"""
+        print(Fore.YELLOW + f"\nCurrent HP: {self.current_hp}/{self.max_hp}" + Style.RESET_ALL)
+        try:
+            new_max_hp = int(input(Fore.GREEN + "New Max HP: " + Style.RESET_ALL))
+            self.max_hp = max(1, new_max_hp)
+            self.current_hp = self.max_hp
+            print(Fore.GREEN + f"✓ HP set to {self.current_hp}/{self.max_hp}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_edit_skill_points(self):
+        """Edit skill points"""
+        print(Fore.YELLOW + f"\nCurrent Skill Points: {self.skill_points}" + Style.RESET_ALL)
+        try:
+            new_sp = int(input(Fore.GREEN + "New skill points: " + Style.RESET_ALL))
+            self.skill_points = max(0, new_sp)
+            print(Fore.GREEN + f"✓ Skill points set to {self.skill_points}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_edit_character_stats(self):
+        """Edit character stats (Strength, Luck, Patience)"""
+        print(Fore.YELLOW + f"\nCurrent Stats:" + Style.RESET_ALL)
+        print(Fore.WHITE + f"  Strength: {self.stats['strength']}" + Style.RESET_ALL)
+        print(Fore.WHITE + f"  Luck: {self.stats['luck']}" + Style.RESET_ALL)
+        print(Fore.WHITE + f"  Patience: {self.stats['patience']}" + Style.RESET_ALL)
+        print()
+        try:
+            str_val = int(input(Fore.GREEN + "New Strength: " + Style.RESET_ALL))
+            luck_val = int(input(Fore.GREEN + "New Luck: " + Style.RESET_ALL))
+            pat_val = int(input(Fore.GREEN + "New Patience: " + Style.RESET_ALL))
+            
+            self.stats['strength'] = max(0, str_val)
+            self.stats['luck'] = max(0, luck_val)
+            self.stats['patience'] = max(0, pat_val)
+            
+            print(Fore.GREEN + f"✓ Stats updated!" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_unlock_rods_baits(self):
+        """Unlock all rods and baits"""
+        self.owned_rods = RODS[:]
+        self.owned_baits = BAITS[:]
+        self.current_rod = RODS[-1]
+        self.current_bait = BAITS[-1]
+        print(Fore.GREEN + "✓ All rods and baits unlocked!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_unlock_combat_items(self):
+        """Unlock all combat items"""
+        self.owned_combat_items = {
+            'attack': COMBAT_ITEMS_ATTACK[:],
+            'defense': COMBAT_ITEMS_DEFENSE[:],
+            'hp': COMBAT_ITEMS_HP[:]
+        }
+        self.equipped_combat_items = {
+            'attack': COMBAT_ITEMS_ATTACK[-1] if COMBAT_ITEMS_ATTACK else None,
+            'defense': COMBAT_ITEMS_DEFENSE[-1] if COMBAT_ITEMS_DEFENSE else None,
+            'hp': COMBAT_ITEMS_HP[-1] if COMBAT_ITEMS_HP else None
+        }
+        print(Fore.GREEN + "✓ All combat items unlocked!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_add_fish(self):
+        """Add specific fish to inventory"""
+        print(Fore.YELLOW + "\nSelect fish rarity to add:" + Style.RESET_ALL)
+        print(Fore.WHITE + "1. Common" + Style.RESET_ALL)
+        print(Fore.GREEN + "2. Uncommon" + Style.RESET_ALL)
+        print(Fore.BLUE + "3. Rare" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "4. Epic" + Style.RESET_ALL)
+        print(Fore.YELLOW + "5. Legendary" + Style.RESET_ALL)
+        print(Fore.RED + "6. Mythical" + Style.RESET_ALL)
+        
+        choice = input(Fore.GREEN + "Choice: " + Style.RESET_ALL)
+        
+        rarity_map = {
+            '1': 'common',
+            '2': 'uncommon',
+            '3': 'rare',
+            '4': 'epic',
+            '5': 'legendary',
+            '6': 'mythical'
+        }
+        
+        if choice in rarity_map:
+            rarity = rarity_map[choice]
+            # Create a sample fish
+            fish_name = random.choice(UNIQUE_FISH_NAMES)
+            fish = Fish(
+                name=fish_name,
+                weight=random.uniform(1, 50),
+                rarity=rarity,
+                mutation=None,
+                xp_value=10
+            )
+            self.inventory.append(fish)
+            print(Fore.GREEN + f"✓ Added {rarity} {fish_name} to inventory!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_clear_inventory(self):
+        """Clear fish inventory"""
+        confirm = input(Fore.RED + "Clear inventory? (Y/N): " + Style.RESET_ALL).lower()
+        if confirm == 'y':
+            self.inventory = []
+            print(Fore.GREEN + "✓ Inventory cleared!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_add_boss_items(self):
+        """Add all boss items"""
+        self.boss_inventory = list(BOSS_ITEMS.values())
+        print(Fore.GREEN + "✓ All boss items added!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_unlock_locations(self):
+        """Unlock all locations by marking bosses as defeated"""
+        # Use the exact boss names from the Boss objects
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken"]
+        # Ensure positive karma for Captain Redbeard
+        if self.karma < 1:
+            self.karma = 10
+            print(Fore.YELLOW + "✓ Karma set to 10 (required for Captain Redbeard at docks)" + Style.RESET_ALL)
+        print(Fore.GREEN + "✓ All locations unlocked!" + Style.RESET_ALL)
+        print(Fore.CYAN + f"  Defeated bosses: {', '.join(self.defeated_bosses)}" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "  Tip: Visit the dock to talk to Captain Redbeard!" + Style.RESET_ALL)
+        time.sleep(2)
+    
+    def dev_reset_bosses(self):
+        """Reset defeated bosses"""
+        confirm = input(Fore.RED + "Reset all defeated bosses? (Y/N): " + Style.RESET_ALL).lower()
+        if confirm == 'y':
+            self.defeated_bosses = []
+            print(Fore.GREEN + "✓ Defeated bosses reset!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_mark_all_bosses(self):
+        """Mark all bosses as defeated"""
+        # Use the exact boss names from the Boss objects
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken"]
+        # Also ensure positive karma so Captain Redbeard appears
+        if self.karma < 1:
+            self.karma = 10
+            print(Fore.YELLOW + "✓ Karma set to 10 (required for Captain Redbeard at docks)" + Style.RESET_ALL)
+        print(Fore.GREEN + "✓ All bosses marked as defeated!" + Style.RESET_ALL)
+        print(Fore.CYAN + f"  Defeated bosses: {', '.join(self.defeated_bosses)}" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "  Tip: Visit the dock to talk to Captain Redbeard!" + Style.RESET_ALL)
+        time.sleep(2)
+    
+    def dev_complete_encyclopedia(self):
+        """Complete encyclopedia"""
+        for fish_name in UNIQUE_FISH_NAMES:
+            if fish_name not in self.encyclopedia:
+                self.encyclopedia[fish_name] = {
+                    'caught': 1,
+                    'max_weight': random.uniform(1, 50)
+                }
+        print(Fore.GREEN + f"✓ Encyclopedia completed! ({len(self.encyclopedia)}/{len(UNIQUE_FISH_NAMES)} species)" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_reset_encyclopedia(self):
+        """Reset encyclopedia"""
+        confirm = input(Fore.RED + "Reset encyclopedia? (Y/N): " + Style.RESET_ALL).lower()
+        if confirm == 'y':
+            self.encyclopedia = {}
+            print(Fore.GREEN + "✓ Encyclopedia reset!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_test_fishing(self):
+        """Instant fishing test"""
+        print(Fore.YELLOW + "\nInstant fishing test..." + Style.RESET_ALL)
+        # Simulate a quick catch
+        fish = self.generate_fish()
+        self.inventory.append(fish)
+        self.update_encyclopedia(fish)
+        print(Fore.GREEN + f"✓ Caught {fish.get_display_name()}!" + Style.RESET_ALL)
+        print(Fore.WHITE + f"  Weight: {fish.weight:.2f} lbs | Rarity: {fish.rarity}" + Style.RESET_ALL)
+        time.sleep(2)
+    
+    def dev_set_durability(self):
+        """Set rod durability"""
+        print(Fore.YELLOW + f"\nCurrent Durability: {self.rod_durability}/{self.rod_max_durability}" + Style.RESET_ALL)
+        try:
+            new_dur = int(input(Fore.GREEN + "New durability: " + Style.RESET_ALL))
+            self.rod_durability = max(0, min(new_dur, self.rod_max_durability))
+            print(Fore.GREEN + f"✓ Durability set to {self.rod_durability}" + Style.RESET_ALL)
+        except ValueError:
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+        time.sleep(1)
+    
+    def dev_toggle_god_mode(self):
+        """Toggle god mode (infinite HP)"""
+        if not hasattr(self, 'god_mode'):
+            self.god_mode = False
+        
+        self.god_mode = not self.god_mode
+        
+        if self.god_mode:
+            print(Fore.GREEN + "✓ GOD MODE ENABLED - You cannot take damage!" + Style.RESET_ALL)
+        else:
+            print(Fore.YELLOW + "✓ God mode disabled" + Style.RESET_ALL)
+        time.sleep(1)
+
 
 
 # ===== MAIN =====
@@ -5226,9 +5790,13 @@ if __name__ == "__main__":
         game.current_bait = BAITS[-1]
         game.debug_mode = True
         game.boss_inventory = list(BOSS_ITEMS.values())  # all boss items
-        print(Fore.LIGHTMAGENTA_EX + "All rods, baits, locations and bosses unlocked!" + Style.RESET_ALL)
-        print(Fore.LIGHTMAGENTA_EX + "Press [B] in-game to spawn bosses directly!" + Style.RESET_ALL)
-        time.sleep(1)
+        print(Fore.LIGHTMAGENTA_EX + "╔════════════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "║          DEV MODE ACTIVATED! 🔧            ║" + Style.RESET_ALL)
+        print(Fore.LIGHTMAGENTA_EX + "╚════════════════════════════════════════════╝" + Style.RESET_ALL)
+        print(Fore.GREEN + "All rods, baits, locations and bosses unlocked!" + Style.RESET_ALL)
+        print(Fore.CYAN + "Press [M] in-game for the full Developer Menu!" + Style.RESET_ALL)
+        print(Fore.CYAN + "Press [B] to quickly spawn bosses!" + Style.RESET_ALL)
+        time.sleep(2)
         game.start_game()
 
     else:
