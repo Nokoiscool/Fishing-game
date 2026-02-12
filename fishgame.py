@@ -194,27 +194,22 @@ class BossAttack:
 
 # ===== BOSS ATTACK PATTERNS =====
 def loch_ness_wave_attack():
-    """Water wave pattern - player must dodge moving characters"""
+    """Simple wave pattern - original attack (kept for variety)"""
     pattern_length = 40
     safe_spots = []
     
-    # Animated wave approach
     print(Fore.CYAN + "\n💧 Waves incoming! 💧\n" + Style.RESET_ALL)
     
-    # Show 3 animated waves approaching
     for wave_num in range(3):
         wave_pos = random.randint(0, pattern_length - 10)
         
-        # Animate wave moving across screen
         for frame in range(10):
             pattern = [' '] * pattern_length
-            # Create wave shape
             wave_start = max(0, wave_pos - 2 + frame)
             wave_end = min(pattern_length, wave_pos + 10 + frame)
             
             for i in range(wave_start, wave_end):
                 if i < pattern_length:
-                    # Wave characters with varying heights
                     offset = abs((i - wave_start) - 5)
                     if offset == 0:
                         pattern[i] = '≋'
@@ -223,20 +218,17 @@ def loch_ness_wave_attack():
                     else:
                         pattern[i] = '˜'
             
-            # Color the waves blue
             display = Fore.CYAN + "[" + ''.join(pattern) + "]" + Style.RESET_ALL
             sys.stdout.write("\r" + display)
             sys.stdout.flush()
             time.sleep(0.05)
         
-        print()  # New line after wave
+        print()
         
-        # Track final wave position for safe spots
         for i in range(pattern_length):
             if i < wave_pos or i >= wave_pos + 8:
                 safe_spots.append(i)
     
-    # Player dodges
     print()
     print(Fore.YELLOW + "Choose a safe position to dodge (0-39):" + Style.RESET_ALL)
     try:
@@ -246,7 +238,6 @@ def loch_ness_wave_attack():
             time.sleep(0.5)
             return 0
         else:
-            # Show hit animation
             for _ in range(3):
                 print(Fore.RED + "💥 SPLASH! 💥" + Style.RESET_ALL)
                 time.sleep(0.1)
@@ -259,101 +250,12 @@ def loch_ness_wave_attack():
         print(Fore.RED + "Invalid input! You got hit!" + Style.RESET_ALL)
         return random.randint(10, 20)
 
-def loch_ness_neck_slam():
-    """Long neck slam - timing based dodge with animation"""
-    # Show neck rising animation
-    print(Fore.YELLOW + "\n🐉 The Loch Ness Monster's neck is rising...\n" + Style.RESET_ALL)
-    
-    neck_frames = [
-        "                    |",
-        "                   /|\\",
-        "                  / | \\",
-        "                 /  |  \\",
-        "                /   👁   \\",
-    ]
-    
-    for frame in neck_frames:
-        print(Fore.GREEN + frame + Style.RESET_ALL)
-        time.sleep(0.3)
-    
-    print()
-    print(Fore.RED + "⚠️  IT'S COMING DOWN! ⚠️" + Style.RESET_ALL)
-    print()
-    
-    # Visual countdown
-    for i in range(3, 0, -1):
-        sys.stdout.write(Fore.YELLOW + f"\r   {i}...   " + Style.RESET_ALL)
-        sys.stdout.flush()
-        time.sleep(0.5)
-    
-    print()
-    
-    # Quick time event
-    print(Fore.CYAN + "Press ENTER to dodge NOW!" + Style.RESET_ALL)
-    start_time = time.time()
-    
-    if platform.system() == "Windows":
-        import msvcrt
-        start = time.time()
-        while time.time() - start < 1.5:
-            if msvcrt.kbhit():
-                msvcrt.getch()
-                elapsed = time.time() - start
-                if 0.3 < elapsed < 1.2:
-                    # Perfect dodge animation
-                    for _ in range(2):
-                        print(Fore.GREEN + "★ PERFECT DODGE! ★" + Style.RESET_ALL)
-                        time.sleep(0.1)
-                    return 0
-                else:
-                    print(Fore.YELLOW + "Partial dodge!" + Style.RESET_ALL)
-                    return random.randint(5, 10)
-        # Impact animation
-        for _ in range(3):
-            print(Fore.RED + "💥 SLAM! 💥" + Style.RESET_ALL)
-            time.sleep(0.1)
-            sys.stdout.write("\r" + " " * 20 + "\r")
-            sys.stdout.flush()
-            time.sleep(0.1)
-        print(Fore.RED + "You got slammed!" + Style.RESET_ALL)
-        return random.randint(15, 25)
-    else:
-        # Simplified for Unix systems
-        try:
-            import select
-            start = time.time()
-            print(Fore.CYAN + "Quick! Press ENTER!" + Style.RESET_ALL)
-            
-            # Wait for input with timeout
-            rlist, _, _ = select.select([sys.stdin], [], [], 1.5)
-            if rlist:
-                sys.stdin.readline()
-                elapsed = time.time() - start
-                if 0.3 < elapsed < 1.2:
-                    print(Fore.GREEN + "★ PERFECT DODGE! ★" + Style.RESET_ALL)
-                    return 0
-                else:
-                    print(Fore.YELLOW + "Close dodge!" + Style.RESET_ALL)
-                    return random.randint(0, 5)
-            else:
-                print(Fore.RED + "Too slow! 💥" + Style.RESET_ALL)
-                return random.randint(15, 25)
-        except:
-            print(Fore.RED + "You got hit!" + Style.RESET_ALL)
-            return random.randint(15, 25)
 
 def loch_ness_water_blast():
-    """Multiple choice dodge with charging animation"""
+    """Multiple choice dodge - original attack (kept for variety)"""
     print(Fore.CYAN + "\n💦 The monster is charging a water blast! 💦\n" + Style.RESET_ALL)
     
-    # Charging animation
-    charging_frames = [
-        "  (  )",
-        "  ( O )",
-        "  ( ⚡ )",
-        "  (💧💧)",
-        "  (💦💦)",
-    ]
+    charging_frames = ["  (  )", "  ( O )", "  ( ⚡ )", "  (💧💧)", "  (💦💦)"]
     
     for frame in charging_frames:
         sys.stdout.write("\r" + Fore.LIGHTBLUE_EX + frame + Style.RESET_ALL)
@@ -379,7 +281,6 @@ def loch_ness_water_blast():
     try:
         choice = int(input(Fore.GREEN + "Choice > " + Style.RESET_ALL))
         
-        # Blast animation
         print()
         for i in range(5):
             blast = "💦" * (i + 1)
@@ -389,13 +290,11 @@ def loch_ness_water_blast():
         print()
         
         if choice == correct:
-            # Success animation
             for _ in range(2):
                 print(Fore.GREEN + "✨ PERFECT DODGE! ✨" + Style.RESET_ALL)
                 time.sleep(0.1)
             return 0
         else:
-            # Hit animation
             for _ in range(3):
                 print(Fore.RED + "💥 SPLASH! 💥" + Style.RESET_ALL)
                 time.sleep(0.1)
@@ -407,6 +306,406 @@ def loch_ness_water_blast():
     except:
         print(Fore.RED + "Invalid input! You got blasted!" + Style.RESET_ALL)
         return random.randint(12, 18)
+
+
+def loch_ness_tidal_wave():
+    """ENHANCED: Multi-wave attack with different speeds and sizes"""
+    pattern_length = 50
+    print(Fore.CYAN + "\n🌊 TIDAL WAVE INCOMING! 🌊\n" + Style.RESET_ALL)
+    
+    waves = []
+    for i in range(5):
+        wave = {
+            'position': random.randint(0, 10),
+            'speed': random.randint(2, 5),
+            'size': random.randint(4, 8),
+            'damage': random.randint(3, 6)
+        }
+        waves.append(wave)
+    
+    for frame in range(15):
+        pattern = [' '] * pattern_length
+        
+        for wave in waves:
+            wave_pos = wave['position'] + (wave['speed'] * frame)
+            wave_size = wave['size']
+            
+            for i in range(wave_pos, min(wave_pos + wave_size, pattern_length)):
+                if 0 <= i < pattern_length:
+                    if i - wave_pos <= 1:
+                        pattern[i] = '≋'
+                    elif i - wave_pos <= wave_size // 2:
+                        pattern[i] = '~'
+                    else:
+                        pattern[i] = '˜'
+        
+        display = Fore.CYAN + "[" + ''.join(pattern) + "]" + Style.RESET_ALL
+        sys.stdout.write("\r" + display)
+        sys.stdout.flush()
+        time.sleep(0.08)
+    
+    print("\n")
+    
+    final_positions = []
+    for wave in waves:
+        final_pos = wave['position'] + (wave['speed'] * 14)
+        final_positions.append((final_pos, final_pos + wave['size']))
+    
+    print(Fore.YELLOW + f"Choose position to stand (0-{pattern_length-1}):" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "💭 Tip: Look for gaps between the waves!" + Style.RESET_ALL)
+    
+    try:
+        player_pos = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        total_damage = 0
+        hit_count = 0
+        for wave_start, wave_end in final_positions:
+            if wave_start <= player_pos < wave_end:
+                hit_count += 1
+                total_damage += waves[final_positions.index((wave_start, wave_end))]['damage']
+        
+        if hit_count == 0:
+            print(Fore.GREEN + "✓ PERFECT DODGE! You found the safe zone!" + Style.RESET_ALL)
+            return 0
+        elif hit_count == 1:
+            print(Fore.YELLOW + f"💦 Caught by 1 wave! (-{total_damage} HP)" + Style.RESET_ALL)
+            return total_damage
+        else:
+            print(Fore.RED + f"💥 CRUSHED by {hit_count} waves! (-{total_damage} HP)" + Style.RESET_ALL)
+            return total_damage
+            
+    except:
+        print(Fore.RED + "Invalid input! Swept away!" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_whirlpool():
+    """ENHANCED: Button mashing to escape spinning vortex"""
+    print(Fore.BLUE + "\n🌀 WHIRLPOOL! You're being pulled in! 🌀\n" + Style.RESET_ALL)
+    
+    whirlpool_frames = [
+        "      ≈≈≈      ",
+        "    ≈≈≈≈≈≈     ",
+        "   ≈≈≈◉≈≈≈≈    ",
+        "  ≈≈≈≈◉≈≈≈≈≈   ",
+        " ≈≈≈≈◉◉◉≈≈≈≈≈  ",
+        "≈≈≈≈◉◉◉◉◉≈≈≈≈≈ ",
+    ]
+    
+    for frame in whirlpool_frames:
+        sys.stdout.write("\r" + Fore.BLUE + frame + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    print(Fore.RED + "MASH THE CORRECT BUTTONS TO ESCAPE!" + Style.RESET_ALL)
+    
+    buttons = ['W', 'A', 'S', 'D']
+    required_sequence = [random.choice(buttons) for _ in range(5)]
+    
+    print(Fore.YELLOW + f"Enter: {' → '.join(required_sequence)}" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "(Type them quickly, then press Enter!)" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    try:
+        player_input = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed_time = time.time() - start_time
+        
+        correct_input = ''.join(required_sequence)
+        
+        if player_input == correct_input and elapsed_time < 3:
+            print(Fore.GREEN + "✨ ESCAPED! Perfect button mashing!" + Style.RESET_ALL)
+            return 0
+        elif player_input == correct_input:
+            print(Fore.YELLOW + "⚡ Escaped, but took some damage from the pull!" + Style.RESET_ALL)
+            return 8
+        else:
+            correct_count = sum(1 for i, char in enumerate(player_input) if i < len(required_sequence) and char == required_sequence[i])
+            damage = 20 - (correct_count * 3)
+            print(Fore.RED + f"💫 Pulled under! Got {correct_count}/5 correct (-{damage} HP)" + Style.RESET_ALL)
+            return damage
+    except:
+        print(Fore.RED + "💥 Sucked into the whirlpool! (-20 HP)" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_tail_sweep():
+    """ENHANCED: Prediction-based dodge with tells"""
+    print(Fore.GREEN + "\n🐉 The Loch Ness Monster winds up its massive tail... 🐉\n" + Style.RESET_ALL)
+    
+    directions = ['LEFT', 'RIGHT', 'CENTER']
+    correct_dir = random.choice(directions)
+    
+    if correct_dir == 'LEFT':
+        print(Fore.LIGHTBLACK_EX + "💭 The monster's body is leaning right..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is on the right side..." + Style.RESET_ALL)
+    elif correct_dir == 'RIGHT':
+        print(Fore.LIGHTBLACK_EX + "💭 The monster's body is leaning left..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is on the left side..." + Style.RESET_ALL)
+    else:
+        print(Fore.LIGHTBLACK_EX + "💭 The monster is perfectly balanced..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is raised high above..." + Style.RESET_ALL)
+    
+    time.sleep(1)
+    
+    charge_frames = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+    for frame in charge_frames:
+        sys.stdout.write("\r" + Fore.YELLOW + f"CHARGING: {frame * 10}" + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.15)
+    
+    print("\n")
+    print(Fore.RED + "⚠️  TAIL SWEEP INCOMING! ⚠️" + Style.RESET_ALL)
+    print()
+    print(Fore.CYAN + "Which way do you dodge?" + Style.RESET_ALL)
+    print(Fore.WHITE + "1. 🏃 Dodge LEFT" + Style.RESET_ALL)
+    print(Fore.WHITE + "2. 🏃 Dodge RIGHT" + Style.RESET_ALL)
+    print(Fore.WHITE + "3. 🤸 Stay CENTER" + Style.RESET_ALL)
+    
+    try:
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL)
+        
+        print()
+        if correct_dir == 'LEFT':
+            sweep = "〰️〰️〰️〰️〰️=====>"
+        elif correct_dir == 'RIGHT':
+            sweep = "<=====〰️〰️〰️〰️〰️"
+        else:
+            sweep = "    ↓↓↓↓↓    "
+        
+        for i in range(3):
+            sys.stdout.write("\r" + Fore.GREEN + sweep + Style.RESET_ALL)
+            sys.stdout.flush()
+            time.sleep(0.15)
+        print()
+        
+        choice_map = {'1': 'LEFT', '2': 'RIGHT', '3': 'CENTER'}
+        player_choice = choice_map.get(choice, 'INVALID')
+        
+        if player_choice == correct_dir:
+            print(Fore.GREEN + "✓ PERFECT READ! You dodged it!" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.RED + f"💥 SMASHED! The tail swept {correct_dir}!" + Style.RESET_ALL)
+            return random.randint(15, 22)
+            
+    except:
+        print(Fore.RED + "Invalid input! Got hit!" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_deep_dive_slam():
+    """ENHANCED: Two-phase attack - dive then slam"""
+    print(Fore.BLUE + "\n🌊 The Loch Ness Monster DIVES beneath the surface! 🌊\n" + Style.RESET_ALL)
+    
+    dive_frames = [
+        "     🐉     ",
+        "     🐉~    ",
+        "     🐉~~   ",
+        "     ~🐉~~  ",
+        "     ~~🐉~~ ",
+        "     ~~~💦  ",
+        "     ~~~    ",
+        "     ...    ",
+    ]
+    
+    for frame in dive_frames:
+        sys.stdout.write("\r" + Fore.CYAN + frame + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    print(Fore.YELLOW + "💭 It's gone under... where will it emerge?" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    zones = 7
+    emerge_zone = random.randint(0, zones - 1)
+    
+    print(Fore.CYAN + f"Choose a safe zone (0-{zones-1}):" + Style.RESET_ALL)
+    print(Fore.WHITE + "[0] [1] [2] [3] [4] [5] [6]" + Style.RESET_ALL)
+    
+    try:
+        phase1_choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        zone_display = ["[ ]"] * zones
+        zone_display[emerge_zone] = "[🐉]"
+        
+        for i in range(3):
+            print("\r" + Fore.GREEN + " ".join(zone_display) + Style.RESET_ALL)
+            time.sleep(0.3)
+        
+        phase1_damage = 0
+        if phase1_choice == emerge_zone:
+            print(Fore.RED + "💥 It emerged RIGHT where you were! (-12 HP)" + Style.RESET_ALL)
+            phase1_damage = 12
+        else:
+            print(Fore.GREEN + "✓ Safe from the emergence!" + Style.RESET_ALL)
+        
+        time.sleep(0.8)
+        
+        print()
+        print(Fore.RED + "\n⚠️  NOW IT'S GOING FOR A BODY SLAM! ⚠️\n" + Style.RESET_ALL)
+        print(Fore.CYAN + "Quick! Dodge direction?" + Style.RESET_ALL)
+        print(Fore.WHITE + "1. ⬅️  Roll LEFT   2. ➡️  Roll RIGHT" + Style.RESET_ALL)
+        
+        slam_dir = random.choice([1, 2])
+        
+        phase2_choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        for i in range(3):
+            if slam_dir == 1:
+                print(Fore.GREEN + "    🐉 <<<====" + Style.RESET_ALL)
+            else:
+                print(Fore.GREEN + "====>>> 🐉    " + Style.RESET_ALL)
+            time.sleep(0.15)
+        
+        phase2_damage = 0
+        if phase2_choice == slam_dir:
+            print(Fore.GREEN + "✓ Perfect dodge roll!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "💥 CRUSHED by the body slam! (-15 HP)" + Style.RESET_ALL)
+            phase2_damage = 15
+        
+        total_damage = phase1_damage + phase2_damage
+        if total_damage == 0:
+            print()
+            print(Fore.LIGHTGREEN_EX + "★★★ FLAWLESS! Both phases dodged! ★★★" + Style.RESET_ALL)
+        
+        return total_damage
+        
+    except:
+        print(Fore.RED + "Invalid input! Got hit by everything! (-27 HP)" + Style.RESET_ALL)
+        return 27
+
+
+def loch_ness_mist_breath():
+    """ENHANCED: Memory test with obscured vision"""
+    print(Fore.LIGHTCYAN_EX + "\n💨 The Loch Ness Monster breathes out a thick mist! 💨\n" + Style.RESET_ALL)
+    
+    positions = ['🪨', '🌊', '⚓', '🐚', '🪨']
+    safe_pos = random.randint(0, 4)
+    positions[safe_pos] = '✨'
+    
+    print(Fore.GREEN + "MEMORIZE THE SAFE ZONE:" + Style.RESET_ALL)
+    print(Fore.YELLOW + " | ".join([f"[{i}]: {pos}" for i, pos in enumerate(positions)]) + Style.RESET_ALL)
+    
+    time.sleep(3)
+    
+    print()
+    for _ in range(3):
+        sys.stdout.write("\r" + Fore.WHITE + "💨💨💨 MIST RISING 💨💨💨" + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.3)
+        sys.stdout.write("\r" + " " * 30 + "\r")
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print()
+    print(Fore.LIGHTBLACK_EX + "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "▓  YOU CAN'T SEE!    ▓" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.CYAN + "Where was the safe zone (✨)? (0-4)" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        print(Fore.WHITE + "The mist clears..." + Style.RESET_ALL)
+        time.sleep(0.5)
+        print(Fore.YELLOW + " | ".join([f"[{i}]: {pos}" for i, pos in enumerate(positions)]) + Style.RESET_ALL)
+        
+        if choice == safe_pos:
+            print(Fore.GREEN + "✓ PERFECT MEMORY! You found the safe zone!" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.RED + f"💥 Wrong! You hit {positions[choice]} (-14 HP)" + Style.RESET_ALL)
+            return 14
+            
+    except:
+        print(Fore.RED + "Invalid! Wandered into danger! (-14 HP)" + Style.RESET_ALL)
+        return 14
+
+
+def loch_ness_combo_attack():
+    """ENHANCED: Ultimate combo attack - only used when HP < 30%"""
+    print(Fore.RED + "\n💢 THE LOCH NESS MONSTER IS ENRAGED! 💢" + Style.RESET_ALL)
+    print(Fore.RED + "⚡ ULTIMATE COMBO ATTACK! ⚡\n" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    total_damage = 0
+    
+    # Part 1: Quick wave dodge
+    print(Fore.CYAN + "Part 1: RAPID WAVES!" + Style.RESET_ALL)
+    wave_dir = random.choice(['L', 'R'])
+    print(Fore.YELLOW + f"Wave coming from the {'LEFT' if wave_dir == 'L' else 'RIGHT'}!" + Style.RESET_ALL)
+    print(Fore.WHITE + "Type 'L' for left or 'R' for right!" + Style.RESET_ALL)
+    
+    try:
+        p1_input = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if p1_input != wave_dir:
+            print(Fore.RED + "💦 Hit by wave! (-8 HP)" + Style.RESET_ALL)
+            total_damage += 8
+        else:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+    except:
+        total_damage += 8
+    
+    time.sleep(0.5)
+    
+    # Part 2: Focus check
+    print()
+    print(Fore.MAGENTA + "Part 2: FOCUS CHECK!" + Style.RESET_ALL)
+    num1 = random.randint(5, 15)
+    num2 = random.randint(1, 10)
+    answer = num1 + num2
+    
+    print(Fore.YELLOW + f"Quick! What's {num1} + {num2}?" + Style.RESET_ALL)
+    
+    try:
+        p2_input = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if p2_input != answer:
+            print(Fore.RED + "❌ Wrong! Distracted! (-6 HP)" + Style.RESET_ALL)
+            total_damage += 6
+        else:
+            print(Fore.GREEN + "✓ Correct!" + Style.RESET_ALL)
+    except:
+        total_damage += 6
+    
+    time.sleep(0.5)
+    
+    # Part 3: Final slam
+    print()
+    print(Fore.RED + "Part 3: FINAL TAIL SLAM!" + Style.RESET_ALL)
+    positions = [' ', ' ', ' ', ' ', ' ']
+    safe = random.randint(0, 4)
+    positions[safe] = '✓'
+    
+    print(Fore.YELLOW + "Pick safe position: " + " | ".join([f"[{i}]" for i in range(5)]) + Style.RESET_ALL)
+    
+    try:
+        p3_input = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if p3_input != safe:
+            print(Fore.RED + "💥 SLAM! (-10 HP)" + Style.RESET_ALL)
+            total_damage += 10
+        else:
+            print(Fore.GREEN + "✓ Safe!" + Style.RESET_ALL)
+    except:
+        total_damage += 10
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★★★ INCREDIBLE! SURVIVED THE COMBO! ★★★" + Style.RESET_ALL)
+    elif total_damage < 15:
+        print(Fore.YELLOW + f"You survived with {total_damage} damage!" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + f"The combo devastated you! {total_damage} damage!" + Style.RESET_ALL)
+    
+    return total_damage
+
 
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
@@ -429,10 +728,17 @@ LOCH_NESS_MONSTER = Boss(
     name="Loch Ness Monster",
     hp=200,
     defense=5,
-    attacks=[
+attacks=[
+        # Original attacks (kept for variety)
         BossAttack("Wave Crash", loch_ness_wave_attack, (10, 20), "Sends powerful waves"),
-        BossAttack("Neck Slam", loch_ness_neck_slam, (15, 25), "Slams with its long neck"),
-        BossAttack("Water Blast", loch_ness_water_blast, (12, 18), "Fires a concentrated water jet")
+        BossAttack("Water Blast", loch_ness_water_blast, (12, 18), "Fires a concentrated water jet"),
+        # NEW Enhanced attacks
+        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 30), "Multi-wave barrage!"),
+        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 20), "Spinning vortex trap!"),
+        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 22), "Massive tail attack!"),
+        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 27), "Two-phase combo!"),
+        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 14), "Vision obscured!"),
+        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 24), "Devastating triple attack!")
     ],
     ascii_art=LOCH_NESS_ASCII,
     dialogue={
@@ -1064,54 +1370,77 @@ def pattern_minigame(patience_stat):
     
 def stardew_valley_minigame(patience_stat):
     print(Fore.YELLOW + "\n🎣 Stardew Valley Fishing Minigame!" + Style.RESET_ALL)
-    print("Use A / D to move\n")
+    print("Use A / D to move the bar - keep the fish inside!\n")
 
     bar_width = 30
-    frames = 120
+    frames = 150  # Bit more time
 
-    # Positions
-    fish_pos = random.uniform(5, bar_width - 5)
+    # Fish setup
+    fish_pos = random.uniform(8, bar_width - 8)
     fish_vel = 0
+    fish_target = fish_pos  # Fish moves toward targets instead of pure random
 
+    # Player bar (now a range, not a point)
     player_pos = bar_width / 2
     player_vel = 0
+    bar_size = 4  # Player controls a 4-unit bar
 
-    # Catch meter
+    # Catch meter - rebalanced
     catch_meter = 0.3
-    catch_speed = 0.015 + patience_stat * 0.002
-    decay_speed = 0.02
+    catch_speed = 0.012 + patience_stat * 0.003  # Patience helps more
+    decay_speed = 0.008  # Much less punishing
+
+    target_timer = 0
 
     for _ in range(frames):
-        # --- Fish movement (wiggly, unpredictable) ---
-        fish_vel += random.uniform(-0.6, 0.6)
-        fish_vel *= 0.9
+        # --- Fish movement (smoother, more predictable) ---
+        target_timer -= 1
+        if target_timer <= 0:
+            # Pick a new target position every so often
+            fish_target = random.uniform(5, bar_width - 5)
+            target_timer = random.randint(15, 40)
+        
+        # Move toward target with some wobble
+        direction = fish_target - fish_pos
+        fish_vel += direction * 0.08 + random.uniform(-0.2, 0.2)
+        fish_vel *= 0.88  # Smooth damping
         fish_pos += fish_vel
         fish_pos = max(0, min(bar_width - 1, fish_pos))
 
-        # --- Player input ---
+        # --- Player input (more responsive) ---
         key = get_key()
         if key == 'a':
-            player_vel -= 0.5
+            player_vel -= 0.7
         elif key == 'd':
-            player_vel += 0.5
+            player_vel += 0.7
 
-        # Inertia & damping
-        player_vel *= 0.85
+        player_vel *= 0.82  # Less damping = snappier
         player_pos += player_vel
-        player_pos = max(0, min(bar_width - 1, player_pos))
+        player_pos = max(bar_size/2, min(bar_width - bar_size/2, player_pos))
 
-        # --- Catch logic ---
-        if abs(player_pos - fish_pos) < 1.2:
+        # --- Catch logic (fish inside player bar?) ---
+        player_left = player_pos - bar_size / 2
+        player_right = player_pos + bar_size / 2
+        
+        if player_left <= fish_pos <= player_right:
             catch_meter += catch_speed
         else:
             catch_meter -= decay_speed
 
         catch_meter = max(0, min(1, catch_meter))
 
-        # --- Render bar ---
+        # --- Render ---
         bar = ['░'] * bar_width
-        bar[int(fish_pos)] = '🐟'
-        bar[int(player_pos)] = '█'
+        
+        # Draw player bar
+        for i in range(bar_width):
+            if player_left <= i <= player_right:
+                bar[i] = '█'
+        
+        # Draw fish on top
+        fish_idx = int(fish_pos)
+        if 0 <= fish_idx < bar_width:
+            bar[fish_idx] = '🐟'
 
         meter = int(catch_meter * 10)
         meter_bar = Fore.GREEN + '█' * meter + Fore.RED + '░' * (10 - meter)
@@ -1132,7 +1461,6 @@ def stardew_valley_minigame(patience_stat):
 
     print(Fore.RED + "\n\n✗ The fish escaped!" + Style.RESET_ALL)
     return False
-
 
 def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
     """Undertale-style attack timing bar - returns damage multiplier (0.5 to 2.0)
