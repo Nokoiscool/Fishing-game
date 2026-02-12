@@ -10,7 +10,8 @@ import subprocess
 from colorama import Fore, Style, init
 from datetime import datetime
 
-#SIMGA! 
+#kant
+#SIMGA!
 RAINBOW = [
     Fore.RED,
     Fore.LIGHTRED_EX,
@@ -142,6 +143,8 @@ DID_YOU_KNOW_FACTS = [
     "Boss fights can be triggered using special items found while fishing!",
     "Sparing bosses gives you positive karma - killing them gives negative karma!",
     "Each location has a unique boss waiting to be discovered!",
+    "A fish is a creature that lives in water!",
+    
 ]
 
 def get_random_fact():
@@ -193,27 +196,22 @@ class BossAttack:
 
 # ===== BOSS ATTACK PATTERNS =====
 def loch_ness_wave_attack():
-    """Water wave pattern - player must dodge moving characters"""
+    """Simple wave pattern - original attack (kept for variety)"""
     pattern_length = 40
     safe_spots = []
     
-    # Animated wave approach
     print(Fore.CYAN + "\n💧 Waves incoming! 💧\n" + Style.RESET_ALL)
     
-    # Show 3 animated waves approaching
     for wave_num in range(3):
         wave_pos = random.randint(0, pattern_length - 10)
         
-        # Animate wave moving across screen
         for frame in range(10):
             pattern = [' '] * pattern_length
-            # Create wave shape
             wave_start = max(0, wave_pos - 2 + frame)
             wave_end = min(pattern_length, wave_pos + 10 + frame)
             
             for i in range(wave_start, wave_end):
                 if i < pattern_length:
-                    # Wave characters with varying heights
                     offset = abs((i - wave_start) - 5)
                     if offset == 0:
                         pattern[i] = '≋'
@@ -222,20 +220,17 @@ def loch_ness_wave_attack():
                     else:
                         pattern[i] = '˜'
             
-            # Color the waves blue
             display = Fore.CYAN + "[" + ''.join(pattern) + "]" + Style.RESET_ALL
             sys.stdout.write("\r" + display)
             sys.stdout.flush()
             time.sleep(0.05)
         
-        print()  # New line after wave
+        print()
         
-        # Track final wave position for safe spots
         for i in range(pattern_length):
             if i < wave_pos or i >= wave_pos + 8:
                 safe_spots.append(i)
     
-    # Player dodges
     print()
     print(Fore.YELLOW + "Choose a safe position to dodge (0-39):" + Style.RESET_ALL)
     try:
@@ -245,7 +240,6 @@ def loch_ness_wave_attack():
             time.sleep(0.5)
             return 0
         else:
-            # Show hit animation
             for _ in range(3):
                 print(Fore.RED + "💥 SPLASH! 💥" + Style.RESET_ALL)
                 time.sleep(0.1)
@@ -258,101 +252,12 @@ def loch_ness_wave_attack():
         print(Fore.RED + "Invalid input! You got hit!" + Style.RESET_ALL)
         return random.randint(10, 20)
 
-def loch_ness_neck_slam():
-    """Long neck slam - timing based dodge with animation"""
-    # Show neck rising animation
-    print(Fore.YELLOW + "\n🐉 The Loch Ness Monster's neck is rising...\n" + Style.RESET_ALL)
-    
-    neck_frames = [
-        "                    |",
-        "                   /|\\",
-        "                  / | \\",
-        "                 /  |  \\",
-        "                /   👁   \\",
-    ]
-    
-    for frame in neck_frames:
-        print(Fore.GREEN + frame + Style.RESET_ALL)
-        time.sleep(0.3)
-    
-    print()
-    print(Fore.RED + "⚠️  IT'S COMING DOWN! ⚠️" + Style.RESET_ALL)
-    print()
-    
-    # Visual countdown
-    for i in range(3, 0, -1):
-        sys.stdout.write(Fore.YELLOW + f"\r   {i}...   " + Style.RESET_ALL)
-        sys.stdout.flush()
-        time.sleep(0.5)
-    
-    print()
-    
-    # Quick time event
-    print(Fore.CYAN + "Press ENTER to dodge NOW!" + Style.RESET_ALL)
-    start_time = time.time()
-    
-    if platform.system() == "Windows":
-        import msvcrt
-        start = time.time()
-        while time.time() - start < 1.5:
-            if msvcrt.kbhit():
-                msvcrt.getch()
-                elapsed = time.time() - start
-                if 0.3 < elapsed < 1.2:
-                    # Perfect dodge animation
-                    for _ in range(2):
-                        print(Fore.GREEN + "★ PERFECT DODGE! ★" + Style.RESET_ALL)
-                        time.sleep(0.1)
-                    return 0
-                else:
-                    print(Fore.YELLOW + "Partial dodge!" + Style.RESET_ALL)
-                    return random.randint(5, 10)
-        # Impact animation
-        for _ in range(3):
-            print(Fore.RED + "💥 SLAM! 💥" + Style.RESET_ALL)
-            time.sleep(0.1)
-            sys.stdout.write("\r" + " " * 20 + "\r")
-            sys.stdout.flush()
-            time.sleep(0.1)
-        print(Fore.RED + "You got slammed!" + Style.RESET_ALL)
-        return random.randint(15, 25)
-    else:
-        # Simplified for Unix systems
-        try:
-            import select
-            start = time.time()
-            print(Fore.CYAN + "Quick! Press ENTER!" + Style.RESET_ALL)
-            
-            # Wait for input with timeout
-            rlist, _, _ = select.select([sys.stdin], [], [], 1.5)
-            if rlist:
-                sys.stdin.readline()
-                elapsed = time.time() - start
-                if 0.3 < elapsed < 1.2:
-                    print(Fore.GREEN + "★ PERFECT DODGE! ★" + Style.RESET_ALL)
-                    return 0
-                else:
-                    print(Fore.YELLOW + "Close dodge!" + Style.RESET_ALL)
-                    return random.randint(0, 5)
-            else:
-                print(Fore.RED + "Too slow! 💥" + Style.RESET_ALL)
-                return random.randint(15, 25)
-        except:
-            print(Fore.RED + "You got hit!" + Style.RESET_ALL)
-            return random.randint(15, 25)
 
 def loch_ness_water_blast():
-    """Multiple choice dodge with charging animation"""
+    """Multiple choice dodge - original attack (kept for variety)"""
     print(Fore.CYAN + "\n💦 The monster is charging a water blast! 💦\n" + Style.RESET_ALL)
     
-    # Charging animation
-    charging_frames = [
-        "  (  )",
-        "  ( O )",
-        "  ( ⚡ )",
-        "  (💧💧)",
-        "  (💦💦)",
-    ]
+    charging_frames = ["  (  )", "  ( O )", "  ( ⚡ )", "  (💧💧)", "  (💦💦)"]
     
     for frame in charging_frames:
         sys.stdout.write("\r" + Fore.LIGHTBLUE_EX + frame + Style.RESET_ALL)
@@ -378,7 +283,6 @@ def loch_ness_water_blast():
     try:
         choice = int(input(Fore.GREEN + "Choice > " + Style.RESET_ALL))
         
-        # Blast animation
         print()
         for i in range(5):
             blast = "💦" * (i + 1)
@@ -388,13 +292,11 @@ def loch_ness_water_blast():
         print()
         
         if choice == correct:
-            # Success animation
             for _ in range(2):
                 print(Fore.GREEN + "✨ PERFECT DODGE! ✨" + Style.RESET_ALL)
                 time.sleep(0.1)
             return 0
         else:
-            # Hit animation
             for _ in range(3):
                 print(Fore.RED + "💥 SPLASH! 💥" + Style.RESET_ALL)
                 time.sleep(0.1)
@@ -407,36 +309,438 @@ def loch_ness_water_blast():
         print(Fore.RED + "Invalid input! You got blasted!" + Style.RESET_ALL)
         return random.randint(12, 18)
 
+
+def loch_ness_tidal_wave():
+    """ENHANCED: Multi-wave attack with different speeds and sizes"""
+    pattern_length = 50
+    print(Fore.CYAN + "\n🌊 TIDAL WAVE INCOMING! 🌊\n" + Style.RESET_ALL)
+    
+    waves = []
+    for i in range(5):
+        wave = {
+            'position': random.randint(0, 10),
+            'speed': random.randint(2, 5),
+            'size': random.randint(4, 8),
+            'damage': random.randint(3, 6)
+        }
+        waves.append(wave)
+    
+    for frame in range(15):
+        pattern = [' '] * pattern_length
+        
+        for wave in waves:
+            wave_pos = wave['position'] + (wave['speed'] * frame)
+            wave_size = wave['size']
+            
+            for i in range(wave_pos, min(wave_pos + wave_size, pattern_length)):
+                if 0 <= i < pattern_length:
+                    if i - wave_pos <= 1:
+                        pattern[i] = '≋'
+                    elif i - wave_pos <= wave_size // 2:
+                        pattern[i] = '~'
+                    else:
+                        pattern[i] = '˜'
+        
+        display = Fore.CYAN + "[" + ''.join(pattern) + "]" + Style.RESET_ALL
+        sys.stdout.write("\r" + display)
+        sys.stdout.flush()
+        time.sleep(0.08)
+    
+    print("\n")
+    
+    final_positions = []
+    for wave in waves:
+        final_pos = wave['position'] + (wave['speed'] * 14)
+        final_positions.append((final_pos, final_pos + wave['size']))
+    
+    print(Fore.YELLOW + f"Choose position to stand (0-{pattern_length-1}):" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "💭 Tip: Look for gaps between the waves!" + Style.RESET_ALL)
+    
+    try:
+        player_pos = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        total_damage = 0
+        hit_count = 0
+        for wave_start, wave_end in final_positions:
+            if wave_start <= player_pos < wave_end:
+                hit_count += 1
+                total_damage += waves[final_positions.index((wave_start, wave_end))]['damage']
+        
+        if hit_count == 0:
+            print(Fore.GREEN + "✓ PERFECT DODGE! You found the safe zone!" + Style.RESET_ALL)
+            return 0
+        elif hit_count == 1:
+            print(Fore.YELLOW + f"💦 Caught by 1 wave! (-{total_damage} HP)" + Style.RESET_ALL)
+            return total_damage
+        else:
+            print(Fore.RED + f"💥 CRUSHED by {hit_count} waves! (-{total_damage} HP)" + Style.RESET_ALL)
+            return total_damage
+            
+    except:
+        print(Fore.RED + "Invalid input! Swept away!" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_whirlpool():
+    """ENHANCED: Button mashing to escape spinning vortex"""
+    print(Fore.BLUE + "\n🌀 WHIRLPOOL! You're being pulled in! 🌀\n" + Style.RESET_ALL)
+    
+    whirlpool_frames = [
+        "      ≈≈≈      ",
+        "    ≈≈≈≈≈≈     ",
+        "   ≈≈≈◉≈≈≈≈    ",
+        "  ≈≈≈≈◉≈≈≈≈≈   ",
+        " ≈≈≈≈◉◉◉≈≈≈≈≈  ",
+        "≈≈≈≈◉◉◉◉◉≈≈≈≈≈ ",
+    ]
+    
+    for frame in whirlpool_frames:
+        sys.stdout.write("\r" + Fore.BLUE + frame + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    print(Fore.RED + "MASH THE CORRECT BUTTONS TO ESCAPE!" + Style.RESET_ALL)
+    
+    buttons = ['W', 'A', 'S', 'D']
+    required_sequence = [random.choice(buttons) for _ in range(5)]
+    
+    print(Fore.YELLOW + f"Enter: {' → '.join(required_sequence)}" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "(Type them quickly, then press Enter!)" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    try:
+        player_input = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed_time = time.time() - start_time
+        
+        correct_input = ''.join(required_sequence)
+        
+        if player_input == correct_input and elapsed_time < 3:
+            print(Fore.GREEN + "✨ ESCAPED! Perfect button mashing!" + Style.RESET_ALL)
+            return 0
+        elif player_input == correct_input:
+            print(Fore.YELLOW + "⚡ Escaped, but took some damage from the pull!" + Style.RESET_ALL)
+            return 8
+        else:
+            correct_count = sum(1 for i, char in enumerate(player_input) if i < len(required_sequence) and char == required_sequence[i])
+            damage = 20 - (correct_count * 3)
+            print(Fore.RED + f"💫 Pulled under! Got {correct_count}/5 correct (-{damage} HP)" + Style.RESET_ALL)
+            return damage
+    except:
+        print(Fore.RED + "💥 Sucked into the whirlpool! (-20 HP)" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_tail_sweep():
+    """ENHANCED: Prediction-based dodge with tells"""
+    print(Fore.GREEN + "\n🐉 The Loch Ness Monster winds up its massive tail... 🐉\n" + Style.RESET_ALL)
+    
+    directions = ['LEFT', 'RIGHT', 'CENTER']
+    correct_dir = random.choice(directions)
+    
+    if correct_dir == 'LEFT':
+        print(Fore.LIGHTBLACK_EX + "💭 The monster's body is leaning right..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is on the right side..." + Style.RESET_ALL)
+    elif correct_dir == 'RIGHT':
+        print(Fore.LIGHTBLACK_EX + "💭 The monster's body is leaning left..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is on the left side..." + Style.RESET_ALL)
+    else:
+        print(Fore.LIGHTBLACK_EX + "💭 The monster is perfectly balanced..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "💭 Its tail is raised high above..." + Style.RESET_ALL)
+    
+    time.sleep(1)
+    
+    charge_frames = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+    for frame in charge_frames:
+        sys.stdout.write("\r" + Fore.YELLOW + f"CHARGING: {frame * 10}" + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.15)
+    
+    print("\n")
+    print(Fore.RED + "⚠️  TAIL SWEEP INCOMING! ⚠️" + Style.RESET_ALL)
+    print()
+    print(Fore.CYAN + "Which way do you dodge?" + Style.RESET_ALL)
+    print(Fore.WHITE + "1. 🏃 Dodge LEFT" + Style.RESET_ALL)
+    print(Fore.WHITE + "2. 🏃 Dodge RIGHT" + Style.RESET_ALL)
+    print(Fore.WHITE + "3. 🤸 Stay CENTER" + Style.RESET_ALL)
+    
+    try:
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL)
+        
+        print()
+        if correct_dir == 'LEFT':
+            sweep = "〰️〰️〰️〰️〰️=====>"
+        elif correct_dir == 'RIGHT':
+            sweep = "<=====〰️〰️〰️〰️〰️"
+        else:
+            sweep = "    ↓↓↓↓↓    "
+        
+        for i in range(3):
+            sys.stdout.write("\r" + Fore.GREEN + sweep + Style.RESET_ALL)
+            sys.stdout.flush()
+            time.sleep(0.15)
+        print()
+        
+        choice_map = {'1': 'LEFT', '2': 'RIGHT', '3': 'CENTER'}
+        player_choice = choice_map.get(choice, 'INVALID')
+        
+        if player_choice == correct_dir:
+            print(Fore.GREEN + "✓ PERFECT READ! You dodged it!" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.RED + f"💥 SMASHED! The tail swept {correct_dir}!" + Style.RESET_ALL)
+            return random.randint(15, 22)
+            
+    except:
+        print(Fore.RED + "Invalid input! Got hit!" + Style.RESET_ALL)
+        return 20
+
+
+def loch_ness_deep_dive_slam():
+    """ENHANCED: Two-phase attack - dive then slam"""
+    print(Fore.BLUE + "\n🌊 The Loch Ness Monster DIVES beneath the surface! 🌊\n" + Style.RESET_ALL)
+    
+    dive_frames = [
+        "     🐉     ",
+        "     🐉~    ",
+        "     🐉~~   ",
+        "     ~🐉~~  ",
+        "     ~~🐉~~ ",
+        "     ~~~💦  ",
+        "     ~~~    ",
+        "     ...    ",
+    ]
+    
+    for frame in dive_frames:
+        sys.stdout.write("\r" + Fore.CYAN + frame + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    print(Fore.YELLOW + "💭 It's gone under... where will it emerge?" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    zones = 7
+    emerge_zone = random.randint(0, zones - 1)
+    
+    print(Fore.CYAN + f"Choose a safe zone (0-{zones-1}):" + Style.RESET_ALL)
+    print(Fore.WHITE + "[0] [1] [2] [3] [4] [5] [6]" + Style.RESET_ALL)
+    
+    try:
+        phase1_choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        zone_display = ["[ ]"] * zones
+        zone_display[emerge_zone] = "[🐉]"
+        
+        for i in range(3):
+            print("\r" + Fore.GREEN + " ".join(zone_display) + Style.RESET_ALL)
+            time.sleep(0.3)
+        
+        phase1_damage = 0
+        if phase1_choice == emerge_zone:
+            print(Fore.RED + "💥 It emerged RIGHT where you were! (-12 HP)" + Style.RESET_ALL)
+            phase1_damage = 12
+        else:
+            print(Fore.GREEN + "✓ Safe from the emergence!" + Style.RESET_ALL)
+        
+        time.sleep(0.8)
+        
+        print()
+        print(Fore.RED + "\n⚠️  NOW IT'S GOING FOR A BODY SLAM! ⚠️\n" + Style.RESET_ALL)
+        print(Fore.CYAN + "Quick! Dodge direction?" + Style.RESET_ALL)
+        print(Fore.WHITE + "1. ⬅️  Roll LEFT   2. ➡️  Roll RIGHT" + Style.RESET_ALL)
+        
+        slam_dir = random.choice([1, 2])
+        
+        phase2_choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        for i in range(3):
+            if slam_dir == 1:
+                print(Fore.GREEN + "    🐉 <<<====" + Style.RESET_ALL)
+            else:
+                print(Fore.GREEN + "====>>> 🐉    " + Style.RESET_ALL)
+            time.sleep(0.15)
+        
+        phase2_damage = 0
+        if phase2_choice == slam_dir:
+            print(Fore.GREEN + "✓ Perfect dodge roll!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "💥 CRUSHED by the body slam! (-15 HP)" + Style.RESET_ALL)
+            phase2_damage = 15
+        
+        total_damage = phase1_damage + phase2_damage
+        if total_damage == 0:
+            print()
+            print(Fore.LIGHTGREEN_EX + "★★★ FLAWLESS! Both phases dodged! ★★★" + Style.RESET_ALL)
+        
+        return total_damage
+        
+    except:
+        print(Fore.RED + "Invalid input! Got hit by everything! (-27 HP)" + Style.RESET_ALL)
+        return 27
+
+
+def loch_ness_mist_breath():
+    """ENHANCED: Memory test with obscured vision"""
+    print(Fore.LIGHTCYAN_EX + "\n💨 The Loch Ness Monster breathes out a thick mist! 💨\n" + Style.RESET_ALL)
+    
+    positions = ['🪨', '🌊', '⚓', '🐚', '🪨']
+    safe_pos = random.randint(0, 4)
+    positions[safe_pos] = '✨'
+    
+    print(Fore.GREEN + "MEMORIZE THE SAFE ZONE:" + Style.RESET_ALL)
+    print(Fore.YELLOW + " | ".join([f"[{i}]: {pos}" for i, pos in enumerate(positions)]) + Style.RESET_ALL)
+    
+    time.sleep(3)
+    
+    print()
+    for _ in range(3):
+        sys.stdout.write("\r" + Fore.WHITE + "💨💨💨 MIST RISING 💨💨💨" + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.3)
+        sys.stdout.write("\r" + " " * 30 + "\r")
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print()
+    print(Fore.LIGHTBLACK_EX + "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "▓  YOU CAN'T SEE!    ▓" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.CYAN + "Where was the safe zone (✨)? (0-4)" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        print()
+        print(Fore.WHITE + "The mist clears..." + Style.RESET_ALL)
+        time.sleep(0.5)
+        print(Fore.YELLOW + " | ".join([f"[{i}]: {pos}" for i, pos in enumerate(positions)]) + Style.RESET_ALL)
+        
+        if choice == safe_pos:
+            print(Fore.GREEN + "✓ PERFECT MEMORY! You found the safe zone!" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.RED + f"💥 Wrong! You hit {positions[choice]} (-14 HP)" + Style.RESET_ALL)
+            return 14
+            
+    except:
+        print(Fore.RED + "Invalid! Wandered into danger! (-14 HP)" + Style.RESET_ALL)
+        return 14
+
+
+def loch_ness_combo_attack():
+    """ENHANCED: Ultimate combo attack - only used when HP < 30%"""
+    print(Fore.RED + "\n💢 THE LOCH NESS MONSTER IS ENRAGED! 💢" + Style.RESET_ALL)
+    print(Fore.RED + "⚡ ULTIMATE COMBO ATTACK! ⚡\n" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    total_damage = 0
+    
+    # Part 1: Quick wave dodge
+    print(Fore.CYAN + "Part 1: RAPID WAVES!" + Style.RESET_ALL)
+    wave_dir = random.choice(['L', 'R'])
+    print(Fore.YELLOW + f"Wave coming from the {'LEFT' if wave_dir == 'L' else 'RIGHT'}!" + Style.RESET_ALL)
+    print(Fore.WHITE + "Type 'L' for left or 'R' for right!" + Style.RESET_ALL)
+    
+    try:
+        p1_input = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if p1_input != wave_dir:
+            print(Fore.RED + "💦 Hit by wave! (-8 HP)" + Style.RESET_ALL)
+            total_damage += 8
+        else:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+    except:
+        total_damage += 8
+    
+    time.sleep(0.5)
+    
+    # Part 2: Focus check
+    print()
+    print(Fore.MAGENTA + "Part 2: FOCUS CHECK!" + Style.RESET_ALL)
+    num1 = random.randint(5, 15)
+    num2 = random.randint(1, 10)
+    answer = num1 + num2
+    
+    print(Fore.YELLOW + f"Quick! What's {num1} + {num2}?" + Style.RESET_ALL)
+    
+    try:
+        p2_input = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if p2_input != answer:
+            print(Fore.RED + "❌ Wrong! Distracted! (-6 HP)" + Style.RESET_ALL)
+            total_damage += 6
+        else:
+            print(Fore.GREEN + "✓ Correct!" + Style.RESET_ALL)
+    except:
+        total_damage += 6
+    
+    time.sleep(0.5)
+    
+    # Part 3: Final slam
+    print()
+    print(Fore.RED + "Part 3: FINAL TAIL SLAM!" + Style.RESET_ALL)
+    positions = [' ', ' ', ' ', ' ', ' ']
+    safe = random.randint(0, 4)
+    positions[safe] = '✓'
+    
+    print(Fore.YELLOW + "Pick safe position: " + " | ".join([f"[{i}]" for i in range(5)]) + Style.RESET_ALL)
+    
+    try:
+        p3_input = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if p3_input != safe:
+            print(Fore.RED + "💥 SLAM! (-10 HP)" + Style.RESET_ALL)
+            total_damage += 10
+        else:
+            print(Fore.GREEN + "✓ Safe!" + Style.RESET_ALL)
+    except:
+        total_damage += 10
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★★★ INCREDIBLE! SURVIVED THE COMBO! ★★★" + Style.RESET_ALL)
+    elif total_damage < 15:
+        print(Fore.YELLOW + f"You survived with {total_damage} damage!" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + f"The combo devastated you! {total_damage} damage!" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
-                                  ___
-                              .-'   `'.
-                             /         \\
-                             |         ;
-                             |         |           ___.--,
-                    _.._     |0) ~ (0) |    _.---'`__.-( (_.
-             __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `""`
-            ( ,.--'`   ',__ /./;   ;, '.__.'`    __
-            _`) )  .---.__.' / |   |\\   \\__..--""  \"\"\"--.,_
-           `---' .'.''-._.-'`_./  /\\ '.  \\ _.-~~~````~~~-._`-.__.'
-                 | |  .' _.-' |  |  \\  \\  '.               `~---`
-                  \\ \\/ .'     \\  \\   '. '-._)
-                   \\/ /        \\  \\    `=.__`~-.
-                   / /\\         `) )    / / `"".`\\
-             , _.-'.'\\ \\        / /    ( (     / /
-              `--~`   ) )    .-'.'      '.'.  | (
-                     (/`    ( (`          ) )  '-;
-                      `      '-;         (-'
+                                _..--+~/@-@--.
+                        _-=~      (  .    )
+                        _-~     _.--=.\ \''''
+                    _~      _-       \ \_\
+                    =      _=          '--'
+                    '      =                             .
+                :      :                              '=_. ___
+                |      ;                                  '~--.~.
+                ;      ;                                       } |
+                =       \             __..-...__           ___/__/__
+                :        =_     _.-~~          ~~--.__
+                __  \         ~-+-~                   ___~=_______
+                    ~@#~~ == ...______ __ ___ _--~~--_
 """
 
 LOCH_NESS_MONSTER = Boss(
     name="Loch Ness Monster",
     hp=200,
     defense=5,
-    attacks=[
+attacks=[
+        # Original attacks (kept for variety)
         BossAttack("Wave Crash", loch_ness_wave_attack, (10, 20), "Sends powerful waves"),
-        BossAttack("Neck Slam", loch_ness_neck_slam, (15, 25), "Slams with its long neck"),
-        BossAttack("Water Blast", loch_ness_water_blast, (12, 18), "Fires a concentrated water jet")
+        BossAttack("Water Blast", loch_ness_water_blast, (12, 18), "Fires a concentrated water jet"),
+        # NEW Enhanced attacks
+        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 30), "Multi-wave barrage!"),
+        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 20), "Spinning vortex trap!"),
+        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 22), "Massive tail attack!"),
+        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 27), "Two-phase combo!"),
+        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 14), "Vision obscured!"),
+        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 24), "Devastating triple attack!")
     ],
     ascii_art=LOCH_NESS_ASCII,
     dialogue={
@@ -503,7 +807,24 @@ class Fish:
             'mutation': self.mutation,
             'catch_time': self.catch_time
         }
-
+    
+    @staticmethod
+    def from_dict(data):
+        """Recreate a Fish object from saved dictionary"""
+        fish = Fish(
+            name=data['name'],
+            min_weight=data['min_weight'],
+            max_weight=data['max_weight'],
+            rarity=data['rarity'],
+            rarity_weight=data['rarity_weight'],
+            xp_reward=data['xp_reward'],
+            real_world_info=data.get('real_world_info', ''),
+            sell_price=data['sell_price']
+        )
+        fish.weight = data['weight']
+        fish.mutation = data.get('mutation', 'normal')
+        fish.catch_time = data.get('catch_time')
+        return fish
 
     def generate_random_weight(self):
         return round(random.uniform(self.min_weight, self.max_weight), 2)
@@ -610,7 +931,7 @@ lake_fish = [
     Fish("Crystal Leviathan", 2000, 8000, "Mythical", 0.02, 2000, "A massive transparent creature dwelling in the deepest lakes.", 25000),
     Fish("Hylian Pike", 2, 4, "Rare", 0.7, 14, "A majestic river fish with ancient markings on its scales.", 50),
     Fish("Nordic Dragon Salmon", 5, 9, "Epic", 0.5, 16, "A salmon with tiny horns and a powerful voice for some reason.", 80),
-    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300)
+    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300),
 ]
 
 ocean_fish = [
@@ -649,7 +970,10 @@ ocean_fish = [
     Fish("Blockfish Creeper", 3, 6, "Rare", 1.2, 12, "A green, blocky fish that hisses softly underwater. It looks unstable.", 40),
     Fish("Vault Carp", 2, 5, "Epic", 0.8, 18, "A carp wearing a tiny blue-and-yellow jumpsuit. It seems oddly optimistic.", 65),
     Fish("Plumber's Tuna", 1, 3, "Uncommon", 2.5, 9, "A red-and-blue tuna that looks like it jumps higher than it swims.", 30),
-    Fish("Glow Reef Angelfish", 3, 6, "Rare", 1.4, 20, "An elegant neon fish that drifts like it's in zero-gravity water.", 90)
+    Fish("Glow Reef Angelfish", 3, 6, "Rare", 1.4, 20, "An elegant neon fish that drifts like it's in zero-gravity water.", 90),
+    #TODO: make the german fish say a random number of fishes in german
+    Fish("Ein kleiner Fisch", 0.1, 0.5, "Common", 0.5, 10, 'A tiny fish that seems to be singing in German. its saying "Fünf kleine Fische, die schwammen im Meer, blub blub blub blub"', 10),
+    Fish("Ein großer Hai", 10, 50, "Rare", 0.1, 50, 'A large shark that seems to be singing in German. its saying "Ein großer Hai, der schwamm im Meer, blub blub blub blub"', 100),
 
 ]
 
@@ -800,38 +1124,38 @@ FISH_DATA = lake_fish + ocean_fish + river_fish + deep_sea_fish + volcanic_lake_
 UNIQUE_FISH_NAMES = list(set([fish.name for fish in FISH_DATA]))
 
 RODS = [
-    Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
-    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
-    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
-    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
-    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
-    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
-    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
-    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
-    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
-    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
-    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
-    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
-    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
-    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
+    Rod("Bamboo Rod", 0, 0.7, 0),
+    Rod("Wooden Rod", 0.03, 0.73, 150),
+    Rod("Fiberglass Rod", 0.06, 0.76, 400),
+    Rod("Composite Rod", 0.10, 0.80, 800),
+    Rod("Carbon Rod", 0.14, 0.84, 1500),
+    Rod("Graphite Rod", 0.18, 0.88, 2500),
+    Rod("Titanium Rod", 0.22, 0.92, 4000),
+    Rod("Reinforced Rod", 0.25, 0.95, 6500),
+    Rod("Legendary Rod", 0.28, 0.98, 10000),
+    Rod("Mythic Rod", 0.32, 1.02, 20000),
+    Rod("Abyssal Rod", 0.35, 1.05, 35000),
+    Rod("Quantum Rod", 0.38, 1.08, 60000),
+    Rod("Godly Rod", 0.42, 1.12, 100000),
+    Rod("Blobfish Rod", 1.0, 5.0, 2000000)
 ]
 
 BAITS = [ 
-    Bait("Worm", 0, 0, "Basic free bait"),
-    Bait("Bread", 50, 0.05, "Simple but effective"),
-    Bait("Cricket", 120, 0.08, "Insects attract small fish"),
-    Bait("Minnow", 250, 0.12, "Small fish attract bigger fish"),
-    Bait("Corn", 180, 0.10, "Surprisingly effective for many species"),
-    Bait("Shrimp", 500, 0.15, "Good for ocean fishing"),
-    Bait("Nightcrawler", 400, 0.14, "Premium worm for serious anglers"),
-    Bait("Squid", 800, 0.18, "Attracts larger predators"),
-    Bait("Cut Bait", 650, 0.16, "Fresh fish chunks work well"),
-    Bait("Artificial Lure", 1200, 0.22, "Mimics prey movement"),
-    Bait("Live Bait", 1500, 0.25, "The real deal for big catches"),
-    Bait("Special Lure", 2500, 0.30, "Increases rare fish chances"),
-    Bait("Premium Lure", 4000, 0.35, "Hand-crafted attractant"),
-    Bait("Exotic Bait", 6500, 0.40, "Imported rare ingredients"),
-    Bait("Master Bait", 50000, 0.50, "The ultimate fishing bait")
+    Bait("Worm", 0, 0, 0),
+    Bait("Bread", 5, 0.05, 50),
+    Bait("Cricket", 8, 0.08, 120),
+    Bait("Minnow", 12, 0.12, 250),
+    Bait("Corn", 10, 0.10, 180),
+    Bait("Shrimp", 15, 0.15, 500),
+    Bait("Nightcrawler", 14, 0.14, 400),
+    Bait("Squid", 18, 0.18, 800),
+    Bait("Cut Bait", 16, 0.16, 650),
+    Bait("Artificial Lure", 22, 0.22, 1200),
+    Bait("Live Bait", 25, 0.25, 1500),
+    Bait("Special Lure", 30, 0.30, 2500),
+    Bait("Premium Lure", 35, 0.35, 4000),
+    Bait("Exotic Bait", 40, 0.40, 6500),
+    Bait("Master Bait", 50, 0.50, 50000)
 ]
 
 WEATHERS = ["Sunny", "Cloudy", "Rainy", "Stormy", "Foggy"]
@@ -1066,77 +1390,6 @@ def pattern_minigame(patience_stat):
         print(Fore.RED + f"✗ Incorrect! The pattern was {pattern}" + Style.RESET_ALL)
         return False
     
-def stardew_valley_minigame(patience_stat):
-    print(Fore.YELLOW + "\n🎣 Stardew Valley Fishing Minigame!" + Style.RESET_ALL)
-    print("Use A / D to move\n")
-
-    bar_width = 30
-    frames = 120
-
-    # Positions
-    fish_pos = random.uniform(5, bar_width - 5)
-    fish_vel = 0
-
-    player_pos = bar_width / 2
-    player_vel = 0
-
-    # Catch meter
-    catch_meter = 0.3
-    catch_speed = 0.015 + patience_stat * 0.002
-    decay_speed = 0.02
-
-    for _ in range(frames):
-        # --- Fish movement (wiggly, unpredictable) ---
-        fish_vel += random.uniform(-0.6, 0.6)
-        fish_vel *= 0.9
-        fish_pos += fish_vel
-        fish_pos = max(0, min(bar_width - 1, fish_pos))
-
-        # --- Player input ---
-        key = get_key()
-        if key == 'a':
-            player_vel -= 0.5
-        elif key == 'd':
-            player_vel += 0.5
-
-        # Inertia & damping
-        player_vel *= 0.85
-        player_pos += player_vel
-        player_pos = max(0, min(bar_width - 1, player_pos))
-
-        # --- Catch logic ---
-        if abs(player_pos - fish_pos) < 1.2:
-            catch_meter += catch_speed
-        else:
-            catch_meter -= decay_speed
-
-        catch_meter = max(0, min(1, catch_meter))
-
-        # --- Render bar ---
-        bar = ['░'] * bar_width
-        bar[int(fish_pos)] = '🐟'
-        bar[int(player_pos)] = '█'
-
-        meter = int(catch_meter * 10)
-        meter_bar = Fore.GREEN + '█' * meter + Fore.RED + '░' * (10 - meter)
-
-        print(
-            '\r' +
-            Fore.CYAN + ''.join(bar) + Style.RESET_ALL +
-            f"  [{meter_bar}{Style.RESET_ALL}]",
-            end='',
-            flush=True
-        )
-
-        if catch_meter >= 1:
-            print(Fore.GREEN + "\n\n✓ Fish caught!" + Style.RESET_ALL)
-            return True
-
-        time.sleep(0.08)
-
-    print(Fore.RED + "\n\n✗ The fish escaped!" + Style.RESET_ALL)
-    return False
-
 
 def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
     """Undertale-style attack timing bar - returns damage multiplier (0.5 to 2.0)
@@ -1265,13 +1518,13 @@ def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
 
 # ===== LOCATION MAP CLASS =====
 class LocationMap:
-    def __init__(self, name, layout, description=""):
+    def __init__(self, name, layout, description="", start_x=None, start_y=None):
         self.name = name
         self.layout = layout  # 2D list of characters
         self.description = description
         self.player_x = 1
         self.player_y = 1
-        self.message = "Use WASD to move around."
+        self.message = "Use WASD to move around. Stand in water and press [E] to fish!"
         
         # Find initial player position (spawn point marked with 'P')
         for y, row in enumerate(layout):
@@ -1280,6 +1533,11 @@ class LocationMap:
                     self.player_x = x
                     self.player_y = y
                     self.layout[y][x] = '.'  # Replace P with ground
+        
+        # Override with custom start position if provided
+        if start_x is not None and start_y is not None:
+            self.player_x = start_x
+            self.player_y = start_y
     
     def move_player(self, dx, dy):
         new_x = self.player_x + dx
@@ -1288,8 +1546,8 @@ class LocationMap:
         # Check bounds
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
-            # Allow movement on walkable tiles (including all water types)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓']:
+            # Allow movement on walkable tiles (including all water types and NPC)
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
@@ -1299,9 +1557,9 @@ class LocationMap:
                 self.message = "Can't walk there!"
     
     def is_fishing_spot(self, x, y):
-        """Check if location is a fishing spot"""
+        """Check if location is a fishing spot - any water tile"""
         tile = self.layout[y][x]
-        return tile in ['⊙', '◉']
+        return tile in ['≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉']
     
     def is_golden_spot(self, x, y):
         """Check if it's a golden fishing spot"""
@@ -1341,14 +1599,16 @@ class LocationMap:
             return 'space'
         return None
     
+    def is_npc_fisherman(self, x, y):
+        """Check if location has the NPC fisherman"""
+        return self.layout[y][x] == 'F'
+    
     def render_tile(self, tile, is_player, is_spot, is_golden):
         """Render a single tile with appropriate coloring"""
         if is_player:
             return Fore.YELLOW + '☻' + Style.RESET_ALL
-        elif is_golden:
+        elif is_golden or tile == '◉':
             return Fore.LIGHTYELLOW_EX + '◉' + Style.RESET_ALL
-        elif is_spot or tile == '⊙':
-            return Fore.CYAN + '⊙' + Style.RESET_ALL
         elif tile == '≈':  # Lake water
             return Fore.BLUE + '≈' + Style.RESET_ALL
         elif tile == '≋':  # River water
@@ -1361,6 +1621,8 @@ class LocationMap:
             return Fore.CYAN + '≈' + Style.RESET_ALL
         elif tile == 'S':  # Space
             return Fore.MAGENTA + '·' + Style.RESET_ALL
+        elif tile == '⊙':  # Old fishing spot marker (treat as regular water)
+            return Fore.CYAN + '≈' + Style.RESET_ALL
         elif tile == '█':  # Wall
             return Fore.WHITE + '█' + Style.RESET_ALL
         elif tile == '🌳':  # Tree
@@ -1377,6 +1639,8 @@ class LocationMap:
             return Fore.LIGHTRED_EX + '🏠' + Style.RESET_ALL
         elif tile == '⚓':  # Dock
             return Fore.LIGHTCYAN_EX + '⚓' + Style.RESET_ALL
+        elif tile == 'F':  # NPC Fisherman
+            return Fore.GREEN + '🎣' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -1389,13 +1653,13 @@ HUB_ISLAND_LAYOUT = [
     ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█',  '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
     ['█', '🌳', '🌳', '▓', '▓', '▓', '▓', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🏛️', '.', '.', '.', '▓', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳',  '█'],
-    ['█', '🌳', '.', '.', '.', '▓', '▓', '🌳', '≋', '⊙', '≋', '≋', '⊙', '≋', '◉', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '.', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '◉', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🏠', '.', '.', 'P', '.', '.', '.', '🌳', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '.', '.', '.', '.', '.', '.', '🌳', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '⊙', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '⊙', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '.', '.', '.',  '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '≈', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '.', '.',  '.', 'F', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '🌳', '🌳', '🌳', '🌳', '█'],
@@ -1407,17 +1671,17 @@ HUB_ISLAND_LAYOUT = [
 # Create location maps for other locations
 OCEAN_LAYOUT = [
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '⊙', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
@@ -1425,17 +1689,17 @@ OCEAN_LAYOUT = [
 
 DEEP_SEA_LAYOUT = [
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
-    ['▓', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
@@ -1443,15 +1707,15 @@ DEEP_SEA_LAYOUT = [
 
 VOLCANIC_LAYOUT = [
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
-    ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', '⊙', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
+    ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V', 'V'],
-    ['V', 'V', '⊙', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
+    ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'P', 'V', 'V', '◉', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
-    ['V', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '⊙', 'V', 'V', 'V', 'V', '▓', '▓', 'V'],
+    ['V', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
@@ -1461,43 +1725,43 @@ VOLCANIC_LAYOUT = [
 
 SPACE_LAYOUT = [
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'P', 'S', 'S', '◉', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
 ]
 
 ARCTIC_LAYOUT = [
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', 'A'],
+    ['A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', 'A'],
     ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
     ['A', 'A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', 'A', '⊙', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
+    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'P', 'A', 'A', '◉', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A'],
+    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', 'A', 'A', 'A'],
     ['A', '▓', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
-    ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A', '▓', '▓', '▓', 'A'],
+    ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
 ]
 
 # Add maps to locations
-LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description)
-LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description)
+LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description, start_x=9, start_y=8)  # Lake spot
+LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description, start_x=11, start_y=3)  # River spot
 LOCATIONS[2].map = LocationMap("Ocean", OCEAN_LAYOUT, LOCATIONS[2].description)
 LOCATIONS[3].map = LocationMap("Deep Sea", DEEP_SEA_LAYOUT, LOCATIONS[3].description)
 LOCATIONS[4].map = LocationMap("Volcanic Lake", VOLCANIC_LAYOUT, LOCATIONS[4].description)
@@ -1834,6 +2098,9 @@ class Game:
             'money': self.money,
             'skill_points': self.skill_points,
             'inventory': [fish.to_dict() for fish in self.inventory],
+            'boss_inventory': [{'name': item.name, 'boss': item.boss.name, 'description': item.description, 'location': item.location} for item in self.boss_inventory],
+            'karma': self.karma,
+            'defeated_bosses': self.defeated_bosses,
             'owned_rods': [rod.name for rod in self.owned_rods],
             'owned_baits': [bait.name for bait in self.owned_baits],
             'current_rod': self.current_rod.name,
@@ -1844,6 +2111,10 @@ class Game:
             'trophy_room': [fish.to_dict() for fish in self.trophy_room],
             'current_location': self.current_location.name,
             'current_weather': self.current_weather,
+            'active_quests': [{'title': q.title, 'description': q.description} for q in self.active_quests],
+            'completed_quests': [{'title': q.title, 'description': q.description} for q in self.completed_quests],
+            'max_hp': self.max_hp,
+            'current_hp': self.current_hp,
         }
         
         # Create hash-based filename
@@ -1890,9 +2161,19 @@ class Game:
             self.money = data['money']
             self.skill_points = data['skill_points']
             
-            # Load inventory
-            self.inventory = []
-            # Inventory loading skipped for simplicity
+            # Load inventory - ACTUALLY LOAD IT NOW
+            self.inventory = [Fish.from_dict(fish_data) for fish_data in data.get('inventory', [])]
+            
+            # Load boss inventory
+            self.boss_inventory = []
+            for item_data in data.get('boss_inventory', []):
+                # Find the matching boss item from BOSS_ITEMS
+                if item_data['name'] in BOSS_ITEMS:
+                    self.boss_inventory.append(BOSS_ITEMS[item_data['name']])
+            
+            # Load karma and defeated bosses
+            self.karma = data.get('karma', 0)
+            self.defeated_bosses = data.get('defeated_bosses', [])
             
             # Load rods and baits
             self.owned_rods = [rod for rod in RODS if rod.name in data['owned_rods']]
@@ -1907,15 +2188,23 @@ class Game:
             # Load encyclopedia
             self.encyclopedia = data.get('encyclopedia', {})
             
-            # Load trophy room
-            self.trophy_room = []
-            # Trophy loading skipped for simplicity
+            # Load trophy room - ACTUALLY LOAD IT NOW
+            self.trophy_room = [Fish.from_dict(fish_data) for fish_data in data.get('trophy_room', [])]
             
             # Load location
             loc_name = data.get('current_location', 'Calm Lake')
             self.current_location = next((loc for loc in LOCATIONS if loc.name == loc_name), LOCATIONS[0])
             
             self.current_weather = data.get('current_weather', random.choice(WEATHERS))
+            
+            # Load quests (we'll skip loading the actual Quest objects and just track completion)
+            # Since quests are generated dynamically, we just need to know which ones are completed
+            self.active_quests = []  # Reset active quests
+            self.completed_quests = []  # We could reconstruct these if needed, but not critical
+            
+            # Load HP
+            self.max_hp = data.get('max_hp', 100)
+            self.current_hp = data.get('current_hp', 100)
             
             print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
@@ -2040,7 +2329,7 @@ class Game:
         print(Fore.YELLOW + "\n🎣 Something's biting!" + Style.RESET_ALL)
         time.sleep(0.5)
         
-        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame, stardew_valley_minigame])
+        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame])
         success = minigame_choice(self.stats['patience'])
         
         if not success:
@@ -2155,6 +2444,100 @@ class Game:
         elif choice == 'b':
             return
 
+    def sell_fish(self):
+        """Sell fish from inventory"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to sell!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║           SELL FISH                   ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            sell_value = int(fish.sell_price * self.difficulty_mult)
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg - ${sell_value}"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        print(Fore.YELLOW + "[A]ll Fish | [S]pecific Fish | [B]ack" + Style.RESET_ALL)
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL).lower()
+        
+        if choice == 'a':
+            # Sell all fish
+            total = sum(int(f.sell_price * self.difficulty_mult) for f in self.inventory)
+            self.money += total
+            count = len(self.inventory)
+            self.inventory.clear()
+            print(Fore.GREEN + f"Sold {count} fish for ${total}!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        elif choice == 's':
+            # Sell specific fish
+            try:
+                idx = int(input(Fore.CYAN + "Enter fish number: " + Style.RESET_ALL)) - 1
+                if 0 <= idx < len(self.inventory):
+                    fish = self.inventory.pop(idx)
+                    value = int(fish.sell_price * self.difficulty_mult)
+                    self.money += value
+                    print(Fore.GREEN + f"Sold {fish.name} for ${value}!" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            except (ValueError, IndexError):
+                print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    def keep_trophy(self):
+        """Move a fish from inventory to trophy room"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to keep as trophy!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║         KEEP AS TROPHY                ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        try:
+            idx = int(input(Fore.CYAN + "Enter fish number (0 to cancel): " + Style.RESET_ALL)) - 1
+            if idx == -1:
+                return
+            if 0 <= idx < len(self.inventory):
+                fish = self.inventory.pop(idx)
+                self.trophy_room.append(fish)
+                print(Fore.GREEN + f"{fish.name} added to trophy room!" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        except (ValueError, IndexError):
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
     
     def visit_shop(self):
         """Shop menu"""
@@ -2347,6 +2730,89 @@ class Game:
         world_map = WorldMap(self)
         return world_map.run()
     
+    def interact_with_npc_fisherman(self):
+        """Talk to the NPC fisherman and get a random fact"""
+        self.clear_screen()
+        
+        # Display ASCII art of fisherman
+        fisherman_art = """
+        
+            🎣 Old Fisherman by the Lake 🎣
+        
+               ,@@@@@@@,
+         ,,,.   ,@@@@@@/@@,  .oo8888o.
+      ,&%%&%&&%,@@@@@/@@@@@@,8888\\88/8o
+     ,%&\\%&&%&&%,@@@\\@@@/@@@88\\88888/88'
+     %&&%&%&/%&&%@@\\@@/ /@@@88888\\88888'
+     %&&%/ %&%%&&@@\\ V /@@' `88\\8 `/88'
+     `&%\\ ` /%&'    |.|        \\ '|8'
+         |o|        | |         | |
+         |.|        | |         | |
+      \\/ ._\\//_/__/  ,\\_//__\\/.  \\_//__/_
+        """
+        
+        print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+        print()
+        
+        # Random greeting
+        greetings = [
+            "Ahoy there, young angler!",
+            "Well, well… another fisher visits my spot!",
+            "Greetings, friend! Beautiful day for fishing, eh?",
+            "Ah, a fellow fisher! Come, sit a spell.",
+            "Welcome to my humble fishing spot. Care for a tale or a tip?",
+            "Ahoy! I see you have a passion for fishing. Let me share some wisdom.",
+            "Well met, traveler! The lake has many secrets.",
+
+            # Wise / Old
+            "The water speaks to those patient enough to listen.",
+            "Fish aren’t caught with strength alone — calm hands matter more.",
+            "I’ve spent more years here than I can count. The fish remember me.",
+            "Every ripple tells a story… most folks just don’t hear it.",
+            "A rushed cast never brings fortune.",
+
+            # Humorous
+            "I once hooked a boot here. Best fight of my life.",
+            "If the fish aren’t biting, they’re probably laughing.",
+            "They say fishing is relaxing. Those people never lost a legendary.",
+            "Careful now — this lake has stolen more rods than storms.",
+
+            # Tips & hints
+            "Morning bites best… but dusk holds surprises.",
+            "Different fish favor different depths. Don’t be afraid to experiment.",
+            "Patience fills the bucket faster than luck.",
+            "If the water’s still, the clever ones are watching.",
+
+            # Atmospheric / Lore
+            "Some say there’s something deep below these waters… watching.",
+            "On quiet nights, I swear the lake glows.",
+            "This spot? Chosen long before either of us were born.",
+            "Lost lures sink… but not always forgotten."
+        
+        ]
+        
+        rare_lines = [
+            "I once caught something here… that I promptly threw back. Some things shouldn’t be kept.",
+            "If you ever hook a fish that pulls *up* instead of down… cut the line."
+        ]
+        
+        if random.random() < 0.1:  # 10% chance to show a rare line
+            print(Fore.LIGHTYELLOW_EX + random.choice(rare_lines) + Style.RESET_ALL)
+        else:
+            print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+        print()
+        time.sleep(1)
+        
+        # Share a random fact
+        fact = get_random_fact()
+        print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+        print(Fore.WHITE + f"\"Did you know? {fact}\"" + Style.RESET_ALL)
+        print()
+        time.sleep(2)
+        
+        print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+        get_key()
+    
     def hub_island_interaction(self, building_type):
         """Handle interactions with buildings on hub island"""
         if building_type == 'shop':
@@ -2437,7 +2903,7 @@ class Game:
             print()
             print(Fore.YELLOW + hub_map.message + Style.RESET_ALL)
             print()
-            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                     print(Fore.MAGENTA + "[DEV] [B]oss Menu | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             else:
@@ -2458,7 +2924,10 @@ class Game:
                 hub_map.move_player(1, 0)
             elif key == 'e':
                 # Check for interactions
-                if hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
+                if hub_map.is_npc_fisherman(hub_map.player_x, hub_map.player_y):
+                    # Talk to the NPC fisherman
+                    self.interact_with_npc_fisherman()
+                elif hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
                     is_golden = hub_map.is_golden_spot(hub_map.player_x, hub_map.player_y)
                     
                     # Determine which location based on water type
@@ -2496,6 +2965,9 @@ class Game:
     
     def explore_remote_location(self, location):
         """Explore a remote location (Ocean, Deep Sea, etc.)"""
+        # Set current location so fishing uses the correct fish pool
+        old_location = self.current_location
+        self.current_location = location
         location_map = location.map
         
         while True:
@@ -2539,12 +3011,24 @@ class Game:
             elif key == 'e':
                 if location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
+                    
+                    # For Hub Island locations, check water type to ensure correct fish pool
+                    if location.name in ["Hub Island - Calm Lake", "Hub Island - Swift River"]:
+                        water_type = location_map.get_water_type(location_map.player_x, location_map.player_y)
+                        if water_type == 'river':
+                            self.current_location = LOCATIONS[1]  # Hub Island - Swift River
+                        elif water_type == 'lake':
+                            self.current_location = LOCATIONS[0]  # Hub Island - Calm Lake
+                    
                     self.fish(golden_spot=is_golden)
+                    
+                    # Restore location after fishing
+                    self.current_location = location
                 else:
-                    location_map.message = "You need to be at a fishing spot (⊙) to fish!"
+                    location_map.message = "You need to be in water to fish!"
             elif key == 'q':
-                # Return to hub island
-                self.current_location = LOCATIONS[0]
+                # Return to previous location
+                self.current_location = old_location
                 break
 
     def start_boss_fight(self, boss):
@@ -2875,6 +3359,16 @@ class Game:
                 
                 # Restore HP and return
                 self.current_hp = self.max_hp
+                #take 15% of money as penalty for losing
+                penalty = int(self.money * 0.15)
+                self.money -= penalty
+                print(Fore.YELLOW + f"You lost ${penalty}!" + Style.RESET_ALL)
+                #take some fish too
+                if self.inventory:
+                    lost_fish = random.sample(self.inventory, min(3, len(self.inventory)))
+                    for fish in lost_fish:
+                        self.inventory.remove(fish)
+                    print(Fore.YELLOW + f"You lost {len(lost_fish)} fish from your inventory!" + Style.RESET_ALL)
                 
                 input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
                 return
@@ -2937,6 +3431,12 @@ if __name__ == "__main__":
     print(Fore.CYAN + "║         V.0.6.0 BETA                  ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
+    print(
+        Fore.YELLOW + "ℹ️   Did You Know?" + Style.RESET_ALL,
+        random.choice(DID_YOU_KNOW_FACTS)
+    )
+    time.sleep(2)
+    print()
     print(Fore.GREEN + "1. New Game" + Style.RESET_ALL)
     print(Fore.GREEN + "2. Load Game" + Style.RESET_ALL)
     print(Fore.GREEN + "3. Exit" + Style.RESET_ALL)
@@ -2959,7 +3459,7 @@ if __name__ == "__main__":
         game.start_game()
     elif choice == '3':
         print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL)
-    elif choice == '99':  #dev mode
+    elif choice == 'up up down down left right A B':  #dev mode konami code
         print(Fore.MAGENTA + "[DEV MODE ENABLED]" + Style.RESET_ALL)
         character_data = {
             'name': 'DEV_Player',
