@@ -1119,38 +1119,38 @@ FISH_DATA = lake_fish + ocean_fish + river_fish + deep_sea_fish + volcanic_lake_
 UNIQUE_FISH_NAMES = list(set([fish.name for fish in FISH_DATA]))
 
 RODS = [
-    Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
-    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
-    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
-    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
-    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
-    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
-    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
-    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
-    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
-    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
-    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
-    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
-    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
-    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
+    Rod("Bamboo Rod", 0, 0.7, 0),
+    Rod("Wooden Rod", 0.03, 0.73, 150),
+    Rod("Fiberglass Rod", 0.06, 0.76, 400),
+    Rod("Composite Rod", 0.10, 0.80, 800),
+    Rod("Carbon Rod", 0.14, 0.84, 1500),
+    Rod("Graphite Rod", 0.18, 0.88, 2500),
+    Rod("Titanium Rod", 0.22, 0.92, 4000),
+    Rod("Reinforced Rod", 0.25, 0.95, 6500),
+    Rod("Legendary Rod", 0.28, 0.98, 10000),
+    Rod("Mythic Rod", 0.32, 1.02, 20000),
+    Rod("Abyssal Rod", 0.35, 1.05, 35000),
+    Rod("Quantum Rod", 0.38, 1.08, 60000),
+    Rod("Godly Rod", 0.42, 1.12, 100000),
+    Rod("Blobfish Rod", 1.0, 5.0, 2000000)
 ]
 
 BAITS = [ 
-    Bait("Worm", 0, 0, "Basic free bait"),
-    Bait("Bread", 50, 0.05, "Simple but effective"),
-    Bait("Cricket", 120, 0.08, "Insects attract small fish"),
-    Bait("Minnow", 250, 0.12, "Small fish attract bigger fish"),
-    Bait("Corn", 180, 0.10, "Surprisingly effective for many species"),
-    Bait("Shrimp", 500, 0.15, "Good for ocean fishing"),
-    Bait("Nightcrawler", 400, 0.14, "Premium worm for serious anglers"),
-    Bait("Squid", 800, 0.18, "Attracts larger predators"),
-    Bait("Cut Bait", 650, 0.16, "Fresh fish chunks work well"),
-    Bait("Artificial Lure", 1200, 0.22, "Mimics prey movement"),
-    Bait("Live Bait", 1500, 0.25, "The real deal for big catches"),
-    Bait("Special Lure", 2500, 0.30, "Increases rare fish chances"),
-    Bait("Premium Lure", 4000, 0.35, "Hand-crafted attractant"),
-    Bait("Exotic Bait", 6500, 0.40, "Imported rare ingredients"),
-    Bait("Master Bait", 50000, 0.50, "The ultimate fishing bait")
+    Bait("Worm", 0, 0, 0),
+    Bait("Bread", 5, 0.05, 50),
+    Bait("Cricket", 8, 0.08, 120),
+    Bait("Minnow", 12, 0.12, 250),
+    Bait("Corn", 10, 0.10, 180),
+    Bait("Shrimp", 15, 0.15, 500),
+    Bait("Nightcrawler", 14, 0.14, 400),
+    Bait("Squid", 18, 0.18, 800),
+    Bait("Cut Bait", 16, 0.16, 650),
+    Bait("Artificial Lure", 22, 0.22, 1200),
+    Bait("Live Bait", 25, 0.25, 1500),
+    Bait("Special Lure", 30, 0.30, 2500),
+    Bait("Premium Lure", 35, 0.35, 4000),
+    Bait("Exotic Bait", 40, 0.40, 6500),
+    Bait("Master Bait", 50, 0.50, 50000)
 ]
 
 WEATHERS = ["Sunny", "Cloudy", "Rainy", "Stormy", "Foggy"]
