@@ -2295,20 +2295,30 @@ FISH_DATA = lake_fish + ocean_fish + river_fish + deep_sea_fish + volcanic_lake_
 UNIQUE_FISH_NAMES = list(set([fish.name for fish in FISH_DATA]))
 
 RODS = [
-    Rod("Bamboo Rod", 0, 0.7, 0),
-    Rod("Wooden Rod", 0.03, 0.73, 150),
-    Rod("Fiberglass Rod", 0.06, 0.76, 400),
-    Rod("Composite Rod", 0.10, 0.80, 800),
-    Rod("Carbon Rod", 0.14, 0.84, 1500),
-    Rod("Graphite Rod", 0.18, 0.88, 2500),
-    Rod("Titanium Rod", 0.22, 0.92, 4000),
-    Rod("Reinforced Rod", 0.25, 0.95, 6500),
-    Rod("Legendary Rod", 0.28, 0.98, 10000),
-    Rod("Mythic Rod", 0.32, 1.02, 20000),
-    Rod("Abyssal Rod", 0.35, 1.05, 35000),
-    Rod("Quantum Rod", 0.38, 1.08, 60000),
-    Rod("Godly Rod", 0.42, 1.12, 100000),
-    Rod("Blobfish Rod", 1.0, 5.0, 2000000)
+    # name, xp_bonus, rarity_bonus, price
+    # ===== EARLY GAME: learning & comfort =====
+    Rod("Bamboo Rod",      0.00, 0.70,        0),     # Tutorial / very safe
+    Rod("Wooden Rod",      0.02, 0.73,      150),
+    Rod("Fiberglass Rod",  0.04, 0.76,      400),
+    Rod("Composite Rod",   0.06, 0.80,      800),
+
+    # ===== MID GAME: steady power =====
+    Rod("Carbon Rod",      0.08, 0.84,     1500),
+    Rod("Graphite Rod",    0.10, 0.88,     2500),
+    Rod("Titanium Rod",    0.12, 0.92,     4000),
+    Rod("Reinforced Rod",  0.14, 0.96,     6500),
+
+    # ===== TRANSITION =====
+    Rod("Legendary Rod",   0.16, 1.00,    10000),
+
+    # ===== ENDGAME SPECIALIZATION =====
+    Rod("Mythic Rod",      0.30, 0.95,    20000),  # XP grinder
+    Rod("Abyssal Rod",     0.10, 1.25,    35000),  # Mutation / rarity hunter
+    Rod("Quantum Rod",     0.20, 1.10,    60000),  # RNG chaos
+    Rod("Godly Rod",       0.18, 1.05,   100000),  # Boss control
+
+    # ===== CHAOS / JOKE / SECRET =====
+    Rod("Blobfish Rod",    0.00, 1.00,  2000000),  # Breaks rules, not numbers
 ]
 
 BAITS = [ 
