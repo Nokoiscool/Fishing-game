@@ -2757,12 +2757,49 @@ class Game:
         # Random greeting
         greetings = [
             "Ahoy there, young angler!",
-            "Well, well... Another fisher visits my spot!",
+            "Well, well… another fisher visits my spot!",
             "Greetings, friend! Beautiful day for fishing, eh?",
             "Ah, a fellow fisher! Come, sit a spell.",
+            "Welcome to my humble fishing spot. Care for a tale or a tip?",
+            "Ahoy! I see you have a passion for fishing. Let me share some wisdom.",
+            "Well met, traveler! The lake has many secrets.",
+
+            # Wise / Old
+            "The water speaks to those patient enough to listen.",
+            "Fish aren’t caught with strength alone — calm hands matter more.",
+            "I’ve spent more years here than I can count. The fish remember me.",
+            "Every ripple tells a story… most folks just don’t hear it.",
+            "A rushed cast never brings fortune.",
+
+            # Humorous
+            "I once hooked a boot here. Best fight of my life.",
+            "If the fish aren’t biting, they’re probably laughing.",
+            "They say fishing is relaxing. Those people never lost a legendary.",
+            "Careful now — this lake has stolen more rods than storms.",
+
+            # Tips & hints
+            "Morning bites best… but dusk holds surprises.",
+            "Different fish favor different depths. Don’t be afraid to experiment.",
+            "Patience fills the bucket faster than luck.",
+            "If the water’s still, the clever ones are watching.",
+
+            # Atmospheric / Lore
+            "Some say there’s something deep below these waters… watching.",
+            "On quiet nights, I swear the lake glows.",
+            "This spot? Chosen long before either of us were born.",
+            "Lost lures sink… but not always forgotten."
+        
         ]
         
-        print(Fore.YELLOW + random.choice(greetings) + Style.RESET_ALL)
+        rare_lines = [
+            "I once caught something here… that I promptly threw back. Some things shouldn’t be kept.",
+            "If you ever hook a fish that pulls *up* instead of down… cut the line."
+        ]
+        
+        if random.random() < 0.1:  # 10% chance to show a rare line
+            print(Fore.LIGHTYELLOW_EX + random.choice(rare_lines) + Style.RESET_ALL)
+        else:
+            print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
         print()
         time.sleep(1)
         
