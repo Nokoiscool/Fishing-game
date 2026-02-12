@@ -89,7 +89,7 @@ init(autoreset=True)
 
 DID_YOU_KNOW_FACTS = [
     "Real blobfish don't look blobby underwater – they only deform at low pressure!",
-    "The coelacanth is a 'living fossil' fish that was thought extinct for 66 million years.",
+    "The coelacanth is a 'living fossil' fish that was thought extinct for 67 million years.",
     "Sturgeon are older than dinosaurs and can live for over 100 years.",
     "The Kraken myth likely began after sailors spotted giant squid.",
     "Pike are known as 'water wolves' because of their sudden ambush attacks.",
@@ -136,6 +136,7 @@ DID_YOU_KNOW_FACTS = [
     "Ancient Polynesians navigated oceans by watching fish behavior.",
     "Vikings believed certain fish could predict storms and weather changes.",
     "Also try Minecraft!",
+    "Also try civ game https://github.com/Nokoiscool/Civ-spill-Skibidi",
     "Visit the Hub Island shop to upgrade your gear!",
     "The Aquarium displays all your trophy catches!",
     "Complete quests for rare rewards and unlock new locations!",
