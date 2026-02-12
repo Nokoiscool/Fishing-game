@@ -67,7 +67,7 @@ def show_intro():
     ║                                                              ║
     ╚══════════════════════════════════════════════════════════════╝
     """
-#test
+
     lines = intro.split("\n")
 
     # Reserve screen space (avoid scrolling)
@@ -905,6 +905,7 @@ class Location:
 
 
 lake_fish = [
+    Fish("fish", 0,1, 0,5, "mythical", 0.0000000000000001, 20, "just a strange fish", 5), #hidden fish for testing
     Fish("Trout", 0.5, 2.5, "Common", 10, 15, "Trout are freshwater fish commonly found in rivers and lakes.", 20),
     Fish("Bass", 4.5, 10.0, "Uncommon", 5, 25, "Bass are popular game fish found in many lakes and rivers.", 50),
     Fish("Pike", 5.0, 15.0, "Rare", 2, 50, "Pike are carnivorous fish found in lakes and rivers.", 100),
@@ -929,7 +930,7 @@ lake_fish = [
     Fish("Crystal Leviathan", 2000, 8000, "Mythical", 0.02, 2000, "A massive transparent creature dwelling in the deepest lakes.", 25000),
     Fish("Hylian Pike", 2, 4, "Rare", 0.7, 14, "A majestic river fish with ancient markings on its scales.", 50),
     Fish("Nordic Dragon Salmon", 5, 9, "Epic", 0.5, 16, "A salmon with tiny horns and a powerful voice for some reason.", 80),
-    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300)
+    Fish("Magicarp", 8, 12, "Rare", 1.5, 50, "A strange orange and yellow fish.", 300),
 ]
 
 ocean_fish = [
@@ -968,7 +969,10 @@ ocean_fish = [
     Fish("Blockfish Creeper", 3, 6, "Rare", 1.2, 12, "A green, blocky fish that hisses softly underwater. It looks unstable.", 40),
     Fish("Vault Carp", 2, 5, "Epic", 0.8, 18, "A carp wearing a tiny blue-and-yellow jumpsuit. It seems oddly optimistic.", 65),
     Fish("Plumber's Tuna", 1, 3, "Uncommon", 2.5, 9, "A red-and-blue tuna that looks like it jumps higher than it swims.", 30),
-    Fish("Glow Reef Angelfish", 3, 6, "Rare", 1.4, 20, "An elegant neon fish that drifts like it's in zero-gravity water.", 90)
+    Fish("Glow Reef Angelfish", 3, 6, "Rare", 1.4, 20, "An elegant neon fish that drifts like it's in zero-gravity water.", 90),
+    #TODO: make the german fish say a random number of fishes in german
+    Fish("Ein kleiner Fisch", 0.1, 0.5, "Common", 0.1, 10, 'A tiny fish that seems to be singing in German. its saying "Fünf kleine Fische, die schwammen im Meer, blub blub blub blub"', 10),
+    
 
 ]
 
@@ -1513,13 +1517,13 @@ def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
 
 # ===== LOCATION MAP CLASS =====
 class LocationMap:
-    def __init__(self, name, layout, description=""):
+    def __init__(self, name, layout, description="", start_x=None, start_y=None):
         self.name = name
         self.layout = layout  # 2D list of characters
         self.description = description
         self.player_x = 1
         self.player_y = 1
-        self.message = "Use WASD to move around."
+        self.message = "Use WASD to move around. Stand in water and press [E] to fish!"
         
         # Find initial player position (spawn point marked with 'P')
         for y, row in enumerate(layout):
@@ -1528,6 +1532,11 @@ class LocationMap:
                     self.player_x = x
                     self.player_y = y
                     self.layout[y][x] = '.'  # Replace P with ground
+        
+        # Override with custom start position if provided
+        if start_x is not None and start_y is not None:
+            self.player_x = start_x
+            self.player_y = start_y
     
     def move_player(self, dx, dy):
         new_x = self.player_x + dx
@@ -1547,9 +1556,9 @@ class LocationMap:
                 self.message = "Can't walk there!"
     
     def is_fishing_spot(self, x, y):
-        """Check if location is a fishing spot"""
+        """Check if location is a fishing spot - any water tile"""
         tile = self.layout[y][x]
-        return tile in ['⊙', '◉']
+        return tile in ['≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉']
     
     def is_golden_spot(self, x, y):
         """Check if it's a golden fishing spot"""
@@ -1593,10 +1602,8 @@ class LocationMap:
         """Render a single tile with appropriate coloring"""
         if is_player:
             return Fore.YELLOW + '☻' + Style.RESET_ALL
-        elif is_golden:
+        elif is_golden or tile == '◉':
             return Fore.LIGHTYELLOW_EX + '◉' + Style.RESET_ALL
-        elif is_spot or tile == '⊙':
-            return Fore.CYAN + '⊙' + Style.RESET_ALL
         elif tile == '≈':  # Lake water
             return Fore.BLUE + '≈' + Style.RESET_ALL
         elif tile == '≋':  # River water
@@ -1609,6 +1616,8 @@ class LocationMap:
             return Fore.CYAN + '≈' + Style.RESET_ALL
         elif tile == 'S':  # Space
             return Fore.MAGENTA + '·' + Style.RESET_ALL
+        elif tile == '⊙':  # Old fishing spot marker (treat as regular water)
+            return Fore.CYAN + '≈' + Style.RESET_ALL
         elif tile == '█':  # Wall
             return Fore.WHITE + '█' + Style.RESET_ALL
         elif tile == '🌳':  # Tree
@@ -1637,12 +1646,12 @@ HUB_ISLAND_LAYOUT = [
     ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█',  '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
     ['█', '🌳', '🌳', '▓', '▓', '▓', '▓', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🏛️', '.', '.', '.', '▓', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳',  '█'],
-    ['█', '🌳', '.', '.', '.', '▓', '▓', '🌳', '≋', '⊙', '≋', '≋', '⊙', '≋', '◉', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '.', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '◉', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🏠', '.', '.', 'P', '.', '.', '.', '🌳', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '.', '.', '.', '.', '.', '.', '🌳', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '⊙', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '⊙', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '≈', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.',  '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
@@ -1655,17 +1664,17 @@ HUB_ISLAND_LAYOUT = [
 # Create location maps for other locations
 OCEAN_LAYOUT = [
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '⊙', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
-    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
+    ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
     ['~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~'],
@@ -1673,17 +1682,17 @@ OCEAN_LAYOUT = [
 
 DEEP_SEA_LAYOUT = [
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
-    ['▓', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', 'P', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '⊙', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '⊙', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
@@ -1691,15 +1700,15 @@ DEEP_SEA_LAYOUT = [
 
 VOLCANIC_LAYOUT = [
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
-    ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', '⊙', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
+    ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V', 'V'],
-    ['V', 'V', '⊙', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
+    ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'P', 'V', 'V', '◉', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
-    ['V', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '⊙', 'V', 'V', 'V', 'V', '▓', '▓', 'V'],
+    ['V', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', '▓', '▓', 'V'],
@@ -1709,43 +1718,43 @@ VOLCANIC_LAYOUT = [
 
 SPACE_LAYOUT = [
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'P', 'S', 'S', '◉', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ['S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '⊙', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
     ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
 ]
 
 ARCTIC_LAYOUT = [
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', 'A'],
+    ['A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', 'A'],
     ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
     ['A', 'A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', 'A', '⊙', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
+    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'P', 'A', 'A', '◉', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
-    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A'],
+    ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', 'A', 'A', 'A'],
     ['A', '▓', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
-    ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '⊙', 'A', 'A', '▓', '▓', '▓', 'A'],
+    ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
 ]
 
 # Add maps to locations
-LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description)
-LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description)
+LOCATIONS[0].map = LocationMap("Hub Island - Calm Lake", HUB_ISLAND_LAYOUT, LOCATIONS[0].description, start_x=9, start_y=8)  # Lake spot
+LOCATIONS[1].map = LocationMap("Hub Island - Swift River", HUB_ISLAND_LAYOUT, LOCATIONS[1].description, start_x=11, start_y=3)  # River spot
 LOCATIONS[2].map = LocationMap("Ocean", OCEAN_LAYOUT, LOCATIONS[2].description)
 LOCATIONS[3].map = LocationMap("Deep Sea", DEEP_SEA_LAYOUT, LOCATIONS[3].description)
 LOCATIONS[4].map = LocationMap("Volcanic Lake", VOLCANIC_LAYOUT, LOCATIONS[4].description)
@@ -2095,8 +2104,8 @@ class Game:
             'trophy_room': [fish.to_dict() for fish in self.trophy_room],
             'current_location': self.current_location.name,
             'current_weather': self.current_weather,
-            'active_quests': [{'name': q.name, 'description': q.description} for q in self.active_quests],
-            'completed_quests': [{'name': q.name, 'description': q.description} for q in self.completed_quests],
+            'active_quests': [{'title': q.title, 'description': q.description} for q in self.active_quests],
+            'completed_quests': [{'title': q.title, 'description': q.description} for q in self.completed_quests],
             'max_hp': self.max_hp,
             'current_hp': self.current_hp,
         }
@@ -2863,6 +2872,9 @@ class Game:
     
     def explore_remote_location(self, location):
         """Explore a remote location (Ocean, Deep Sea, etc.)"""
+        # Set current location so fishing uses the correct fish pool
+        old_location = self.current_location
+        self.current_location = location
         location_map = location.map
         
         while True:
@@ -2906,12 +2918,24 @@ class Game:
             elif key == 'e':
                 if location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
+                    
+                    # For Hub Island locations, check water type to ensure correct fish pool
+                    if location.name in ["Hub Island - Calm Lake", "Hub Island - Swift River"]:
+                        water_type = location_map.get_water_type(location_map.player_x, location_map.player_y)
+                        if water_type == 'river':
+                            self.current_location = LOCATIONS[1]  # Hub Island - Swift River
+                        elif water_type == 'lake':
+                            self.current_location = LOCATIONS[0]  # Hub Island - Calm Lake
+                    
                     self.fish(golden_spot=is_golden)
+                    
+                    # Restore location after fishing
+                    self.current_location = location
                 else:
-                    location_map.message = "You need to be at a fishing spot (⊙) to fish!"
+                    location_map.message = "You need to be in water to fish!"
             elif key == 'q':
-                # Return to hub island
-                self.current_location = LOCATIONS[0]
+                # Return to previous location
+                self.current_location = old_location
                 break
 
     def start_boss_fight(self, boss):
@@ -3336,7 +3360,7 @@ if __name__ == "__main__":
         game.start_game()
     elif choice == '3':
         print(Fore.GREEN + "Thanks for playing! 🎣" + Style.RESET_ALL)
-    elif choice == '99':  #dev mode
+    elif choice == 'up up down down left right A B':  #dev mode konami code
         print(Fore.MAGENTA + "[DEV MODE ENABLED]" + Style.RESET_ALL)
         character_data = {
             'name': 'DEV_Player',
@@ -3361,4 +3385,4 @@ if __name__ == "__main__":
         game.start_game()
 
     else:
-        print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
+        print(Fore.RED + "Invalid choice." + Style.RESET_ALL)  
