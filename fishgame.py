@@ -1368,99 +1368,6 @@ def pattern_minigame(patience_stat):
         print(Fore.RED + f"✗ Incorrect! The pattern was {pattern}" + Style.RESET_ALL)
         return False
     
-def stardew_valley_minigame(patience_stat):
-    print(Fore.YELLOW + "\n🎣 Stardew Valley Fishing Minigame!" + Style.RESET_ALL)
-    print("Use A / D to move the bar - keep the fish inside!\n")
-
-    bar_width = 30
-    frames = 150  # Bit more time
-
-    # Fish setup
-    fish_pos = random.uniform(8, bar_width - 8)
-    fish_vel = 0
-    fish_target = fish_pos  # Fish moves toward targets instead of pure random
-
-    # Player bar (now a range, not a point)
-    player_pos = bar_width / 2
-    player_vel = 0
-    bar_size = 4  # Player controls a 4-unit bar
-
-    # Catch meter - rebalanced
-    catch_meter = 0.3
-    catch_speed = 0.012 + patience_stat * 0.003  # Patience helps more
-    decay_speed = 0.008  # Much less punishing
-
-    target_timer = 0
-
-    for _ in range(frames):
-        # --- Fish movement (smoother, more predictable) ---
-        target_timer -= 1
-        if target_timer <= 0:
-            # Pick a new target position every so often
-            fish_target = random.uniform(5, bar_width - 5)
-            target_timer = random.randint(15, 40)
-        
-        # Move toward target with some wobble
-        direction = fish_target - fish_pos
-        fish_vel += direction * 0.08 + random.uniform(-0.2, 0.2)
-        fish_vel *= 0.88  # Smooth damping
-        fish_pos += fish_vel
-        fish_pos = max(0, min(bar_width - 1, fish_pos))
-
-        # --- Player input (more responsive) ---
-        key = get_key()
-        if key == 'a':
-            player_vel -= 0.7
-        elif key == 'd':
-            player_vel += 0.7
-
-        player_vel *= 0.82  # Less damping = snappier
-        player_pos += player_vel
-        player_pos = max(bar_size/2, min(bar_width - bar_size/2, player_pos))
-
-        # --- Catch logic (fish inside player bar?) ---
-        player_left = player_pos - bar_size / 2
-        player_right = player_pos + bar_size / 2
-        
-        if player_left <= fish_pos <= player_right:
-            catch_meter += catch_speed
-        else:
-            catch_meter -= decay_speed
-
-        catch_meter = max(0, min(1, catch_meter))
-
-        # --- Render ---
-        bar = ['░'] * bar_width
-        
-        # Draw player bar
-        for i in range(bar_width):
-            if player_left <= i <= player_right:
-                bar[i] = '█'
-        
-        # Draw fish on top
-        fish_idx = int(fish_pos)
-        if 0 <= fish_idx < bar_width:
-            bar[fish_idx] = '🐟'
-
-        meter = int(catch_meter * 10)
-        meter_bar = Fore.GREEN + '█' * meter + Fore.RED + '░' * (10 - meter)
-
-        print(
-            '\r' +
-            Fore.CYAN + ''.join(bar) + Style.RESET_ALL +
-            f"  [{meter_bar}{Style.RESET_ALL}]",
-            end='',
-            flush=True
-        )
-
-        if catch_meter >= 1:
-            print(Fore.GREEN + "\n\n✓ Fish caught!" + Style.RESET_ALL)
-            return True
-
-        time.sleep(0.08)
-
-    print(Fore.RED + "\n\n✗ The fish escaped!" + Style.RESET_ALL)
-    return False
 
 def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
     """Undertale-style attack timing bar - returns damage multiplier (0.5 to 2.0)
@@ -2364,7 +2271,7 @@ class Game:
         print(Fore.YELLOW + "\n🎣 Something's biting!" + Style.RESET_ALL)
         time.sleep(0.5)
         
-        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame, stardew_valley_minigame])
+        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame])
         success = minigame_choice(self.stats['patience'])
         
         if not success:
