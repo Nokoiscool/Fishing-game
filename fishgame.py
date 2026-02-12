@@ -2732,86 +2732,175 @@ class Game:
     
     def interact_with_npc_fisherman(self):
         """Talk to the NPC fisherman and get a random fact"""
-        self.clear_screen()
-        
-        # Display ASCII art of fisherman
-        fisherman_art = """
-        
-            🎣 Old Fisherman by the Lake 🎣
-        
-               ,@@@@@@@,
-         ,,,.   ,@@@@@@/@@,  .oo8888o.
-      ,&%%&%&&%,@@@@@/@@@@@@,8888\\88/8o
-     ,%&\\%&&%&&%,@@@\\@@@/@@@88\\88888/88'
-     %&&%&%&/%&&%@@\\@@/ /@@@88888\\88888'
-     %&&%/ %&%%&&@@\\ V /@@' `88\\8 `/88'
-     `&%\\ ` /%&'    |.|        \\ '|8'
-         |o|        | |         | |
-         |.|        | |         | |
-      \\/ ._\\//_/__/  ,\\_//__\\/.  \\_//__/_
-        """
-        
-        print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
-        print()
-        
-        # Random greeting
-        greetings = [
-            "Ahoy there, young angler!",
-            "Well, well… another fisher visits my spot!",
-            "Greetings, friend! Beautiful day for fishing, eh?",
-            "Ah, a fellow fisher! Come, sit a spell.",
-            "Welcome to my humble fishing spot. Care for a tale or a tip?",
-            "Ahoy! I see you have a passion for fishing. Let me share some wisdom.",
-            "Well met, traveler! The lake has many secrets.",
-
-            # Wise / Old
-            "The water speaks to those patient enough to listen.",
-            "Fish aren’t caught with strength alone — calm hands matter more.",
-            "I’ve spent more years here than I can count. The fish remember me.",
-            "Every ripple tells a story… most folks just don’t hear it.",
-            "A rushed cast never brings fortune.",
-
-            # Humorous
-            "I once hooked a boot here. Best fight of my life.",
-            "If the fish aren’t biting, they’re probably laughing.",
-            "They say fishing is relaxing. Those people never lost a legendary.",
-            "Careful now — this lake has stolen more rods than storms.",
-
-            # Tips & hints
-            "Morning bites best… but dusk holds surprises.",
-            "Different fish favor different depths. Don’t be afraid to experiment.",
-            "Patience fills the bucket faster than luck.",
-            "If the water’s still, the clever ones are watching.",
-
-            # Atmospheric / Lore
-            "Some say there’s something deep below these waters… watching.",
-            "On quiet nights, I swear the lake glows.",
-            "This spot? Chosen long before either of us were born.",
-            "Lost lures sink… but not always forgotten."
-        
-        ]
-        
-        rare_lines = [
-            "I once caught something here… that I promptly threw back. Some things shouldn’t be kept.",
-            "If you ever hook a fish that pulls *up* instead of down… cut the line."
-        ]
-        
-        if random.random() < 0.1:  # 10% chance to show a rare line
-            print(Fore.LIGHTYELLOW_EX + random.choice(rare_lines) + Style.RESET_ALL)
-        else:
-            print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
-        print()
-        time.sleep(1)
-        
-        # Share a random fact
-        fact = get_random_fact()
-        print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
-        print(Fore.WHITE + f"\"Did you know? {fact}\"" + Style.RESET_ALL)
-        print()
-        time.sleep(2)
-        
-        print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
-        get_key()
+        while True:  # Keep dialog open until player chooses to leave
+            self.clear_screen()
+            
+            # Display ASCII art of fisherman
+            fisherman_art = """
+            
+                🎣 Old Fisherman by the Lake 🎣
+            
+                   ,@@@@@@@,
+             ,,,.   ,@@@@@@/@@,  .oo8888o.
+          ,&%%&%&&%,@@@@@/@@@@@@,8888\\88/8o
+         ,%&\\%&&%&&%,@@@\\@@@/@@@88\\88888/88'
+         %&&%&%&/%&&%@@\\@@/ /@@@88888\\88888'
+         %&&%/ %&%%&&@@\\ V /@@' `88\\8 `/88'
+         `&%\\ ` /%&'    |.|        \\ '|8'
+             |o|        | |         | |
+             |.|        | |         | |
+          \\/ ._\\//_/__/  ,\\_//__\\/.  \\_//__/_
+            """
+            
+            print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+            print()
+            
+            # Greeting only on first interaction (or randomly)
+            if random.random() < 0.3:
+                greetings = [
+                    "Ahoy there, young angler!",
+                    "Well, well… another fisher visits my spot!",
+                    "Greetings, friend! Beautiful day for fishing, eh?",
+                    "Ah, a fellow fisher! Come, sit a spell.",
+                    "Welcome to my humble fishing spot.",
+                    "The water speaks to those patient enough to listen.",
+                    "Fish aren't caught with strength alone — calm hands matter more.",
+                ]
+                print(Fore.GREEN + random.choice(greetings) + Style.RESET_ALL)
+                print()
+            
+            # Dialog menu
+            print(Fore.YELLOW + "What would you like to talk about?" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Ask for fishing wisdom" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Ask about the lake" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Ask about the dangerous creatures" + Style.RESET_ALL)
+            print(Fore.WHITE + "4. Ask about recent troubles" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + "5. Leave" + Style.RESET_ALL)
+            print()
+            
+            choice = input(Fore.CYAN + "Your choice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                # Random fishing fact/wisdom
+                self.clear_screen()
+                print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+                print()
+                fact = get_random_fact()
+                print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+                print(Fore.WHITE + f"\"Did you know? {fact}\"" + Style.RESET_ALL)
+                print()
+                time.sleep(2)
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '2':
+                # Talk about the lake
+                self.clear_screen()
+                print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+                print()
+                print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"This lake... I've fished here for nigh on fifty years.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"My father fished here, and his father before him.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The waters run deep, deeper than most folk realize.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"There's old magic here. Ancient things that keep the balance.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '3':
+                # Talk about the guardians/protectors
+                self.clear_screen()
+                print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+                print()
+                print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Ah, you've encountered them, have you?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Those great beasts... most call them monsters, threats to be eliminated.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.YELLOW + "\"But they're not monsters at all. They're guardians.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"Each one watches over its domain, keeping the natural order.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"The great serpent in this lake, for instance...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"She's been here longer than human memory. Protects the waters from corruption.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.CYAN + "\"But lately... they've been different. Aggressive. Desperate, even.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.CYAN + "\"Something's got them riled up fierce.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '4':
+                # Talk about the corporation
+                self.clear_screen()
+                print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+                print()
+                print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+                time.sleep(0.5)
+                print(Fore.WHITE + "*The old man's expression darkens*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.RED + "\"AquaTech Industries.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"Big corporation out of the city. Been sending suits around here for months.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"Want to buy up the lake. 'Development opportunities,' they call it.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.YELLOW + "\"Luxury resorts. Industrial fishing operations. 'Eco-tourism.'\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"Bah! They don't care about this place. Just want to drain it dry.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.CYAN + "\"The guardians know. They can sense it.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.CYAN + "\"That's why they've been so aggressive lately - they're trying to protect their homes.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"AquaTech's been sending 'specialists' to deal with the 'problem wildlife.'\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.WHITE + "\"But those creatures... they're not the problem. Never were.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTYELLOW_EX + "*He sighs heavily*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.GREEN + "\"I've been refusing to sell my fishing rights, but I'm just one old man.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print(Fore.GREEN + "\"If they get the lake... everything changes. Forever.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '5':
+                # Leave
+                self.clear_screen()
+                print(Fore.CYAN + fisherman_art + Style.RESET_ALL)
+                print()
+                farewell = [
+                    "\"Tight lines, friend. May the waters be kind to you.\"",
+                    "\"Be safe out there. The guardians remember kindness.\"",
+                    "\"Come back anytime. These old bones enjoy the company.\"",
+                    "\"Fish well, and respect the waters. They're watching.\"",
+                ]
+                print(Fore.GREEN + "Old Fisherman:" + Style.RESET_ALL)
+                print(Fore.WHITE + random.choice(farewell) + Style.RESET_ALL)
+                print()
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                break
+            else:
+                # Invalid choice - loop again
+                continue
     
     def hub_island_interaction(self, building_type):
         """Handle interactions with buildings on hub island"""
