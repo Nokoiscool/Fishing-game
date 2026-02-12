@@ -222,6 +222,11 @@ DID_YOU_KNOW_FACTS = [
     "Sparing the Kraken grants you the blessing of the ancient seas!",
     "The Kraken's tentacles can reach over 100 feet in the legends!",
     "Some say the Kraken is older than human civilization itself!",
+    "Jörmungandr is the World Serpent from Norse mythology - so large it encircles the Earth!",
+    "In Norse legend, Jörmungandr and Thor are destined to kill each other at Ragnarök!",
+    "Jörmungandr's venom is said to be potent enough to poison the ocean itself!",
+    "The World Serpent is one of Loki's three monstrous children in Norse mythology!",
+    "Defeating Jörmungandr breaks ancient Norse prophecy - with unknown consequences!",
     
 ]
 
@@ -674,6 +679,7 @@ def loch_ness_mist_breath():
     time.sleep(3)
     
     print()
+    os.system('cls' if os.name == 'nt' else 'clear')
     for _ in range(3):
         sys.stdout.write("\r" + Fore.WHITE + "💨💨💨 MIST RISING 💨💨💨" + Style.RESET_ALL)
         sys.stdout.flush()
@@ -995,6 +1001,7 @@ def river_wrath_combo():
     
     print(Fore.GREEN + "MEMORIZE: " + " | ".join([f"[{i}]: {display[i]}" for i in range(5)]) + Style.RESET_ALL)
     time.sleep(2.5)
+    os.system('cls' if os.name == 'nt' else 'clear')
     
     print(Fore.LIGHTBLACK_EX + "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓" + Style.RESET_ALL)
     print(Fore.CYAN + "Pick a safe zone (0-4):" + Style.RESET_ALL)
@@ -1274,6 +1281,282 @@ def pirate_ultimate_assault():
 
 
 # ===== KRAKEN ATTACK PATTERNS =====
+# ===== JÖRMUNGANDR ATTACKS =====
+
+def jormungandr_world_coil():
+    """Escape the World Serpent's crushing coils"""
+    print(Fore.MAGENTA + "\n🐍 THE WORLD SERPENT COILS AROUND YOU! 🐍\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Break free before you're crushed! Match the sequence!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    # Sequence matching challenge
+    sequence_length = 6
+    directions = ['↑', '↓', '←', '→']
+    sequence = [random.choice(directions) for _ in range(sequence_length)]
+    
+    print(Fore.CYAN + "Memorize the escape sequence:" + Style.RESET_ALL)
+    time.sleep(0.5)
+    
+    for symbol in sequence:
+        print(Fore.GREEN + f" {symbol} ", end='', flush=True)
+        time.sleep(0.6)
+    
+    print("\n")
+    time.sleep(1)
+    
+    # Clear screen effect
+    print(Fore.LIGHTBLACK_EX + "█" * 50 + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Enter the sequence (use: up, down, left, right):" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "Example: up down left right" + Style.RESET_ALL)
+    
+    try:
+        user_input = input(Fore.GREEN + "> " + Style.RESET_ALL).lower().split()
+        
+        # Convert input to symbols
+        convert = {'up': '↑', 'down': '↓', 'left': '←', 'right': '→'}
+        user_sequence = [convert.get(x, '') for x in user_input]
+        
+        if user_sequence == sequence:
+            print(Fore.GREEN + "✓ Perfect! You broke free from the serpent's grip!" + Style.RESET_ALL)
+            return 0
+        else:
+            correct = sum(1 for i, s in enumerate(user_sequence) if i < len(sequence) and s == sequence[i])
+            damage = 35 - (correct * 5)
+            print(Fore.YELLOW + f"Partially escaped! {correct}/{sequence_length} correct (-{damage} HP)" + Style.RESET_ALL)
+            return damage
+    except:
+        print(Fore.RED + "💥 Crushed by the serpent's coils! (-35 HP)" + Style.RESET_ALL)
+        return 35
+
+
+def jormungandr_venom_rain():
+    """Dodge falling venom droplets"""
+    print(Fore.GREEN + "\n☠️ JÖRMUNGANDR'S VENOM RAINS DOWN! ☠️\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Dodge the poisonous drops! Watch carefully!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    total_damage = 0
+    rounds = 5
+    
+    for round_num in range(rounds):
+        positions = list(range(1, 8))
+        safe_spots = random.sample(positions, 3)  # Only 3 safe spots
+        
+        print()
+        print(Fore.CYAN + f"💧 Venom Wave {round_num + 1}!" + Style.RESET_ALL)
+        
+        # Show where venom will fall
+        display = []
+        for pos in positions:
+            if pos in safe_spots:
+                display.append('[ ]')
+            else:
+                display.append('[☠️]')
+        
+        print(Fore.WHITE + "Positions: " + ' '.join(display) + Style.RESET_ALL)
+        print(Fore.YELLOW + f"Choose safe spot (1-7):" + Style.RESET_ALL)
+        
+        try:
+            choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+            if choice not in safe_spots:
+                print(Fore.RED + "💥 BURNED BY VENOM! (-8 HP)" + Style.RESET_ALL)
+                total_damage += 8
+            else:
+                print(Fore.GREEN + "✓ Safe!" + Style.RESET_ALL)
+        except:
+            total_damage += 8
+        
+        time.sleep(0.4)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★ FLAWLESS! No venom touched you! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def jormungandr_tidal_wave():
+    """Swim against the serpent's massive waves"""
+    print(Fore.BLUE + "\n🌊 THE WORLD SERPENT THRASHES - CREATING COLOSSAL WAVES! 🌊\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Swim to stay afloat! Press ENTER repeatedly!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    target_presses = 20
+    presses = 0
+    start_time = time.time()
+    time_limit = 6
+    
+    print(Fore.CYAN + f"Press ENTER {target_presses} times!" + Style.RESET_ALL)
+    print(Fore.WHITE + "GO!" + Style.RESET_ALL)
+    
+    while presses < target_presses and (time.time() - start_time) < time_limit:
+        try:
+            input()
+            presses += 1
+            progress = "█" * presses + "░" * (target_presses - presses)
+            sys.stdout.write(f"\r{Fore.CYAN}[{progress}] {presses}/{target_presses}{Style.RESET_ALL}")
+            sys.stdout.flush()
+        except:
+            break
+    
+    print()
+    
+    if presses >= target_presses:
+        print(Fore.GREEN + "✓ You survived the waves!" + Style.RESET_ALL)
+        return 0
+    else:
+        damage = 30 - presses
+        print(Fore.YELLOW + f"Struggled against the current! (-{damage} HP)" + Style.RESET_ALL)
+        return max(0, damage)
+
+
+def jormungandr_ragnarok_fury():
+    """Survive the World Serpent's ultimate attack - Ragnarök Fury"""
+    print(Fore.RED + "\n⚡ RAGNARÖK FURY - THE WORLD-ENDING STRIKE! ⚡\n" + Style.RESET_ALL)
+    
+    print(Fore.LIGHTRED_EX + "The serpent channels the power of Ragnarök itself!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Solve the Norse rune puzzle to deflect the attack!" + Style.RESET_ALL)
+    time.sleep(1.5)
+    
+    # Math puzzle with Norse theme
+    rune_values = {
+        'ᚠ': random.randint(1, 5),
+        'ᚢ': random.randint(1, 5),
+        'ᚦ': random.randint(1, 5)
+    }
+    
+    print(Fore.CYAN + "\nRune values:" + Style.RESET_ALL)
+    for rune, value in rune_values.items():
+        print(Fore.WHITE + f"  {rune} = {value}" + Style.RESET_ALL)
+    
+    time.sleep(1)
+    
+    # Create equation
+    rune1, rune2, rune3 = list(rune_values.keys())
+    answer = rune_values[rune1] * 2 + rune_values[rune2] - rune_values[rune3]
+    
+    print()
+    print(Fore.YELLOW + f"Solve: ({rune1} × 2) + {rune2} - {rune3} = ?" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "You have 8 seconds!" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    time_limit = 8
+    
+    try:
+        user_answer = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        elapsed = time.time() - start_time
+        
+        if elapsed > time_limit:
+            print(Fore.RED + "⏱️ Too slow! The fury overwhelms you! (-45 HP)" + Style.RESET_ALL)
+            return 45
+        elif user_answer == answer:
+            print(Fore.LIGHTGREEN_EX + "★ PERFECT! You deflected Ragnarök itself! ★" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.YELLOW + f"Close, but not quite! (Answer was {answer}) (-25 HP)" + Style.RESET_ALL)
+            return 25
+    except:
+        print(Fore.RED + "💥 The fury strikes! (-45 HP)" + Style.RESET_ALL)
+        return 45
+
+
+def jormungandr_serpent_gaze():
+    """Face the hypnotic gaze of the World Serpent"""
+    print(Fore.MAGENTA + "\n👁️ THE SERPENT'S ANCIENT GAZE LOCKS ONTO YOU! 👁️\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Don't be mesmerized! Focus and type the word correctly!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    words = [
+        "MIDGARD", "YGGDRASIL", "RAGNAROK", "VALHALLA", "ASGARD",
+        "SERPENT", "JORMUNGANDR", "FENRIR", "THOR", "ODIN"
+    ]
+    
+    word = random.choice(words)
+    
+    # Show word briefly then scramble
+    print(Fore.CYAN + "\nRemember this word:" + Style.RESET_ALL)
+    time.sleep(0.5)
+    print(Fore.GREEN + f"  {word}  " + Style.RESET_ALL)
+    time.sleep(2)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+    # Scramble effect
+    print()
+    for _ in range(3):
+        scrambled = ''.join(random.sample(word, len(word)))
+        sys.stdout.write(f"\r{Fore.LIGHTBLACK_EX}{scrambled}{Style.RESET_ALL}")
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    print(Fore.YELLOW + "Type the original word:" + Style.RESET_ALL)
+    
+    try:
+        user_word = input(Fore.GREEN + "> " + Style.RESET_ALL).upper().strip()
+        
+        if user_word == word:
+            print(Fore.GREEN + "✓ You resisted the serpent's gaze!" + Style.RESET_ALL)
+            return 0
+        else:
+            print(Fore.YELLOW + f"The gaze weakened you! (Correct word: {word}) (-20 HP)" + Style.RESET_ALL)
+            return 20
+    except:
+        print(Fore.RED + "💥 Hypnotized! (-20 HP)" + Style.RESET_ALL)
+        return 20
+
+
+def jormungandr_tail_whip():
+    """React quickly to dodge the serpent's tail"""
+    print(Fore.YELLOW + "\n⚡ THE SERPENT'S TAIL WHIPS AROUND! ⚡\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Quick! React to avoid it!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    # Quick reaction challenge
+    directions = ['DUCK', 'JUMP', 'LEFT', 'RIGHT']
+    correct_action = random.choice(directions)
+    
+    print(Fore.CYAN + "Tail coming from the " + Style.RESET_ALL, end='')
+    sys.stdout.flush()
+    time.sleep(0.5)
+    
+    if correct_action == 'DUCK':
+        print(Fore.RED + "TOP!" + Style.RESET_ALL)
+    elif correct_action == 'JUMP':
+        print(Fore.RED + "BOTTOM!" + Style.RESET_ALL)
+    elif correct_action == 'LEFT':
+        print(Fore.RED + "RIGHT!" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + "LEFT!" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + f"Type '{correct_action}' quickly!" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper().strip()
+        elapsed = time.time() - start_time
+        
+        if response == correct_action and elapsed < 2:
+            print(Fore.GREEN + "✓ Lightning reflexes!" + Style.RESET_ALL)
+            return 0
+        elif response == correct_action:
+            print(Fore.YELLOW + "Too slow! Grazed by the tail! (-10 HP)" + Style.RESET_ALL)
+            return 10
+        else:
+            print(Fore.RED + "💥 Hit! (-25 HP)" + Style.RESET_ALL)
+            return 25
+    except:
+        print(Fore.RED + "💥 Hit! (-25 HP)" + Style.RESET_ALL)
+        return 25
+
+
+# ===== KRAKEN ATTACKS =====
+
 def kraken_tentacle_slam():
     """Dodge multiple tentacle slams"""
     print(Fore.MAGENTA + "\n🐙 TENTACLES RISE FROM THE DEPTHS! 🐙\n" + Style.RESET_ALL)
@@ -1339,7 +1622,7 @@ def kraken_ink_cloud():
     
     print("\n")
     time.sleep(1.5)
-    
+    os.system('cls' if os.name == 'nt' else 'clear')
     # Hide with ink
     for _ in range(3):
         print(Fore.LIGHTBLACK_EX + "█" * 40 + Style.RESET_ALL)
@@ -1575,7 +1858,7 @@ def kraken_tidal_fury():
 
 
 # ===== BOSS DEFINITIONS =====
-LOCH_NESS_ASCII = r"""
+LOCH_NESS_ASCII = """
                                 _..--+~/@-@--.
                         _-=~      (  .    )
                         _-~     _.--=.\ \''''
@@ -1915,6 +2198,126 @@ KRAKEN = Boss(
     spare_threshold=30
 )
 
+# ===== JÖRMUNGANDR - THE WORLD SERPENT =====
+
+JORMUNGANDR_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         🐍 JÖRMUNGANDR - THE WORLD SERPENT 🐍             ║
+    ║              [Midgard's Eternal Guardian]                  ║
+    ╚════════════════════════════════════════════════════════════╝
+    
+            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣿⣶⣦⣽⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷⠷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⡀⢀⣽⣿⣷⣶⣦⣤⣄⣀⠀⠀⠀
+            ⠀⠀⣰⣿⣿⣿⣿⣿⠟⠉⠀⠀⠀⠙⢿⣧⡈⠛⠛⠋⠏⠙⢿⡿⠿⣿⣿⣷⡄⠀
+            ⠀⠀⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠙⢿⣦⣤⠄⠀⠀⠈⠀⠀⠻⠀⢻⠇⠀
+            ⠀⠐⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣶⡶⠂⠀⠀⠀⠀⠀⠈⠀⠀
+            ⠀⠀⢿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣶⡶⠂⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣶⠞⠁⠀⠀⠀⠀
+            ⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠈⠙⠻⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠚⠛⠛⠛⠛⠛⠛⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            [The serpent that encircles the world...]
+"""
+
+JORMUNGANDR = Boss(
+    name="Jörmungandr",
+    hp=750,
+    defense=22,
+    attacks=[
+        BossAttack("World Coil", jormungandr_world_coil, (0, 35), "Break free from the crushing coils!"),
+        BossAttack("Venom Rain", jormungandr_venom_rain, (0, 40), "Dodge the poisonous droplets!"),
+        BossAttack("Tidal Wave", jormungandr_tidal_wave, (0, 30), "Swim against the massive waves!"),
+        BossAttack("Serpent's Gaze", jormungandr_serpent_gaze, (0, 20), "Resist the hypnotic stare!"),
+        BossAttack("Tail Whip", jormungandr_tail_whip, (0, 25), "React quickly to dodge!"),
+        BossAttack("RAGNARÖK FURY", jormungandr_ragnarok_fury, (0, 45), "The World Serpent's ultimate power!")
+    ],
+    ascii_art=JORMUNGANDR_ASCII,
+    dialogue={
+        "intro": [
+            "*The ocean floor trembles with ancient power...*",
+            "*A massive shadow appears far below the surface*",
+            "*It's so large... it seems to have no end...*",
+            "*Suddenly, an ENORMOUS serpentine head rises from the depths!*",
+            "*The creature is so vast it disappears beyond the horizon!*",
+            "JÖRMUNGANDR: 'I am the serpent that encircles Midgard...'",
+            "JÖRMUNGANDR: 'Even mighty Thor could not slay me!'",
+            "JÖRMUNGANDR: 'What makes you think you stand a chance, mortal?'",
+            "*The World Serpent's eyes glow with primordial power*",
+            "*This is a being from the dawn of the world itself!*"
+        ],
+        "default": [
+            "*The serpent's coils writhe through the water*",
+            "*Its scales shimmer with ancient runes*",
+            "*You can feel the weight of millennia in its presence*",
+            "JÖRMUNGANDR: 'You are brave... or foolish...'",
+            "*Venom drips from its massive fangs*"
+        ],
+        "hit": [
+            "*The World Serpent recoils!*",
+            "JÖRMUNGANDR: 'You... dare strike me?!'",
+            "*Its roar shakes the very ocean!*",
+            "*Ancient power radiates from its wounds*"
+        ],
+        "low_hp": [
+            "*The serpent's movements slow considerably...*",
+            "*Its mighty coils loosen their grip on the world*",
+            "JÖRMUNGANDR: 'Impossible... I have existed since the dawn of time...'",
+            "JÖRMUNGANDR: 'Could a mortal truly... defeat me?'",
+            "*The ocean itself seems to mourn*",
+            "*You sense this is a being that was never meant to fall*"
+        ],
+        "merciful": [
+            "*You lower your weapon and stand peacefully*",
+            "*The World Serpent pauses, studying you with ancient eyes*",
+            "JÖRMUNGANDR: 'You... show mercy?'",
+            "JÖRMUNGANDR: 'Even Thor sought only my destruction...'",
+            "*The serpent's aggressive posture softens slightly*",
+            "*Its massive eye reflects something almost like... curiosity?*"
+        ],
+        "spare_ready": [
+            "*The World Serpent can be SPARED*",
+            "JÖRMUNGANDR: 'Perhaps... not all mortals are the same...'",
+            "*The ancient being awaits your final choice*"
+        ],
+        "spared": [
+            "*You bow respectfully to the ancient guardian*",
+            "*The World Serpent's eyes widen in genuine surprise*",
+            "JÖRMUNGANDR: 'In all my eons... none have shown me such respect...'",
+            "JÖRMUNGANDR: 'You fight with honor... and mercy...'",
+            "JÖRMUNGANDR: 'Very well, mortal. I recognize your worth.'",
+            "*The serpent's massive form begins to sink back into the depths*",
+            "JÖRMUNGANDR: 'Until Ragnarök comes... I shall remember this kindness.'",
+            "*Before disappearing, the serpent's tail touches the water near you*",
+            "*A glowing scale drifts down - a gift from the World Serpent itself!*",
+            "*The scale pulses with the power of ages*",
+            "⚡ JÖRMUNGANDR HAS BLESSED YOU! ⚡",
+            "*The ocean's deepest guardian has acknowledged your honor*",
+            "*You feel the protection of Norse legend flowing through you*"
+        ],
+        "killed": [
+            "*The World Serpent lets out an earth-shaking roar of agony!*",
+            "*Its coils thrash violently, creating massive whirlpools!*",
+            "JÖRMUNGANDR: 'IMPOSSIBLE! I... am... eternal...'",
+            "JÖRMUNGANDR: 'Not even the gods... could end me...'",
+            "*The serpent's massive form begins to sink*",
+            "*As it descends, the ocean itself seems to darken*",
+            "JÖRMUNGANDR: 'Ragnarök... comes early... because of you...'",
+            "*The creature's eyes dim, losing their primordial glow*",
+            "*Its endless coils slowly release their grip on the world*",
+            "*You watch as a being older than civilization... dies*",
+            "*The ocean will never be the same without its eternal guardian*",
+            "*Norse prophecy has been broken... and the consequences are unknown*",
+            "*You have slain a legend... but at what cost?*"
+        ]
+    },
+    spare_threshold=35
+)
+
 # Boss item that triggers the fight
 class BossItem:
     def __init__(self, name, boss, description, location):
@@ -1947,6 +2350,12 @@ BOSS_ITEMS = {
         KRAKEN,
         "A massive, serrated tooth from the deep. Holding it makes the ocean feel... watchful...",
         "Ocean"
+    ),
+    "Serpent Rune": BossItem(
+        "Serpent Rune",
+        JORMUNGANDR,
+        "An ancient Norse rune stone pulsing with primordial power. It whispers of the World Serpent...",
+        "Deep Sea"
     ),
     # Add more boss items for other locations here
 }
@@ -5461,7 +5870,8 @@ class Game:
         print(Fore.CYAN + "2. River Guardian (River)" + Style.RESET_ALL)
         print(Fore.CYAN + "3. The Crimson Tide (Pirate Ship - Ocean)" + Style.RESET_ALL)
         print(Fore.CYAN + "4. The Kraken (Ocean)" + Style.RESET_ALL)
-        print(Fore.CYAN + "5. [MORE BOSSES COMING SOON]" + Style.RESET_ALL)
+        print(Fore.CYAN + "5. Jormungandr (Deep sea)" + Style.RESET_ALL)
+        print(Fore.CYAN + "6. [MORE COMMING SOON]" + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -5474,6 +5884,8 @@ class Game:
             self.start_boss_fight(PIRATE_SHIP)
         elif choice == '4':
             self.start_boss_fight(KRAKEN)
+        elif choice == '5':
+            self.start_boss_fight(JORMUNGANDR)
     
     def dev_menu(self):
         """DEV MODE: Comprehensive testing and stat editing menu"""
@@ -5732,7 +6144,7 @@ class Game:
     def dev_unlock_locations(self):
         """Unlock all locations by marking bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr"]
         # Ensure positive karma for Captain Redbeard
         if self.karma < 1:
             self.karma = 10
@@ -5753,7 +6165,7 @@ class Game:
     def dev_mark_all_bosses(self):
         """Mark all bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr"]
         # Also ensure positive karma so Captain Redbeard appears
         if self.karma < 1:
             self.karma = 10
