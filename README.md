@@ -871,4 +871,17 @@ You gained 8,000 XP!
 
 ---
 
+
 **Version 0.4.3 | Open Beta | Active Development**
+
+
+
+
+
+
+
+
+
+
+
+wow du leste gjennom
