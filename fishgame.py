@@ -67,7 +67,7 @@ def show_intro():
     ║                                                              ║
     ╚══════════════════════════════════════════════════════════════╝
     """
-    #intro wow
+#test
     lines = intro.split("\n")
 
     # Reserve screen space (avoid scrolling)
@@ -805,7 +805,24 @@ class Fish:
             'mutation': self.mutation,
             'catch_time': self.catch_time
         }
-
+    
+    @staticmethod
+    def from_dict(data):
+        """Recreate a Fish object from saved dictionary"""
+        fish = Fish(
+            name=data['name'],
+            min_weight=data['min_weight'],
+            max_weight=data['max_weight'],
+            rarity=data['rarity'],
+            rarity_weight=data['rarity_weight'],
+            xp_reward=data['xp_reward'],
+            real_world_info=data.get('real_world_info', ''),
+            sell_price=data['sell_price']
+        )
+        fish.weight = data['weight']
+        fish.mutation = data.get('mutation', 'normal')
+        fish.catch_time = data.get('catch_time')
+        return fish
 
     def generate_random_weight(self):
         return round(random.uniform(self.min_weight, self.max_weight), 2)
@@ -1102,38 +1119,38 @@ FISH_DATA = lake_fish + ocean_fish + river_fish + deep_sea_fish + volcanic_lake_
 UNIQUE_FISH_NAMES = list(set([fish.name for fish in FISH_DATA]))
 
 RODS = [
-    Rod("Bamboo Rod", 0, 0.7, "Your starting rod"),
-    Rod("Wooden Rod", 150, 0.73, "A slight upgrade from bamboo"),
-    Rod("Fiberglass Rod", 400, 0.76, "A decent upgrade"),
-    Rod("Composite Rod", 800, 0.80, "Blends strength and flexibility"),
-    Rod("Carbon Rod", 1500, 0.84, "Professional quality"),
-    Rod("Graphite Rod", 2500, 0.88, "Lightweight and sensitive"),
-    Rod("Titanium Rod", 4000, 0.92, "Top of the line"),
-    Rod("Reinforced Rod", 6500, 0.95, "Built to handle massive fish"),
-    Rod("Legendary Rod", 10000, 0.98, "Never miss a catch"),
-    Rod("Mythic Rod", 20000, 1.02, "Forged from celestial metal, improves rare catch chances"),
-    Rod("Abyssal Rod", 35000, 1.05, "Can withstand extreme pressures of the deep sea"),
-    Rod("Quantum Rod", 60000, 1.08, "Uses temporal resonance to always hook something"),
-    Rod("Godly Rod", 100000, 1.12, "Said to catch even mythical creatures with ease"),
-    Rod("Blobfish Rod", 2000000, 5.0, "The ultimate fishing rod designed specifically for catching the elusive Blobfish")
+    Rod("Bamboo Rod", 0, 0.7, 0),
+    Rod("Wooden Rod", 0.03, 0.73, 150),
+    Rod("Fiberglass Rod", 0.06, 0.76, 400),
+    Rod("Composite Rod", 0.10, 0.80, 800),
+    Rod("Carbon Rod", 0.14, 0.84, 1500),
+    Rod("Graphite Rod", 0.18, 0.88, 2500),
+    Rod("Titanium Rod", 0.22, 0.92, 4000),
+    Rod("Reinforced Rod", 0.25, 0.95, 6500),
+    Rod("Legendary Rod", 0.28, 0.98, 10000),
+    Rod("Mythic Rod", 0.32, 1.02, 20000),
+    Rod("Abyssal Rod", 0.35, 1.05, 35000),
+    Rod("Quantum Rod", 0.38, 1.08, 60000),
+    Rod("Godly Rod", 0.42, 1.12, 100000),
+    Rod("Blobfish Rod", 1.0, 5.0, 2000000)
 ]
 
 BAITS = [ 
-    Bait("Worm", 0, 0, "Basic free bait"),
-    Bait("Bread", 50, 0.05, "Simple but effective"),
-    Bait("Cricket", 120, 0.08, "Insects attract small fish"),
-    Bait("Minnow", 250, 0.12, "Small fish attract bigger fish"),
-    Bait("Corn", 180, 0.10, "Surprisingly effective for many species"),
-    Bait("Shrimp", 500, 0.15, "Good for ocean fishing"),
-    Bait("Nightcrawler", 400, 0.14, "Premium worm for serious anglers"),
-    Bait("Squid", 800, 0.18, "Attracts larger predators"),
-    Bait("Cut Bait", 650, 0.16, "Fresh fish chunks work well"),
-    Bait("Artificial Lure", 1200, 0.22, "Mimics prey movement"),
-    Bait("Live Bait", 1500, 0.25, "The real deal for big catches"),
-    Bait("Special Lure", 2500, 0.30, "Increases rare fish chances"),
-    Bait("Premium Lure", 4000, 0.35, "Hand-crafted attractant"),
-    Bait("Exotic Bait", 6500, 0.40, "Imported rare ingredients"),
-    Bait("Master Bait", 50000, 0.50, "The ultimate fishing bait")
+    Bait("Worm", 0, 0, 0),
+    Bait("Bread", 5, 0.05, 50),
+    Bait("Cricket", 8, 0.08, 120),
+    Bait("Minnow", 12, 0.12, 250),
+    Bait("Corn", 10, 0.10, 180),
+    Bait("Shrimp", 15, 0.15, 500),
+    Bait("Nightcrawler", 14, 0.14, 400),
+    Bait("Squid", 18, 0.18, 800),
+    Bait("Cut Bait", 16, 0.16, 650),
+    Bait("Artificial Lure", 22, 0.22, 1200),
+    Bait("Live Bait", 25, 0.25, 1500),
+    Bait("Special Lure", 30, 0.30, 2500),
+    Bait("Premium Lure", 35, 0.35, 4000),
+    Bait("Exotic Bait", 40, 0.40, 6500),
+    Bait("Master Bait", 50, 0.50, 50000)
 ]
 
 WEATHERS = ["Sunny", "Cloudy", "Rainy", "Stormy", "Foggy"]
@@ -1368,99 +1385,6 @@ def pattern_minigame(patience_stat):
         print(Fore.RED + f"✗ Incorrect! The pattern was {pattern}" + Style.RESET_ALL)
         return False
     
-def stardew_valley_minigame(patience_stat):
-    print(Fore.YELLOW + "\n🎣 Stardew Valley Fishing Minigame!" + Style.RESET_ALL)
-    print("Use A / D to move the bar - keep the fish inside!\n")
-
-    bar_width = 30
-    frames = 150  # Bit more time
-
-    # Fish setup
-    fish_pos = random.uniform(8, bar_width - 8)
-    fish_vel = 0
-    fish_target = fish_pos  # Fish moves toward targets instead of pure random
-
-    # Player bar (now a range, not a point)
-    player_pos = bar_width / 2
-    player_vel = 0
-    bar_size = 4  # Player controls a 4-unit bar
-
-    # Catch meter - rebalanced
-    catch_meter = 0.3
-    catch_speed = 0.012 + patience_stat * 0.003  # Patience helps more
-    decay_speed = 0.008  # Much less punishing
-
-    target_timer = 0
-
-    for _ in range(frames):
-        # --- Fish movement (smoother, more predictable) ---
-        target_timer -= 1
-        if target_timer <= 0:
-            # Pick a new target position every so often
-            fish_target = random.uniform(5, bar_width - 5)
-            target_timer = random.randint(15, 40)
-        
-        # Move toward target with some wobble
-        direction = fish_target - fish_pos
-        fish_vel += direction * 0.08 + random.uniform(-0.2, 0.2)
-        fish_vel *= 0.88  # Smooth damping
-        fish_pos += fish_vel
-        fish_pos = max(0, min(bar_width - 1, fish_pos))
-
-        # --- Player input (more responsive) ---
-        key = get_key()
-        if key == 'a':
-            player_vel -= 0.7
-        elif key == 'd':
-            player_vel += 0.7
-
-        player_vel *= 0.82  # Less damping = snappier
-        player_pos += player_vel
-        player_pos = max(bar_size/2, min(bar_width - bar_size/2, player_pos))
-
-        # --- Catch logic (fish inside player bar?) ---
-        player_left = player_pos - bar_size / 2
-        player_right = player_pos + bar_size / 2
-        
-        if player_left <= fish_pos <= player_right:
-            catch_meter += catch_speed
-        else:
-            catch_meter -= decay_speed
-
-        catch_meter = max(0, min(1, catch_meter))
-
-        # --- Render ---
-        bar = ['░'] * bar_width
-        
-        # Draw player bar
-        for i in range(bar_width):
-            if player_left <= i <= player_right:
-                bar[i] = '█'
-        
-        # Draw fish on top
-        fish_idx = int(fish_pos)
-        if 0 <= fish_idx < bar_width:
-            bar[fish_idx] = '🐟'
-
-        meter = int(catch_meter * 10)
-        meter_bar = Fore.GREEN + '█' * meter + Fore.RED + '░' * (10 - meter)
-
-        print(
-            '\r' +
-            Fore.CYAN + ''.join(bar) + Style.RESET_ALL +
-            f"  [{meter_bar}{Style.RESET_ALL}]",
-            end='',
-            flush=True
-        )
-
-        if catch_meter >= 1:
-            print(Fore.GREEN + "\n\n✓ Fish caught!" + Style.RESET_ALL)
-            return True
-
-        time.sleep(0.08)
-
-    print(Fore.RED + "\n\n✗ The fish escaped!" + Style.RESET_ALL)
-    return False
 
 def undertale_attack_minigame(strength_stat, difficulty_name="Normal"):
     """Undertale-style attack timing bar - returns damage multiplier (0.5 to 2.0)
@@ -2158,6 +2082,9 @@ class Game:
             'money': self.money,
             'skill_points': self.skill_points,
             'inventory': [fish.to_dict() for fish in self.inventory],
+            'boss_inventory': [{'name': item.name, 'boss': item.boss.name, 'description': item.description, 'location': item.location} for item in self.boss_inventory],
+            'karma': self.karma,
+            'defeated_bosses': self.defeated_bosses,
             'owned_rods': [rod.name for rod in self.owned_rods],
             'owned_baits': [bait.name for bait in self.owned_baits],
             'current_rod': self.current_rod.name,
@@ -2168,6 +2095,10 @@ class Game:
             'trophy_room': [fish.to_dict() for fish in self.trophy_room],
             'current_location': self.current_location.name,
             'current_weather': self.current_weather,
+            'active_quests': [{'name': q.name, 'description': q.description} for q in self.active_quests],
+            'completed_quests': [{'name': q.name, 'description': q.description} for q in self.completed_quests],
+            'max_hp': self.max_hp,
+            'current_hp': self.current_hp,
         }
         
         # Create hash-based filename
@@ -2214,9 +2145,19 @@ class Game:
             self.money = data['money']
             self.skill_points = data['skill_points']
             
-            # Load inventory
-            self.inventory = []
-            # Inventory loading skipped for simplicity
+            # Load inventory - ACTUALLY LOAD IT NOW
+            self.inventory = [Fish.from_dict(fish_data) for fish_data in data.get('inventory', [])]
+            
+            # Load boss inventory
+            self.boss_inventory = []
+            for item_data in data.get('boss_inventory', []):
+                # Find the matching boss item from BOSS_ITEMS
+                if item_data['name'] in BOSS_ITEMS:
+                    self.boss_inventory.append(BOSS_ITEMS[item_data['name']])
+            
+            # Load karma and defeated bosses
+            self.karma = data.get('karma', 0)
+            self.defeated_bosses = data.get('defeated_bosses', [])
             
             # Load rods and baits
             self.owned_rods = [rod for rod in RODS if rod.name in data['owned_rods']]
@@ -2231,15 +2172,23 @@ class Game:
             # Load encyclopedia
             self.encyclopedia = data.get('encyclopedia', {})
             
-            # Load trophy room
-            self.trophy_room = []
-            # Trophy loading skipped for simplicity
+            # Load trophy room - ACTUALLY LOAD IT NOW
+            self.trophy_room = [Fish.from_dict(fish_data) for fish_data in data.get('trophy_room', [])]
             
             # Load location
             loc_name = data.get('current_location', 'Calm Lake')
             self.current_location = next((loc for loc in LOCATIONS if loc.name == loc_name), LOCATIONS[0])
             
             self.current_weather = data.get('current_weather', random.choice(WEATHERS))
+            
+            # Load quests (we'll skip loading the actual Quest objects and just track completion)
+            # Since quests are generated dynamically, we just need to know which ones are completed
+            self.active_quests = []  # Reset active quests
+            self.completed_quests = []  # We could reconstruct these if needed, but not critical
+            
+            # Load HP
+            self.max_hp = data.get('max_hp', 100)
+            self.current_hp = data.get('current_hp', 100)
             
             print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
@@ -2364,7 +2313,7 @@ class Game:
         print(Fore.YELLOW + "\n🎣 Something's biting!" + Style.RESET_ALL)
         time.sleep(0.5)
         
-        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame, stardew_valley_minigame])
+        minigame_choice = random.choice([button_mashing_minigame, timing_minigame, pattern_minigame])
         success = minigame_choice(self.stats['patience'])
         
         if not success:
@@ -2479,6 +2428,100 @@ class Game:
         elif choice == 'b':
             return
 
+    def sell_fish(self):
+        """Sell fish from inventory"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to sell!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║           SELL FISH                   ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            sell_value = int(fish.sell_price * self.difficulty_mult)
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg - ${sell_value}"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        print(Fore.YELLOW + "[A]ll Fish | [S]pecific Fish | [B]ack" + Style.RESET_ALL)
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL).lower()
+        
+        if choice == 'a':
+            # Sell all fish
+            total = sum(int(f.sell_price * self.difficulty_mult) for f in self.inventory)
+            self.money += total
+            count = len(self.inventory)
+            self.inventory.clear()
+            print(Fore.GREEN + f"Sold {count} fish for ${total}!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        elif choice == 's':
+            # Sell specific fish
+            try:
+                idx = int(input(Fore.CYAN + "Enter fish number: " + Style.RESET_ALL)) - 1
+                if 0 <= idx < len(self.inventory):
+                    fish = self.inventory.pop(idx)
+                    value = int(fish.sell_price * self.difficulty_mult)
+                    self.money += value
+                    print(Fore.GREEN + f"Sold {fish.name} for ${value}!" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            except (ValueError, IndexError):
+                print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+                input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    def keep_trophy(self):
+        """Move a fish from inventory to trophy room"""
+        if not self.inventory:
+            print(Fore.YELLOW + "No fish to keep as trophy!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+            return
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║         KEEP AS TROPHY                ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        
+        # Show fish
+        for i, fish in enumerate(self.inventory, 1):
+            mutation_str = (
+                f"[{fish.mutation.upper()}]" if getattr(fish, "mutation", "normal") != "normal" else ""
+            )
+            print(
+                Fore.WHITE
+                + f"{i}. {fish.name} {mutation_str} - "
+                f"{fish.weight:.2f}kg"
+                + Style.RESET_ALL
+            )
+        
+        print()
+        try:
+            idx = int(input(Fore.CYAN + "Enter fish number (0 to cancel): " + Style.RESET_ALL)) - 1
+            if idx == -1:
+                return
+            if 0 <= idx < len(self.inventory):
+                fish = self.inventory.pop(idx)
+                self.trophy_room.append(fish)
+                print(Fore.GREEN + f"{fish.name} added to trophy room!" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
+        except (ValueError, IndexError):
+            print(Fore.RED + "Invalid input!" + Style.RESET_ALL)
+            input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
     
     def visit_shop(self):
         """Shop menu"""
