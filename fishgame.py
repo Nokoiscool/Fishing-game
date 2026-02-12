@@ -146,6 +146,10 @@ DID_YOU_KNOW_FACTS = [
     "The River Guardian is said to be over 1000 years old!",
     "Pike are ambush predators known as 'water wolves' in nature!",
     "The River Guardian protects the sacred rapids from those who would harm them!",
+    "You must defeat or spare bosses to unlock new fishing locations!",
+    "Defeat the Loch Ness Monster to unlock the River location!",
+    "The River Guardian must be conquered before you can explore the Ocean!",
+    "Boss progression is required - defeat them in order to advance!",
     "A fish is a creature that lives in water!",
     
 ]
@@ -975,7 +979,7 @@ LOCH_NESS_ASCII = r"""
                 =       \             __..-...__           ___/__/__
                 :        =_     _.-~~          ~~--.__
                 __  \         ~-+-~                   ___~=_______
-                    ~@#~~ == ...______ __ ___ _--~~--_
+                    ~@ ~~ == ...______ __ ___ _--~~--_
 """
 
 LOCH_NESS_MONSTER = Boss(
@@ -1112,6 +1116,18 @@ BOSS_ITEMS = {
         "Hub Island - Swift River"
     ),
     # Add more boss items for other locations here
+}
+
+# Boss requirements for unlocking locations
+# Maps location name to the boss that must be defeated/spared
+LOCATION_BOSS_REQUIREMENTS = {
+    "Hub Island - Calm Lake": None,  # Starting location
+    "Hub Island - Swift River": "Loch Ness Monster",  # Must defeat/spare Loch Ness first
+    "Ocean": "The River Guardian",  # Must defeat/spare River Guardian
+    "Deep Sea": "The River Guardian",  # Also requires River Guardian (or you could add an Ocean boss)
+    "Volcanic Lake": "The River Guardian",  # Could add more bosses for progression
+    "Arctic Waters": "The River Guardian",
+    "Space Station Aquarium": "The River Guardian"
 }
 
 
@@ -2230,7 +2246,19 @@ class WorldMap:
     
     def is_location_unlocked(self, location):
         """Check if player has unlocked this location"""
-        return self.game.level >= location['unlock_level']
+        # First check level requirement
+        if self.game.level < location['unlock_level']:
+            return False
+        
+        # Then check boss requirement
+        location_name = location['name']
+        required_boss = LOCATION_BOSS_REQUIREMENTS.get(location_name)
+        
+        # If a boss is required, check if it's been defeated or spared
+        if required_boss and required_boss not in self.game.defeated_bosses:
+            return False
+        
+        return True
     
     def move_player(self, dx, dy):
         """Move player on world map"""
@@ -2245,7 +2273,20 @@ class WorldMap:
             # Check if standing on a location
             location = self.get_location_at(new_x, new_y)
             if location:
-                status = "✓ Unlocked" if self.is_location_unlocked(location) else f"🔒 Requires Level {location['unlock_level']}"
+                if self.is_location_unlocked(location):
+                    status = "✓ Unlocked"
+                else:
+                    # Check what's blocking
+                    requirements = []
+                    if self.game.level < location['unlock_level']:
+                        requirements.append(f"Level {location['unlock_level']}")
+                    
+                    required_boss = LOCATION_BOSS_REQUIREMENTS.get(location['name'])
+                    if required_boss and required_boss not in self.game.defeated_bosses:
+                        requirements.append(f"Defeat {required_boss}")
+                    
+                    status = f"🔒 Requires: {', '.join(requirements)}"
+                
                 self.message = f"{location['name']} - {status}. Press [E] to enter!"
             else:
                 self.message = "Navigate to a location and press [E] to travel there!"
@@ -2324,7 +2365,21 @@ class WorldMap:
             if tile_char == 'H':  # Skip Hub Island
                 continue
             is_unlocked = self.is_location_unlocked(loc)
-            status = f"{Fore.GREEN}✓" if is_unlocked else f"{Fore.RED}🔒 Lvl{loc['unlock_level']}"
+            
+            # Build status message
+            if is_unlocked:
+                status = f"{Fore.GREEN}✓"
+            else:
+                requirements = []
+                if self.game.level < loc['unlock_level']:
+                    requirements.append(f"Lvl{loc['unlock_level']}")
+                
+                required_boss = LOCATION_BOSS_REQUIREMENTS.get(loc['name'])
+                if required_boss and required_boss not in self.game.defeated_bosses:
+                    requirements.append(f"Beat {required_boss}")
+                
+                status = f"{Fore.RED}🔒 {', '.join(requirements)}"
+            
             color = loc['color'] if is_unlocked else Fore.LIGHTBLACK_EX
             print(f"  {color}{loc['name']:20s}{Style.RESET_ALL} {status}{Style.RESET_ALL}")
         
@@ -2359,7 +2414,16 @@ class WorldMap:
                         # Return the location to enter
                         return LOCATIONS[location['game_index']]
                     else:
-                        self.message = f"🔒 {location['name']} is locked! Requires level {location['unlock_level']} (You: Lvl {self.game.level})"
+                        # Build requirements message
+                        requirements = []
+                        if self.game.level < location['unlock_level']:
+                            requirements.append(f"Level {location['unlock_level']} (You: Lvl {self.game.level})")
+                        
+                        required_boss = LOCATION_BOSS_REQUIREMENTS.get(location['name'])
+                        if required_boss and required_boss not in self.game.defeated_bosses:
+                            requirements.append(f"Defeat {required_boss}")
+                        
+                        self.message = f"🔒 {location['name']} is locked! Requires: {', '.join(requirements)}"
                 else:
                     self.message = "Nothing to enter here. Navigate to a location!"
             elif key == 'q':
@@ -3364,11 +3428,22 @@ class Game:
                     original_location = self.current_location
                     
                     if water_type == 'river':
-                        self.current_location = LOCATIONS[1]  # Hub Island - Swift River
+                        target_location = LOCATIONS[1]  # Hub Island - Swift River
                     elif water_type == 'lake':
-                        self.current_location = LOCATIONS[0]  # Hub Island - Calm Lake
+                        target_location = LOCATIONS[0]  # Hub Island - Calm Lake
+                    else:
+                        target_location = self.current_location
                     
-                    self.fish(golden_spot=is_golden)
+                    # Check if this location requires a boss to be defeated
+                    required_boss = LOCATION_BOSS_REQUIREMENTS.get(target_location.name)
+                    if required_boss and required_boss not in self.defeated_bosses:
+                        hub_map.message = f"🔒 {target_location.name} is blocked! You must defeat {required_boss} first!"
+                        print(Fore.RED + hub_map.message + Style.RESET_ALL)
+                        time.sleep(1.5)
+                    else:
+                        # Allowed to fish here
+                        self.current_location = target_location
+                        self.fish(golden_spot=is_golden)
                     
                     # Restore original location
                     self.current_location = original_location
@@ -3442,14 +3517,23 @@ class Game:
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
                     
                     # For Hub Island locations, check water type to ensure correct fish pool
+                    target_location = location
                     if location.name in ["Hub Island - Calm Lake", "Hub Island - Swift River"]:
                         water_type = location_map.get_water_type(location_map.player_x, location_map.player_y)
                         if water_type == 'river':
-                            self.current_location = LOCATIONS[1]  # Hub Island - Swift River
+                            target_location = LOCATIONS[1]  # Hub Island - Swift River
                         elif water_type == 'lake':
-                            self.current_location = LOCATIONS[0]  # Hub Island - Calm Lake
+                            target_location = LOCATIONS[0]  # Hub Island - Calm Lake
                     
-                    self.fish(golden_spot=is_golden)
+                    # Check if this location requires a boss to be defeated
+                    required_boss = LOCATION_BOSS_REQUIREMENTS.get(target_location.name)
+                    if required_boss and required_boss not in self.defeated_bosses:
+                        location_map.message = f"🔒 {target_location.name} is blocked! You must defeat {required_boss} first!"
+                        print(Fore.RED + location_map.message + Style.RESET_ALL)
+                        time.sleep(1.5)
+                    else:
+                        self.current_location = target_location
+                        self.fish(golden_spot=is_golden)
                     
                     # Restore location after fishing
                     self.current_location = location
