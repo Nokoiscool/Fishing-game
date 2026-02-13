@@ -9142,6 +9142,10 @@ class Game:
                 ("local politician, Speech",
                     "\"I support our local fishermen and the fishing industry. We need to balance economic growth with environmental protection.\""),
 
+                ("Environmental activist, Speech",
+                    "\"The fish are dying, the waters are polluted, and we are running out of time. We need to take bold action to save our oceans.\""),
+
+
                 # ============================================
                 # MUSIC LYRICS
                 # ============================================
@@ -9225,6 +9229,9 @@ class Game:
                 ("Fallout", "narrator",
                  "\"War. war never changes.\""),
 
+                ("Bioshock", "Andrew Ryan",
+                    "\"A man chooses, a slave obeys.\""),
+
                 # ============================================
                 # MOVIES AND TV SHOWS
                 # ============================================
@@ -9247,7 +9254,7 @@ class Game:
                     "\"Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos.\""),
 
                 # ============================================
-                # IN GAME CHARACTER QUOTES
+                # IN GAME QUOTES
                 # ============================================
 
                 ("Hub Island Library", "Thalia, the Librarian",
@@ -9267,6 +9274,15 @@ class Game:
 
                 ("The Book of Flames", "Prometheus the fire monk",
                     "\"The fire that burns within us is the same fire that burns in the heart of the ocean.\nTo master one is to understand the other.\""),
+
+                ("legend of the Loch Ness Monster", "Local folklore",
+                    "\"In the depths of Loch Ness, a creature stirs. Some say it's a remnant of an ancient age, a guardian of secrets long forgotten.\""),
+
+                ("Journal of a Lost Fisher", "Anonymous",
+                    "\"I set out to find the legendary fish that haunts these waters. Days turned into weeks, and I found nothing but silence and shadows. The sea is a cruel mistress.\""),
+
+                ("State of the island adress", "Bob, mayor of hub island",
+                    "\"My fellow islanders, we stand at a crossroads. The sea is both our greatest resource and our greatest threat. We must come together to protect it, to learn from it, and to ensure that it continues to sustain us for generations to come.\""),
 
 
                 
