@@ -9198,7 +9198,7 @@ class Game:
         print(Fore.CYAN + "5. Jormungandr (Deep sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "6. Cthulhu (Deep Sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "7. ifrit (Volcanic lake)" + Style.RESET_ALL) 
-        print(Fore.CYAN + "8. [MORE COMMING SOON]" + Style.RESET_ALL)
+        print(Fore.CYAN + "8. Megalodon ghost (Volcanic lake)" + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -9217,6 +9217,8 @@ class Game:
             self.start_boss_fight(CTHULHU)
         elif choice == '7':
             self.start_boss_fight(IFRIT)
+        elif choice == '8':
+            self.start_boss_fight(MEGALODON_GHOST)
     
     def dev_menu(self):
         """DEV MODE: Comprehensive testing and stat editing menu"""
