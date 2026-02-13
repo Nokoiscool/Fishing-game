@@ -2865,27 +2865,21 @@ CTHULHU_ASCII = """
     ║                     [Ph'nglui mglw'nafh...]                ║
     ╚════════════════════════════════════════════════════════════╝
     
-                            ⊗⊕⊙⊛⊚◉◎
-                        .~?#@@@@@@#?~.
-                      /?#@@@@@@@@@@@#?/.
-                    /#@@@@@@@@@@@@@@@@@#\\
-                   ?@@@@@@@#######@@@@@@@?
-                  /@@@@@#?~~~~~~~~~?#@@@@@\\
-                 ?@@@@@?   O     O   ?@@@@@?
-                 #@@@@@   <  . .  >   @@@@@#
-                ?@@@@@#    \\ ___ /    #@@@@@?
-                #@@@@@|   .~\\_|_/~.   |@@@@@#
-                @@@@@#|  {  CTHULHU }  |#@@@@@
-               .@@@@@#|   ~ ~ ~ ~ ~    |#@@@@@.
-               |@@@@@#\\    FHTAGN     /#@@@@@|
-               |@@@@@@#\\             /##@@@@@|
-            ~≈~|@@@@@@@#?~.       .~?#@@@@@@@|~≈~
-         ~≈~   |@@@@@@@@@@#######@@@@@@@@@@@@|   ~≈~
-       ~≈~  |~~{@@}~|~~{@@}~|~~{@@}~|~~{@@}~~|  ~≈~
-      ~≈~ __|~~|@@|~|~~|@@|~|~~|@@|~|~~|@@|~~|__ ~≈~
-    ≈~≈~{    THE SUNKEN CITY OF R'LYEH    }~≈~≈
-       ~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~
-        "In his house at R'lyeh, dead Cthulhu waits dreaming..."
+    ⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⣀⣤⣶⣾⣿⣿⣷⣶⣤⣀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠜⠉⣿⡆⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢰⣿⠉⠃⠀⠀⠀⠀⠀
+    ⠀⢀⣤⣴⣦⣄⣴⠟⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡎⢻⣦⣠⣴⣦⣄⠀⠀
+    ⠀⡞⠁⣠⣾⢿⣧⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣽⡿⣷⣄⠈⢷⠀
+    ⠀⣠⣾⠟⠁⢸⣿⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⣿⡇⠈⠻⣷⣄⠀
+    ⣰⡿⠁⠀⢀⣾⣏⣾⣄⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣰⣷⣹⣷⠀⠀⠈⢿⣆
+    ⣿⡇⠀⢠⣾⠏⢸⣿⣿⣿⣿⠋⢻⣿⣿⣿⣿⡟⠙⣿⣿⣿⣿⡇⠹⣷⡀⠀⢸⣿
+    ⠹⣿⣴⡿⠋⠀⠈⠛⠉⣹⣿⣦⣄⡹⣿⣿⣋⣠⣶⣿⣏⠉⠛⠁⠀⠙⢿⣦⣿⠏
+    ⠀⣸⣿⠿⠿⣿⣾⣿⡿⠿⣿⣿⣿⣿⡆⢰⣿⣿⣿⣿⠿⢿⣿⣶⣿⠿⠿⣻⣇⠀
+    ⠀⣿⡇⢀⣴⣶⣤⣀⣴⣿⠿⣻⡿⣿⣧⣾⣿⢿⣟⠿⣿⣦⣀⣤⣶⣦⠀⢸⣿⠀
+    ⠀⢿⣧⠈⠃⢀⣵⣿⡋⠁⢀⣿⡷⣿⡇⢻⣿⣿⣿⡀⠈⢛⣿⣮⡀⠘⠀⣼⡟⠀
+    ⠀⠈⠻⣷⣤⣟⣋⣿⣧⣴⡿⠋⠀⣿⡇⢸⣿⠀⠙⢿⣦⣼⣿⣙⣻⣤⣾⠟⠁⠀
+    ⠀⠀⠀⠈⢽⣿⠛⢻⣏⢉⣤⣶⣶⣿⠁⠈⣿⣶⣶⣤⡉⣽⡟⠛⣿⡏⠁⠀⠀⠀
+    ⠀⠀⠀⠀⠈⠿⣷⣾⣾⣟⣉⣠⣿⢿⡇⢸⠿⣿⣄⣙⣻⣷⣷⣾⠿⠁⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⠿⠛⢁⡼⠃⠘⢦⡈⠛⠿⠟⠃⠀⠀⠀⠀⠀⠀⠀⠀
 """
 
 CTHULHU = Boss(
@@ -4002,7 +3996,7 @@ class LocationMap:
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
             # Allow movement on walkable tiles (including all water types and NPC)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M']:
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M', 'H']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
@@ -4062,6 +4056,10 @@ class LocationMap:
         """Check if location has MacTavish - only visible if Loch Ness defeated"""
         return self.layout[y][x] == 'M'
     
+    def is_npc_holloway(self, x, y):
+        """Check if location has Dr. Holloway - only visible after Cthulhu defeated"""
+        return self.layout[y][x] == 'H'
+    
     def render_tile(self, tile, is_player, is_spot, is_golden, game=None):
         """Render a single tile with appropriate coloring"""
         if is_player:
@@ -4106,6 +4104,12 @@ class LocationMap:
             else:
                 # Show as water if not unlocked yet
                 return Fore.BLUE + '≈' + Style.RESET_ALL
+        elif tile == 'H':  # Dr. Holloway - only visible after Cthulhu defeated
+            if game and "Cthulhu" in game.defeated_bosses:
+                return Fore.CYAN + '🔬' + Style.RESET_ALL
+            else:
+                # Show as water if not unlocked yet
+                return Fore.BLUE + '~' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -4156,7 +4160,7 @@ DEEP_SEA_LAYOUT = [
     ['▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
-    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
+    ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', 'H', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '◉', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
     ['▓', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '~', '▓'],
@@ -5711,7 +5715,11 @@ class Game:
             print(Fore.WHITE + "2. Ask about the rebellion" + Style.RESET_ALL)
             print(Fore.WHITE + "3. Ask about pirate life" + Style.RESET_ALL)
             print(Fore.WHITE + "4. Get a gift from the captain" + Style.RESET_ALL)
-            print(Fore.LIGHTBLACK_EX + "5. Leave" + Style.RESET_ALL)
+            print(Fore.CYAN + "5. Ask about his connection to the ocean" + Style.RESET_ALL)
+            print(Fore.CYAN + "6. Ask what he knows about the Guardians" + Style.RESET_ALL)
+            print(Fore.CYAN + "7. Ask about AquaTech's true intentions" + Style.RESET_ALL)
+            print(Fore.CYAN + "8. Ask about the Fisher prophecy" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + "9. Leave" + Style.RESET_ALL)
             print()
             
             choice = input(Fore.CYAN + "Your choice: " + Style.RESET_ALL)
@@ -5816,6 +5824,184 @@ class Game:
                 get_key()
                 
             elif choice == '5':
+                # New dialogue: About the ocean
+                self.clear_screen()
+                print(Fore.RED + pirate_art + Style.RESET_ALL)
+                print()
+                print(Fore.RED + "Captain Redbeard:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Ye want to know why I'm still here? After all these years?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*He gazes out at the endless sea*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Truth is... I should've died centuries ago.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Lost in a storm off the Arctic coast. Ship went down. Crew too.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"But the ocean... it wasn't finished with me.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Woke up on these waters, ship intact, crew alive again.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Or... somethin' like alive.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Touches his chest*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Don't got a heartbeat no more. Haven't for... longer than I remember.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The ocean keeps us here. Sailin' forever.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Waitin' for somethin'. Someone.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"I think... maybe that someone was you.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Grins*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"The sea don't let go of those it has use for.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Question is... what's it got planned for ye?\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '6':
+                # New dialogue: About the Guardians
+                self.clear_screen()
+                print(Fore.RED + pirate_art + Style.RESET_ALL)
+                print()
+                print(Fore.RED + "Captain Redbeard:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"The Guardians? Aye, I've met most of 'em.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Been sailin' long enough to see things most folk call myth.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The River Guardian? That one's as old as rivers themselves.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Remembers when humans first built settlements near water.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Every scar on its hide is a broken promise. A betrayal.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Sighs*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Nessie though... that one breaks my heart.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"It's not a monster. It's grief. Pure concentrated sorrow.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Lost everything it protected, centuries ago.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Now it just... lashes out. Doesn't know what else to do.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"And the Kraken... nobody understands what it's really doin' down there.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Holdin' somethin' back. Somethin' that wants through.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Leans closer*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Ye spare these guardians, ye're not just showin' mercy.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Ye're healin' wounds older than nations.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The ocean notices. The ocean remembers.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '7':
+                # New dialogue: About AquaTech's true intentions
+                self.clear_screen()
+                print(Fore.RED + pirate_art + Style.RESET_ALL)
+                print()
+                print(Fore.RED + "Captain Redbeard:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"AquaTech... they started with good intentions.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"No lie. They wanted to feed a growin' world.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But somewhere along the way...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Efficiency became more important than ecology.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Profit more valuable than preservation.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Slams fist on the rail*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"They don't see the ocean as alive!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"Just a resource to be managed. Optimized. EXPLOITED.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Their deep-sea drills? Getting closer to the rift.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The one the Kraken guards.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"They don't know what they're about to unleash.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Or maybe... maybe they do, and they don't care.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Voice drops*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"There's rumors of a final weapon. A Megalodon Mech.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Designed to harvest EVERYTHING.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"If they deploy that thing...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"The ocean as we know it... ends.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"That's why we fight. That's why we rebel.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Because someone has to stand against the tide of greed.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '8':
+                # New dialogue: About the prophecy
+                self.clear_screen()
+                print(Fore.RED + pirate_art + Style.RESET_ALL)
+                print()
+                print(Fore.RED + "Captain Redbeard:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Ah, the prophecy. Ye heard about that, have ye?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The elders on Hub Island whisper it to every new Fisher.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Recites from memory*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"'A Fisher will come who will decide the fate of all waters.'\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"'They will either save the seas or doom them forever.'\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Most think it means one person makes one big choice.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But I've sailed long enough to know better.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"It's not one choice. It's every choice.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Every guardian spared or killed.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Every alliance forged or broken.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Every moment ye choose mercy over violence.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Eyes gleam with ancient knowledge*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"The prophecy's already in motion.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"And from what I've seen... ye might actually be the one.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The Fisher who unites the waters instead of conquerin' them.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Voice darkens*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"Or... the one who breaks 'em forever.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Ocean's watchin' ye, friend. Every move ye make.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The waters remember. And they're takin' notes.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+                get_key()
+                
+            elif choice == '9':
                 # Leave - karma-based farewell
                 self.clear_screen()
                 print(Fore.RED + pirate_art + Style.RESET_ALL)
@@ -6111,6 +6297,202 @@ class Game:
         print()
         print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
         get_key()
+    
+    
+    def interact_with_dr_holloway(self):
+        """Talk to Dr. Marina Holloway - unlocked after defeating Cthulhu"""
+        
+        while True:
+            self.clear_screen()
+            
+            holloway_art = """
+            
+                🔬 Dr. Marina Holloway 🔬
+            
+                        _____
+                      /       \\
+                     |  *   *  |
+                     |    -    |     "Fascinating..."
+                     |  \\___/  |
+                      \\_______/
+                        | | |
+                      __| | |__
+                     |  \\___/  |
+                    /    🔬🐠    \\
+                   | DEEP SEA   |
+                   | RESEARCHER |
+                    \\___________/
+            """
+            
+            print(Fore.CYAN + holloway_art + Style.RESET_ALL)
+            print()
+            
+            # Intro message on first encounter
+            if not hasattr(self, 'met_holloway'):
+                self.met_holloway = True
+                print(Fore.LIGHTBLACK_EX + "*Inside a reinforced bathysphere, dim blue lights illuminate strange equipment*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*A woman in a diving suit turns as you approach*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Her eyes are... different. They've seen too much deep*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.CYAN + "Dr. Holloway:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Oh! A visitor. Rare, down here.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Welcome to my research station.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Gestures at tanks full of bioluminescent creatures*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"I study the impossible. The things that shouldn't exist.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But do anyway.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+            
+            # Menu
+            print(Fore.YELLOW + "What would you like to discuss?" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Ask about her research" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Ask about AquaTech" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Ask about the Kraken" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + "4. Leave" + Style.RESET_ALL)
+            print()
+            
+            choice = input(Fore.CYAN + "Your choice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                # About research
+                self.clear_screen()
+                print(Fore.CYAN + holloway_art + Style.RESET_ALL)
+                print()
+                print(Fore.CYAN + "Dr. Holloway:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"My research? It's... complicated.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Officially, I'm cataloging deep-sea biodiversity.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Unofficially...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Pulls out a journal filled with incomprehensible notes*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"I'm documenting proof that consciousness isn't unique to humans.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"These fish... they respond to our thoughts.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Not telepathy. Nothing so simple.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"But when I feel fear, certain species patterns change.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"When I experience joy, different species become active.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The ocean is... aware. Thinking. Feeling.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Just not in any way our science can currently measure.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Laughs bitterly*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"I can't publish this. They'd call me mad.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But I know what I've seen. What I've felt.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '2':
+                # About AquaTech
+                self.clear_screen()
+                print(Fore.CYAN + holloway_art + Style.RESET_ALL)
+                print()
+                print(Fore.CYAN + "Dr. Holloway:" + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + "*Voice drops to whisper*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"AquaTech funds my research. They don't know what I've really discovered.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Their deep-sea drilling operations...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Pulls up sonar data*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"They're approaching something. Something that's aware of them.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The drilling has awakened... I don't know what to call it.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"An intelligence? A presence? Something ancient?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"It's responding. Communicating. Getting... angry.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Shows readings that make no sense*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"These patterns shouldn't be possible. They violate physics.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"But they're real. And they're getting stronger.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"I've tried warning AquaTech. They think it's equipment malfunction.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"They're going to keep drilling until...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Trails off, staring at the dark water beyond the viewport*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"Until something breaks through.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '3':
+                # About the Kraken
+                self.clear_screen()
+                print(Fore.CYAN + holloway_art + Style.RESET_ALL)
+                print()
+                print(Fore.CYAN + "Dr. Holloway:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"The Kraken? You've seen it?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Intense focus*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"Tell me everything.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*After you describe your encounter*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"I knew it! I KNEW there was a guardian!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Frantically takes notes*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The rift it's guarding... I've detected it on my instruments.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"It's not geological. It's dimensional.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"A thin spot in reality where... something else... presses through.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"The Kraken isn't just a guardian of the ocean.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"It's a guardian of THIS reality.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"If it fails... if AquaTech's drilling weakens it...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Meets your eyes*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"We won't just lose the ocean.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.RED + "\"We'll lose... everything.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '4':
+                # Leave
+                self.clear_screen()
+                print(Fore.CYAN + holloway_art + Style.RESET_ALL)
+                print()
+                print(Fore.CYAN + "Dr. Holloway:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Stay safe down here. The deep doesn't forgive mistakes.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"And... thank you for listening. It's been so long since I could talk to someone.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                break
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
     
     def interact_with_npc_fisherman(self):
         """Talk to the NPC fisherman and get a random fact"""
@@ -6557,6 +6939,9 @@ class Game:
             print()
             print(Fore.YELLOW + location_map.message + Style.RESET_ALL)
             print()
+            # Show NPC hint for Deep Sea if Cthulhu defeated
+            if location.name == "Deep Sea" and "Cthulhu" in self.defeated_bosses:
+                print(Fore.CYAN + "🔬 Dr. Holloway's Research Station | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                 print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Fish | [Q] Return to Hub" + Style.RESET_ALL)
             else:
@@ -6574,7 +6959,14 @@ class Game:
             elif key == 'd':
                 location_map.move_player(1, 0)
             elif key == 'e':
-                if location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
+                # Check for NPC first
+                if location_map.is_npc_holloway(location_map.player_x, location_map.player_y):
+                    # Talk to Dr. Holloway (only if Cthulhu defeated)
+                    if "Cthulhu" in self.defeated_bosses:
+                        self.interact_with_dr_holloway()
+                    else:
+                        location_map.message = "The dark waters seem still here..."
+                elif location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
                     
                     # For Hub Island locations, check water type to ensure correct fish pool
