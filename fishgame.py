@@ -3011,7 +3011,7 @@ JORMUNGANDR_ASCII = """
 
 JORMUNGANDR = Boss(
     name="Jörmungandr",
-    hp=800,  # Increased from 750 - this is the final boss
+    hp=800,  # Increased from 750  hard but still not final boss level
     defense=25,  # Increased from 22 - highest defense
     attacks=[
         BossAttack("World Coil", jormungandr_world_coil, (0, 45), "Break free from the crushing coils!"),
