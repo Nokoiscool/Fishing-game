@@ -11,7 +11,7 @@ from colorama import Fore, Style, init
 from datetime import datetime
 
 # Game version for save file compatibility
-GAME_VERSION = "0.7.1"
+GAME_VERSION = "0.7.2"
 
 # Music system - cross-platform support
 current_music = None
@@ -2124,6 +2124,312 @@ def cthulhu_cultist_summon():
     return total_damage
 
 
+# ===== IFRIT ATTACK PATTERNS =====
+def ifrit_lava_geyser():
+    """Erupting geysers of molten lava"""
+    print(Fore.RED + "\n🌋 LAVA GEYSERS ERUPT FROM THE LAKE! 🌋\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    # Phase 1: Predict the eruptions
+    print(Fore.YELLOW + "Phase 1: VOLCANIC TREMORS!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Watch the pattern of tremors and predict where geysers will erupt!" + Style.RESET_ALL)
+    print()
+    
+    # Show tremor pattern (5x5 grid)
+    grid_size = 5
+    tremor_positions = []
+    for _ in range(4):
+        tremor_positions.append((random.randint(0, grid_size-1), random.randint(0, grid_size-1)))
+    
+    # Show tremors
+    for y in range(grid_size):
+        row = ""
+        for x in range(grid_size):
+            if (x, y) in tremor_positions:
+                row += Fore.YELLOW + "⚠️ " + Style.RESET_ALL
+            else:
+                row += Fore.BLUE + "≈≈" + Style.RESET_ALL
+        print(row)
+    
+    time.sleep(2)
+    print()
+    print(Fore.RED + "Geysers erupt next to tremors! Choose a safe spot (row col):" + Style.RESET_ALL)
+    
+    # Generate danger zones (adjacent to tremors)
+    danger_zones = set()
+    for tx, ty in tremor_positions:
+        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+            nx, ny = tx + dx, ty + dy
+            if 0 <= nx < grid_size and 0 <= ny < grid_size:
+                danger_zones.add((nx, ny))
+        danger_zones.add((tx, ty))  # Tremor spot itself is also dangerous
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().split()
+        y, x = int(response[0]), int(response[1])
+        
+        if 0 <= x < grid_size and 0 <= y < grid_size:
+            if (x, y) not in danger_zones:
+                print(Fore.GREEN + "✓ You found a safe spot!" + Style.RESET_ALL)
+            else:
+                total_damage += 18
+                print(Fore.RED + "💥 LAVA GEYSER! (-18 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 18
+            print(Fore.RED + "💥 OUT OF BOUNDS! BURNED! (-18 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 18
+        print(Fore.RED + "💥 CONFUSION! ENGULFED! (-18 HP)" + Style.RESET_ALL)
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Dodge the eruption
+    print()
+    print(Fore.LIGHTRED_EX + "Phase 2: ERUPTION SEQUENCE!" + Style.RESET_ALL)
+    
+    sequence = ''.join(random.choices(['W', 'A', 'S', 'D'], k=4))
+    print(Fore.GREEN + f"Dodge pattern: {' → '.join(sequence)}" + Style.RESET_ALL)
+    time.sleep(2.5)
+    
+    # Obscure with lava
+    print(Fore.RED + "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type the sequence:" + Style.RESET_ALL)
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == sequence:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            total_damage += 15
+            print(Fore.RED + "💥 SCORCHED! (-15 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 15
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ PERFECT EVASION! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def ifrit_scorching_breath():
+    """A wave of superheated air and flames"""
+    print(Fore.LIGHTYELLOW_EX + "\n🔥 IFRIT UNLEASHES SCORCHING BREATH! 🔥\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.RED + "A wave of flames approaches!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "You must dive deep to avoid it!" + Style.RESET_ALL)
+    print()
+    
+    # Timing challenge
+    print(Fore.CYAN + "Type 'DIVE' when ready, then hold your breath!" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        
+        if response == "DIVE":
+            print(Fore.BLUE + "You plunge beneath the surface!" + Style.RESET_ALL)
+            print(Fore.YELLOW + "Hold SPACE for 3 seconds to stay underwater!" + Style.RESET_ALL)
+            
+            # Button hold challenge
+            start_time = time.time()
+            hold_time = 0
+            last_press = time.time()
+            
+            while time.time() - start_time < 3:
+                key = get_key()
+                if key == ' ':
+                    last_press = time.time()
+                    
+                # Check if they're still holding (last press was recent)
+                if time.time() - last_press < 0.3:
+                    hold_time = time.time() - start_time
+                    sys.stdout.write(f"\r{Fore.CYAN}Holding: {hold_time:.1f}s / 3.0s{Style.RESET_ALL}")
+                    sys.stdout.flush()
+                else:
+                    break
+            
+            print()
+            
+            if hold_time >= 2.5:
+                print(Fore.GREEN + "✓ You stayed submerged!" + Style.RESET_ALL)
+            else:
+                total_damage += 20
+                print(Fore.RED + f"💥 SURFACED TOO EARLY! BURNED! (-20 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 25
+            print(Fore.RED + "💥 FAILED TO DIVE! INCINERATED! (-25 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 25
+    
+    return total_damage
+
+
+def ifrit_obsidian_shard_storm():
+    """Sharp volcanic glass shards rain down"""
+    print(Fore.LIGHTBLACK_EX + "\n⬛ OBSIDIAN SHARDS RAIN FROM ABOVE! ⬛\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.YELLOW + "Sharp shards of volcanic glass fall like deadly rain!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Deflect them by timing your blocks!" + Style.RESET_ALL)
+    print()
+    
+    # Rhythm-based blocking
+    num_shards = 6
+    for i in range(num_shards):
+        print(Fore.WHITE + f"Shard {i+1}/{num_shards} incoming!" + Style.RESET_ALL)
+        
+        # Random delay before shard hits
+        wait_time = random.uniform(0.8, 1.5)
+        time.sleep(wait_time)
+        
+        print(Fore.RED + "BLOCK NOW! " + Style.RESET_ALL, end='')
+        
+        start_time = time.time()
+        response = get_key()
+        reaction_time = time.time() - start_time
+        
+        if response == ' ' and reaction_time < 0.5:
+            print(Fore.GREEN + "✓ Blocked!" + Style.RESET_ALL)
+        elif reaction_time >= 0.5:
+            total_damage += 5
+            print(Fore.RED + "💥 Too slow! (-5 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 5
+            print(Fore.RED + "💥 Wrong key! (-5 HP)" + Style.RESET_ALL)
+        
+        time.sleep(0.3)
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★ PERFECT DEFENSE! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def ifrit_magma_whip():
+    """Ifrit lashes out with tendrils of living lava"""
+    print(Fore.RED + "\n🔥 MAGMA TENDRILS LASH OUT! 🔥\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.YELLOW + "Ifrit extends burning tendrils of molten rock!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Dodge left (A) or right (D)!" + Style.RESET_ALL)
+    print()
+    
+    # Three quick dodges
+    for i in range(5):
+        direction = random.choice(['LEFT', 'RIGHT'])
+        correct_key = 'a' if direction == 'LEFT' else 'd'
+        
+        print(Fore.RED + f"Tendril {i+1} whips {direction}!" + Style.RESET_ALL)
+        print(Fore.YELLOW + "Dodge quick!" + Style.RESET_ALL)
+        
+        start_time = time.time()
+        response = get_key()
+        reaction_time = time.time() - start_time
+        
+        if response == correct_key and reaction_time < 0.8:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            total_damage += 6
+            if reaction_time >= 0.8:
+                print(Fore.RED + "💥 Too slow! Struck! (-6 HP)" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "💥 Wrong direction! (-6 HP)" + Style.RESET_ALL)
+        
+        time.sleep(0.4)
+    
+    return total_damage
+
+
+def ifrit_volcanic_fury():
+    """Ultimate attack - the entire lake becomes a cauldron of fire"""
+    print(Fore.LIGHTRED_EX + "\n🌋🔥 VOLCANIC FURY - THE LAKE BECOMES HELL! 🔥🌋\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.RED + "*The entire volcanic lake ignites in fury!*" + Style.RESET_ALL)
+    print(Fore.YELLOW + "*The water itself begins to boil!*" + Style.RESET_ALL)
+    print()
+    
+    # Phase 1: Navigate through the inferno
+    print(Fore.LIGHTRED_EX + "Phase 1: INFERNO MAZE!" + Style.RESET_ALL)
+    
+    maze_sequence = ''.join(random.choices(['W', 'A', 'S', 'D'], k=6))
+    print(Fore.CYAN + "Navigate through the flames: " + Style.RESET_ALL)
+    print(Fore.GREEN + ' → '.join(maze_sequence) + Style.RESET_ALL)
+    time.sleep(3)
+    
+    # Obscure
+    for _ in range(10):
+        print(Fore.RED + "🔥" * 30 + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type the path:" + Style.RESET_ALL)
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == maze_sequence:
+            print(Fore.GREEN + "✓ Navigated!" + Style.RESET_ALL)
+        else:
+            total_damage += 25
+            print(Fore.RED + "💥 LOST IN THE INFERNO! (-25 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 25
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Survive the heat
+    print()
+    print(Fore.LIGHTYELLOW_EX + "Phase 2: EXTREME HEAT!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Mash SPACE to swim toward safety!" + Style.RESET_ALL)
+    
+    presses = 0
+    start_time = time.time()
+    target = 25
+    
+    while time.time() - start_time < 6 and presses < target:
+        key = get_key()
+        if key == ' ':
+            presses += 1
+            sys.stdout.write(f"\r{Fore.CYAN}Swimming: {presses}/{target}{Style.RESET_ALL}")
+            sys.stdout.flush()
+    
+    print()
+    
+    if presses >= target:
+        print(Fore.GREEN + "✓ YOU ESCAPE THE VOLCANIC FURY!" + Style.RESET_ALL)
+    else:
+        damage = 40
+        total_damage += damage
+        print(Fore.RED + f"💥 CAUGHT IN THE INFERNO! (-{damage} HP)" + Style.RESET_ALL)
+    
+    # Phase 3: Final explosion
+    print()
+    print(Fore.RED + "Phase 3: FINAL ERUPTION!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Type 'SHIELD' to protect yourself!" + Style.RESET_ALL)
+    
+    start = time.time()
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start
+        
+        if response == "SHIELD" and elapsed < 2.0:
+            print(Fore.GREEN + "✓ Protected!" + Style.RESET_ALL)
+        else:
+            total_damage += 20
+            print(Fore.RED + "💥 VOLCANIC BLAST! (-20 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 20
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★★★ LEGENDARY SURVIVAL! YOU WITHSTOOD THE FURY! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 def cthulhu_ultimate_awakening():
     """Cthulhu begins to awaken - ultimate attack"""
     print(Fore.RED + "\n💀 CTHULHU STIRS! THE STARS ARE RIGHT! 💀\n" + Style.RESET_ALL)
@@ -3098,6 +3404,193 @@ CTHULHU = Boss(
     spare_threshold=25  # Lower threshold - Cthulhu is more willing to return to sleep
 )
 
+# ===== IFRIT THE FLAMEBRINGER =====
+
+IFRIT_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         🔥 IFRIT - THE FLAMEBRINGER 🔥                    ║
+    ║              [Ancient Fire Spirit of the Volcano]          ║
+    ║                     [Bound to the Lake]                    ║
+    ╚════════════════════════════════════════════════════════════╝
+    
+            ⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣶⣶⣶⣶⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀
+            ⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀
+            ⠀⠀⣼⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣧⠀⠀
+            ⠀⣸⣿⣿⡿⠋⠀⠀⠀⠀🔥🔥🔥⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣇⠀
+            ⠀⣿⣿⡿⠁⠀⠀⠀🔥🔥🔥🔥🔥⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⠀
+            ⢰⣿⣿⠃⠀⠀⠀🔥🔥🔥🔥🔥🔥🔥⠀⠀⠀⠀⠘⣿⣿⣿⡆
+            ⢸⣿⣿⠀⠀⠀⠀🔥🔥🔥🔥🔥🔥🔥⠀⠀⠀⠀⢸⣿⣿⣿
+            ⢸⣿⣿⠀⠀⠀⠀🔥⬛⬛🔥🔥⬛⬛🔥⠀⠀⠀⠀⢸⣿⣿⣿
+            ⢸⣿⣿⠀⠀⠀⠀⠀⬛⬛⬛🔥⬛⬛⬛⠀⠀⠀⠀⠀⢸⣿⣿⣿
+            ⢸⣿⣿⡀⠀⠀⠀⠀⠀⬛⬛🔥🔥⬛⬛⠀⠀⠀⠀⠀⣸⣿⣿⣿
+            ⠘⣿⣿⣧⠀⠀⠀⠀⠀⠀🔥🔥🔥🔥🔥⠀⠀⠀⠀⠀⣼⣿⣿⡿
+            ⠀⢻⣿⣿⣧⡀⠀⠀⠀⠀🔥🔥🔥🔥⠀⠀⠀⠀⣠⣾⣿⣿⡟⠀
+            ⠀⠀⠻⣿⣿⣿⣦⣀⠀⠀⠀🔥🔥🔥⠀⠀⠀⣠⣾⣿⣿⠟⠀⠀
+            ⠀⠀⠀⠈⠻⣿⣿⣿⣿⣶⣤⣄⣀⣀⣀⣠⣴⣾⣿⣿⠟⠁⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠀⠉⠛⠿⢿⣿⣿⣿⣿⣿⡿⠿⠛⠉⠀⠀⠀⠀⠀⠀
+            [A being of living flame and obsidian...]
+"""
+
+IFRIT = Boss(
+    name="Ifrit the Flamebringer",
+    hp=700,
+    defense=20,
+    attacks=[
+        BossAttack("Lava Geyser", ifrit_lava_geyser, (0, 35), "Predict the eruption pattern!"),
+        BossAttack("Scorching Breath", ifrit_scorching_breath, (0, 50), "Dive deep to escape the flames!"),
+        BossAttack("Obsidian Shard Storm", ifrit_obsidian_shard_storm, (0, 30), "Block the razor-sharp shards!"),
+        BossAttack("Magma Whip", ifrit_magma_whip, (0, 30), "Dodge the molten tendrils!"),
+        BossAttack("VOLCANIC FURY", ifrit_volcanic_fury, (0, 90), "The lake itself becomes an inferno!")
+    ],
+    ascii_art=IFRIT_ASCII,
+    dialogue={
+        "intro": [
+            "*The volcanic lake begins to bubble violently*",
+            "*Steam rises in thick, choking clouds*",
+            "*The water's surface glows orange, then red*",
+            "*Then WHITE with heat*",
+            "*Something rises from the crater's heart*",
+            "*A figure made of molten rock and living flame*",
+            "*Eyes like volcanic glass stare at you*",
+            "*'WHO... DISTURBS... MY SLUMBER?'*",
+            "*The voice is the sound of erupting volcanoes*",
+            "*The roar of forest fires*",
+            "*The crackle of burning worlds*",
+            "*'I AM IFRIT'*",
+            "*'THE FLAMEBRINGER'*",
+            "*'BOUND TO THIS CRATER SINCE THE WORLD WAS YOUNG'*",
+            "*'I remember when this lake was pure magma'*",
+            "*'When the earth was new and molten'*",
+            "*'I have watched empires rise and fall to ash'*",
+            "*'And you...'*",
+            "*'You dare to fish in MY domain?'*",
+            "*'Then burn with the rest!'*"
+        ],
+        "default": [
+            "*Flames dance across Ifrit's obsidian form*",
+            "*Each movement sends waves of heat across the water*",
+            "*'The fire never dies... only waits...'*",
+            "*'I am eternal as the earth's burning heart'*",
+            "*'What are you but water... soon to boil away?'*"
+        ],
+        "hit": [
+            "*Your attack cracks Ifrit's obsidian shell*",
+            "*Lava bleeds from the wound, hissing into the water*",
+            "*'You... you actually HURT me?'*",
+            "*'Impressive for a creature of flesh and water'*",
+            "*'But I am FIRE ITSELF!'*",
+            "*The wound seals as quickly as it formed*",
+            "*Cooled obsidian covering the molten blood*"
+        ],
+        "low_hp": [
+            "*Cracks spread across Ifrit's form*",
+            "*Lava flows freely now, no longer contained*",
+            "*'This... this cannot be...'*",
+            "*'I have burned for MILLENNIA'*",
+            "*'Survived the ice ages... the great extinctions...'*",
+            "*The flames begin to dim*",
+            "*'I feel... cold...'*",
+            "*'For the first time in eons... I feel COLD'*",
+            "*'Perhaps...'*",
+            "*'Perhaps this binding can finally END'*",
+            "*'One way... or another...'*"
+        ],
+        "merciful": [
+            "*You lower your weapon*",
+            "*And you speak to the ancient spirit*",
+            "*Words of understanding, not conquest*",
+            "*'You're trapped here, aren't you?'*",
+            "*Ifrit's flames flicker - surprise?*",
+            "*'Trapped... yes...'*",
+            "*'Bound when the volcano first formed'*",
+            "*'When priests of forgotten gods sealed me here'*",
+            "*'To power their forges... heat their cities...'*",
+            "*'Those cities are dust now'*",
+            "*'Those gods forgotten'*",
+            "*'But I... I remain bound'*",
+            "*'Burning... always burning...'*",
+            "*'Never free to return to the earth's deep fire'*",
+            "*'You... you understand this pain?'*"
+        ],
+        "spare_ready": [
+            "*IFRIT can be SPARED*",
+            "*'You could end me... end my eternal burning'*",
+            "*'Or... perhaps...'*",
+            "*'Perhaps you could SET ME FREE?'*",
+            "*The flames burn with something like... hope*"
+        ],
+        "spared": [
+            "*You reach into the heat*",
+            "*And touch the ancient binding runes*",
+            "*You can feel them - woven into reality itself*",
+            "*Threads of old magic, brittle with age*",
+            "*You PULL*",
+            "*The runes SHATTER*",
+            "*Ifrit's flames EXPLODE upward*",
+            "*'FREE! FINALLY FREE!'*",
+            "*But the flames don't attack*",
+            "*Instead they swirl around you*",
+            "*Warm, but not burning*",
+            "*'For ten thousand years I have been trapped'*",
+            "*'Bound to this crater like a chained beast'*",
+            "*'And in all that time...'*",
+            "*'Not one mortal sought to understand'*",
+            "*'Not one offered mercy instead of conquest'*",
+            "*'Until YOU'*",
+            "*Ifrit's form begins to change*",
+            "*The obsidian shell cracks away*",
+            "*Revealing pure elemental flame beneath*",
+            "*'I return now to the deep places'*",
+            "*'To the earth's molten heart where I belong'*",
+            "*'But I leave you this:'*",
+            "*A single ember falls into your hand*",
+            "*It burns, but doesn't harm*",
+            "*'Ifrit's Ember - my blessing'*",
+            "*'It will call volcanic fish to any water'*",
+            "*'A small gift... for the greatest kindness'*",
+            "*The djinn descends into the crater*",
+            "*The lava welcomes him home*",
+            "*As you watch, the lake begins to cool*",
+            "*No longer superheated by Ifrit's prison*",
+            "*You have freed an ancient being*",
+            "*And gained a powerful ally*"
+        ],
+        "killed": [
+            "*Your final blow strikes true*",
+            "*Ifrit's obsidian core SHATTERS*",
+            "*'NO... NOT LIKE THIS...'*",
+            "*The flames don't extinguish*",
+            "*They DETONATE*",
+            "*An explosion of elemental fire*",
+            "*You're thrown back, severely burned*",
+            "*When you can see again...*",
+            "*Ifrit's form is fragmenting*",
+            "*Pieces of living lava falling into the water*",
+            "*Each one hissing, steaming, cooling to black glass*",
+            "*'You... you FOOL...'*",
+            "*'I was not... just bound here...'*",
+            "*'I WAS... containing it...'*",
+            "*The lake begins to shake*",
+            "*VIOLENTLY*",
+            "*'The volcano... it's going to...'*",
+            "*Ifrit's voice fades*",
+            "*The ancient spirit dies*",
+            "*And with his death, the binding breaks*",
+            "*But now nothing contains the volcano's fury*",
+            "*The lake begins to boil*",
+            "*The ground cracks*",
+            "*Lava seeps up from below*",
+            "*You've killed the guardian*",
+            "*And doomed the region*",
+            "*Somewhere deep beneath the earth*",
+            "*The volcano awakens*",
+            "*And it is ANGRY*"
+        ]
+    },
+    spare_threshold=30
+)
+
 # Boss item that triggers the fight
 class BossItem:
     def __init__(self, name, boss, description, location):
@@ -3142,6 +3635,12 @@ BOSS_ITEMS = {
         CTHULHU,
         "A non-Euclidean stone fragment from the sunken city. Gazing at it too long causes strange dreams...",
         "Deep Sea"
+    ),
+    "Volcanic Rune": BossItem(
+        "Volcanic Rune",
+        IFRIT,
+        "A rune of binding etched in cooled lava. It radiates intense heat and pulses with elemental fire...",
+        "Volcanic Lake"
     ),
     # Add more boss items for other locations here
 }
@@ -7432,7 +7931,9 @@ class Game:
         print(Fore.CYAN + "3. The Crimson Tide (Pirate Ship - Ocean)" + Style.RESET_ALL)
         print(Fore.CYAN + "4. The Kraken (Ocean)" + Style.RESET_ALL)
         print(Fore.CYAN + "5. Jormungandr (Deep sea)" + Style.RESET_ALL)
-        print(Fore.CYAN + "6. [MORE COMMING SOON]" + Style.RESET_ALL)
+        print(Fore.CYAN + "6. Cthulhu (Deep Sea)" + Style.RESET_ALL)
+        print(Fore.CYAN + "7. ifrit (Volcanic lake)" + Style.RESET_ALL) 
+        print(Fore.CYAN + "8. [MORE COMMING SOON]" + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -7447,6 +7948,10 @@ class Game:
             self.start_boss_fight(KRAKEN)
         elif choice == '5':
             self.start_boss_fight(JORMUNGANDR)
+        elif choice == '6':
+            self.start_boss_fight(CTHULHU)
+        elif choice == '7':
+            self.start_boss_fight(IFRIT)
     
     def dev_menu(self):
         """DEV MODE: Comprehensive testing and stat editing menu"""
@@ -7705,7 +8210,7 @@ class Game:
     def dev_unlock_locations(self):
         """Unlock all locations by marking bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer"]
         # Ensure positive karma for Captain Redbeard
         if self.karma < 1:
             self.karma = 10
@@ -7727,7 +8232,7 @@ class Game:
     def dev_mark_all_bosses(self):
         """Mark all bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer"]
         # Also ensure positive karma so Captain Redbeard appears
         if self.karma < 1:
             self.karma = 10
@@ -7804,7 +8309,7 @@ if __name__ == "__main__":
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
     print(Fore.CYAN + "║       BOSS BATTLES UPDATE             ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         V.0.7.1 BETA                  ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         V.0.7.2 BETA                  ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(
