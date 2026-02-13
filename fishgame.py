@@ -2865,21 +2865,27 @@ CTHULHU_ASCII = """
     ║                     [Ph'nglui mglw'nafh...]                ║
     ╚════════════════════════════════════════════════════════════╝
     
-    ⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⣀⣤⣶⣾⣿⣿⣷⣶⣤⣀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠜⠉⣿⡆⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢰⣿⠉⠃⠀⠀⠀⠀⠀
-    ⠀⢀⣤⣴⣦⣄⣴⠟⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡎⢻⣦⣠⣴⣦⣄⠀⠀
-    ⠀⡞⠁⣠⣾⢿⣧⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣽⡿⣷⣄⠈⢷⠀
-    ⠀⣠⣾⠟⠁⢸⣿⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⣿⡇⠈⠻⣷⣄⠀
-    ⣰⡿⠁⠀⢀⣾⣏⣾⣄⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣰⣷⣹⣷⠀⠀⠈⢿⣆
-    ⣿⡇⠀⢠⣾⠏⢸⣿⣿⣿⣿⠋⢻⣿⣿⣿⣿⡟⠙⣿⣿⣿⣿⡇⠹⣷⡀⠀⢸⣿
-    ⠹⣿⣴⡿⠋⠀⠈⠛⠉⣹⣿⣦⣄⡹⣿⣿⣋⣠⣶⣿⣏⠉⠛⠁⠀⠙⢿⣦⣿⠏
-    ⠀⣸⣿⠿⠿⣿⣾⣿⡿⠿⣿⣿⣿⣿⡆⢰⣿⣿⣿⣿⠿⢿⣿⣶⣿⠿⠿⣻⣇⠀
-    ⠀⣿⡇⢀⣴⣶⣤⣀⣴⣿⠿⣻⡿⣿⣧⣾⣿⢿⣟⠿⣿⣦⣀⣤⣶⣦⠀⢸⣿⠀
-    ⠀⢿⣧⠈⠃⢀⣵⣿⡋⠁⢀⣿⡷⣿⡇⢻⣿⣿⣿⡀⠈⢛⣿⣮⡀⠘⠀⣼⡟⠀
-    ⠀⠈⠻⣷⣤⣟⣋⣿⣧⣴⡿⠋⠀⣿⡇⢸⣿⠀⠙⢿⣦⣼⣿⣙⣻⣤⣾⠟⠁⠀
-    ⠀⠀⠀⠈⢽⣿⠛⢻⣏⢉⣤⣶⣶⣿⠁⠈⣿⣶⣶⣤⡉⣽⡟⠛⣿⡏⠁⠀⠀⠀
-    ⠀⠀⠀⠀⠈⠿⣷⣾⣾⣟⣉⣠⣿⢿⡇⢸⠿⣿⣄⣙⣻⣷⣷⣾⠿⠁⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⠿⠛⢁⡼⠃⠘⢦⡈⠛⠿⠟⠃⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⊗⊕⊙⊛⊚◉◎
+                        .~?#@@@@@@#?~.
+                      /?#@@@@@@@@@@@#?/.
+                    /#@@@@@@@@@@@@@@@@@#\\
+                   ?@@@@@@@#######@@@@@@@?
+                  /@@@@@#?~~~~~~~~~?#@@@@@\\
+                 ?@@@@@?   O     O   ?@@@@@?
+                 #@@@@@   <  . .  >   @@@@@#
+                ?@@@@@#    \\ ___ /    #@@@@@?
+                #@@@@@|   .~\\_|_/~.   |@@@@@#
+                @@@@@#|  {  CTHULHU }  |#@@@@@
+               .@@@@@#|   ~ ~ ~ ~ ~    |#@@@@@.
+               |@@@@@#\\    FHTAGN     /#@@@@@|
+               |@@@@@@#\\             /##@@@@@|
+            ~≈~|@@@@@@@#?~.       .~?#@@@@@@@|~≈~
+         ~≈~   |@@@@@@@@@@#######@@@@@@@@@@@@|   ~≈~
+       ~≈~  |~~{@@}~|~~{@@}~|~~{@@}~|~~{@@}~~|  ~≈~
+      ~≈~ __|~~|@@|~|~~|@@|~|~~|@@|~|~~|@@|~~|__ ~≈~
+    ≈~≈~{    THE SUNKEN CITY OF R'LYEH    }~≈~≈
+       ~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~
+        "In his house at R'lyeh, dead Cthulhu waits dreaming..."
 """
 
 CTHULHU = Boss(
@@ -7705,7 +7711,7 @@ class Game:
     def dev_unlock_locations(self):
         """Unlock all locations by marking bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu"]
         # Ensure positive karma for Captain Redbeard
         if self.karma < 1:
             self.karma = 10
@@ -7713,6 +7719,7 @@ class Game:
         print(Fore.GREEN + "✓ All locations unlocked!" + Style.RESET_ALL)
         print(Fore.CYAN + f"  Defeated bosses: {', '.join(self.defeated_bosses)}" + Style.RESET_ALL)
         print(Fore.LIGHTBLACK_EX + "  Tip: Visit the dock to talk to Captain Redbeard!" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "  Tip: Visit Deep Sea to talk to Dr. Holloway!" + Style.RESET_ALL)
         time.sleep(2)
     
     def dev_reset_bosses(self):
@@ -7726,7 +7733,7 @@ class Game:
     def dev_mark_all_bosses(self):
         """Mark all bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu"]
         # Also ensure positive karma so Captain Redbeard appears
         if self.karma < 1:
             self.karma = 10
@@ -7734,6 +7741,7 @@ class Game:
         print(Fore.GREEN + "✓ All bosses marked as defeated!" + Style.RESET_ALL)
         print(Fore.CYAN + f"  Defeated bosses: {', '.join(self.defeated_bosses)}" + Style.RESET_ALL)
         print(Fore.LIGHTBLACK_EX + "  Tip: Visit the dock to talk to Captain Redbeard!" + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "  Tip: Visit Deep Sea to talk to Dr. Holloway!" + Style.RESET_ALL)
         time.sleep(2)
     
     def dev_complete_encyclopedia(self):
