@@ -2408,7 +2408,7 @@ COMBAT_ITEMS_HP = [
 LOCATION_BOSS_REQUIREMENTS = {
     "Hub Island - Calm Lake": None,  # Starting location
     "Hub Island - Swift River": "Loch Ness Monster",  # Must defeat/spare Loch Ness first
-    "Ocean": "The River Guardian",  # Must defeat/spare River Guardian
+    "Ocean": "The Crimson Tide",  # Must defeat/spare pirates before accessing Ocean
     "Deep Sea": "The River Guardian",  # Also requires River Guardian (or you could add an Ocean boss)
     "Volcanic Lake": "The River Guardian",  # Could add more bosses for progression
     "Arctic Waters": "The River Guardian",
@@ -5894,9 +5894,12 @@ class Game:
                     if retry != 'y':
                         return
                 
-                # Remove item and start boss fight
-                self.boss_inventory.pop(index)
+                # Start boss fight FIRST, then remove item only if boss is defeated
                 self.start_boss_fight(boss_item.boss)
+                
+                # Only remove the item if the boss was actually defeated/spared
+                if boss_item.boss.name in self.defeated_bosses:
+                    self.boss_inventory.pop(index)
             else:
                 print(Fore.RED + "Invalid number!" + Style.RESET_ALL)
         except ValueError:
