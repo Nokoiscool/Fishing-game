@@ -2686,21 +2686,27 @@ CTHULHU_ASCII = """
     ║                     [Ph'nglui mglw'nafh...]                ║
     ╚════════════════════════════════════════════════════════════╝
     
-        ⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⣀⣤⣶⣾⣿⣿⣷⣶⣤⣀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠜⠉⣿⡆⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢰⣿⠉⠃⠀⠀⠀⠀⠀
-        ⠀⢀⣤⣴⣦⣄⣴⠟⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡎⢻⣦⣠⣴⣦⣄⠀⠀
-        ⠀⡞⠁⣠⣾⢿⣧⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣽⡿⣷⣄⠈⢷⠀
-        ⠀⣠⣾⠟⠁⢸⣿⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⣿⡇⠈⠻⣷⣄⠀
-        ⣰⡿⠁⠀⢀⣾⣏⣾⣄⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣰⣷⣹⣷⠀⠀⠈⢿⣆
-        ⣿⡇⠀⢠⣾⠏⢸⣿⣿⣿⣿⠋⢻⣿⣿⣿⣿⡟⠙⣿⣿⣿⣿⡇⠹⣷⡀⠀⢸⣿
-        ⠹⣿⣴⡿⠋⠀⠈⠛⠉⣹⣿⣦⣄⡹⣿⣿⣋⣠⣶⣿⣏⠉⠛⠁⠀⠙⢿⣦⣿⠏
-        ⠀⣸⣿⠿⠿⣿⣾⣿⡿⠿⣿⣿⣿⣿⡆⢰⣿⣿⣿⣿⠿⢿⣿⣶⣿⠿⠿⣻⣇⠀
-        ⠀⣿⡇⢀⣴⣶⣤⣀⣴⣿⠿⣻⡿⣿⣧⣾⣿⢿⣟⠿⣿⣦⣀⣤⣶⣦⠀⢸⣿⠀
-        ⠀⢿⣧⠈⠃⢀⣵⣿⡋⠁⢀⣿⡷⣿⡇⢻⣿⣿⣿⡀⠈⢛⣿⣮⡀⠘⠀⣼⡟⠀
-        ⠀⠈⠻⣷⣤⣟⣋⣿⣧⣴⡿⠋⠀⣿⡇⢸⣿⠀⠙⢿⣦⣼⣿⣙⣻⣤⣾⠟⠁⠀
-        ⠀⠀⠀⠈⢽⣿⠛⢻⣏⢉⣤⣶⣶⣿⠁⠈⣿⣶⣶⣤⡉⣽⡟⠛⣿⡏⠁⠀⠀⠀
-        ⠀⠀⠀⠀⠈⠿⣷⣾⣾⣟⣉⣠⣿⢿⡇⢸⠿⣿⣄⣙⣻⣷⣷⣾⠿⠁⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⠿⠛⢁⡼⠃⠘⢦⡈⠛⠿⠟⠃⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⊗⊕⊙⊛⊚◉◎
+                        .~?#@@@@@@#?~.
+                      /?#@@@@@@@@@@@#?/.
+                    /#@@@@@@@@@@@@@@@@@#\\
+                   ?@@@@@@@#######@@@@@@@?
+                  /@@@@@#?~~~~~~~~~?#@@@@@\\
+                 ?@@@@@?   O     O   ?@@@@@?
+                 #@@@@@   <  . .  >   @@@@@#
+                ?@@@@@#    \\ ___ /    #@@@@@?
+                #@@@@@|   .~\\_|_/~.   |@@@@@#
+                @@@@@#|  {  CTHULHU }  |#@@@@@
+               .@@@@@#|   ~ ~ ~ ~ ~    |#@@@@@.
+               |@@@@@#\\    FHTAGN     /#@@@@@|
+               |@@@@@@#\\             /##@@@@@|
+            ~≈~|@@@@@@@#?~.       .~?#@@@@@@@|~≈~
+         ~≈~   |@@@@@@@@@@#######@@@@@@@@@@@@|   ~≈~
+       ~≈~  |~~{@@}~|~~{@@}~|~~{@@}~|~~{@@}~~|  ~≈~
+      ~≈~ __|~~|@@|~|~~|@@|~|~~|@@|~|~~|@@|~~|__ ~≈~
+    ≈~≈~{    THE SUNKEN CITY OF R'LYEH    }~≈~≈
+       ~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~≈~
+        "In his house at R'lyeh, dead Cthulhu waits dreaming..."
 """
 
 CTHULHU = Boss(
@@ -3751,7 +3757,7 @@ class LocationMap:
         """Check if location has MacTavish - only visible if Loch Ness defeated"""
         return self.layout[y][x] == 'M'
     
-    def render_tile(self, tile, is_player, is_spot, is_golden):
+    def render_tile(self, tile, is_player, is_spot, is_golden, game=None):
         """Render a single tile with appropriate coloring"""
         if is_player:
             return Fore.YELLOW + '☻' + Style.RESET_ALL
@@ -3790,7 +3796,7 @@ class LocationMap:
         elif tile == 'F':  # NPC Fisherman
             return Fore.GREEN + '🎣' + Style.RESET_ALL
         elif tile == 'M':  # MacTavish - only visible if Loch Ness defeated
-            if "Loch Ness Monster" in self.game.defeated_bosses:
+            if game and "Loch Ness Monster" in game.defeated_bosses:
                 return Fore.YELLOW + '🧓' + Style.RESET_ALL
             else:
                 # Show as water if not unlocked yet
@@ -6123,7 +6129,7 @@ class Game:
                     is_player = (x == hub_map.player_x and y == hub_map.player_y)
                     is_spot = hub_map.is_fishing_spot(x, y)
                     is_golden = hub_map.is_golden_spot(x, y)
-                    line += hub_map.render_tile(tile, is_player, is_spot, is_golden)
+                    line += hub_map.render_tile(tile, is_player, is_spot, is_golden, self)
                 print(line)
             
             print()
@@ -6237,7 +6243,7 @@ class Game:
                     is_player = (x == location_map.player_x and y == location_map.player_y)
                     is_spot = location_map.is_fishing_spot(x, y)
                     is_golden = location_map.is_golden_spot(x, y)
-                    line += location_map.render_tile(tile, is_player, is_spot, is_golden)
+                    line += location_map.render_tile(tile, is_player, is_spot, is_golden, self)
                 print(line)
             
             print()
