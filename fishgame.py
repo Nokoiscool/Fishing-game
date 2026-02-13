@@ -11,7 +11,7 @@ from colorama import Fore, Style, init
 from datetime import datetime
 
 # Game version for save file compatibility
-GAME_VERSION = "0.6.0"
+GAME_VERSION = "0.7.1"
 
 # Music system - cross-platform support
 current_music = None
@@ -1860,6 +1860,362 @@ def kraken_tidal_fury():
     return total_damage
 
 
+# ===== CTHULHU ATTACK PATTERNS =====
+def cthulhu_madness_gaze():
+    """The Dreaming God's psychic assault - symbols and sanity check"""
+    print(Fore.MAGENTA + "\n👁️ THE DREAMING GOD'S GAZE FALLS UPON YOU! 👁️\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    # Phase 1: Symbol Recognition (tests sanity/focus)
+    print(Fore.YELLOW + "Phase 1: ELDER SYMBOLS BURN YOUR MIND!" + Style.RESET_ALL)
+    print()
+    
+    symbols = ['⊗', '⊕', '⊙', '⊛', '⊚', '◉', '◎']
+    target_symbols = random.sample(symbols, 3)
+    
+    print(Fore.CYAN + "Remember these symbols:" + Style.RESET_ALL)
+    print(Fore.GREEN + f"  {' '.join(target_symbols)}" + Style.RESET_ALL)
+    time.sleep(2.5)
+    
+    # Clear with "madness" text
+    for _ in range(5):
+        print(Fore.LIGHTBLACK_EX + "█" * 60 + Style.RESET_ALL)
+    
+    # Show mixed symbols
+    print()
+    print(Fore.MAGENTA + "Which symbols did you see? (Enter the positions 1-7)" + Style.RESET_ALL)
+    all_symbols = random.sample(symbols, 7)
+    for i, sym in enumerate(all_symbols, 1):
+        print(Fore.WHITE + f"{i}. {sym}" + Style.RESET_ALL)
+    
+    correct_positions = [str(all_symbols.index(s) + 1) for s in target_symbols if s in all_symbols]
+    
+    try:
+        response = input(Fore.GREEN + "Enter positions (e.g., '1 3 5'): " + Style.RESET_ALL).strip()
+        if sorted(response.split()) == sorted(correct_positions):
+            print(Fore.GREEN + "✓ Your mind holds firm!" + Style.RESET_ALL)
+        else:
+            total_damage += 15
+            print(Fore.RED + "💥 MADNESS SEEPS IN! (-15 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 15
+        print(Fore.RED + "💥 YOUR MIND SHATTERS! (-15 HP)" + Style.RESET_ALL)
+    
+    time.sleep(1)
+    
+    # Phase 2: Whispers of R'lyeh
+    print()
+    print(Fore.LIGHTMAGENTA_EX + "Phase 2: THE WHISPERS... THEY'RE GETTING LOUDER..." + Style.RESET_ALL)
+    
+    phrases = ["PH'NGLUI", "MGLW'NAFH", "CTHULHU", "R'LYEH", "WGAH'NAGL", "FHTAGN"]
+    correct_phrase = random.choice(phrases)
+    
+    # Show corrupted text
+    corrupted = list(correct_phrase)
+    for _ in range(random.randint(2, 4)):
+        pos = random.randint(0, len(corrupted) - 1)
+        corrupted[pos] = random.choice(['█', '▓', '▒', '░', '?', '#', '@'])
+    
+    print(Fore.GREEN + f"The whispers speak: {Fore.YELLOW}{''.join(corrupted)}" + Style.RESET_ALL)
+    print(Fore.CYAN + "What word do they utter?" + Style.RESET_ALL)
+    
+    # Show options
+    options = random.sample(phrases, 3)
+    if correct_phrase not in options:
+        options[0] = correct_phrase
+    random.shuffle(options)
+    
+    for i, phrase in enumerate(options, 1):
+        print(Fore.WHITE + f"{i}. {phrase}" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if options[choice - 1] == correct_phrase:
+            print(Fore.GREEN + "✓ You comprehend the madness!" + Style.RESET_ALL)
+        else:
+            total_damage += 12
+            print(Fore.RED + "💥 THE WORDS BURN! (-12 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 12
+    
+    time.sleep(0.5)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★ YOUR SANITY HOLDS! ★" + Style.RESET_ALL)
+    else:
+        print(Fore.LIGHTBLACK_EX + "\n*You feel... different... wrong...*" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def cthulhu_tentacle_rlyeh():
+    """Massive tentacles emerge from the sunken city"""
+    print(Fore.GREEN + "\n🐙 TENTACLES RISE FROM R'LYEH! 🐙\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    grid_size = 5
+    
+    print(Fore.YELLOW + "Massive tentacles breach the surface!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Navigate to safety!" + Style.RESET_ALL)
+    print()
+    
+    # Create grid
+    tentacle_positions = []
+    for _ in range(8):
+        tentacle_positions.append((random.randint(0, grid_size-1), random.randint(0, grid_size-1)))
+    
+    # Show animated tentacles rising
+    for frame in range(6):
+        print("\r" + Fore.LIGHTBLACK_EX + "Rising..." + "." * frame + Style.RESET_ALL, end='')
+        time.sleep(0.2)
+    print("\n")
+    
+    # Display grid
+    for y in range(grid_size):
+        row = ""
+        for x in range(grid_size):
+            if (x, y) in tentacle_positions:
+                row += Fore.GREEN + "🐙" + Style.RESET_ALL
+            else:
+                row += Fore.BLUE + "≈≈" + Style.RESET_ALL
+        print(row)
+    
+    print()
+    print(Fore.YELLOW + "Choose a safe position (row, col) - e.g., '2 3':" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().split()
+        y, x = int(response[0]), int(response[1])
+        
+        if 0 <= x < grid_size and 0 <= y < grid_size:
+            if (x, y) not in tentacle_positions:
+                print(Fore.GREEN + "✓ You find a safe spot!" + Style.RESET_ALL)
+            else:
+                total_damage += 20
+                print(Fore.RED + "💥 TENTACLE CRUSHES YOU! (-20 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 20
+            print(Fore.RED + "💥 OUT OF BOUNDS! GRABBED! (-20 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 20
+        print(Fore.RED + "💥 CONFUSION! GRABBED! (-20 HP)" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def cthulhu_dream_paralysis():
+    """Reality distorts as Cthulhu dreams - rapid timing challenge"""
+    print(Fore.CYAN + "\n😴 YOU ENTER THE DREAMING GOD'S NIGHTMARE! 😴\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.LIGHTMAGENTA_EX + "Reality bends... time flows strangely..." + Style.RESET_ALL)
+    print(Fore.YELLOW + "You must act QUICKLY before you're trapped forever!" + Style.RESET_ALL)
+    print()
+    
+    # Rapid-fire sequence
+    actions = [
+        ("WAKE", "Type 'WAKE' to resist!"),
+        ("FIGHT", "Type 'FIGHT' against the dream!"),
+        ("RUN", "Type 'RUN' from the nightmare!"),
+        ("BREAK", "Type 'BREAK' free from paralysis!")
+    ]
+    
+    for action_word, instruction in actions:
+        print(Fore.CYAN + instruction + Style.RESET_ALL)
+        
+        start_time = time.time()
+        try:
+            response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+            elapsed = time.time() - start_time
+            
+            if response == action_word and elapsed < 2.0:
+                print(Fore.GREEN + "✓ Success!" + Style.RESET_ALL)
+            else:
+                total_damage += 6
+                if elapsed >= 2.0:
+                    print(Fore.RED + "💥 TOO SLOW! The dream takes hold! (-6 HP)" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "💥 WRONG! Paralysis spreads! (-6 HP)" + Style.RESET_ALL)
+        except:
+            total_damage += 6
+        
+        time.sleep(0.3)
+    
+    # Final dream escape
+    print()
+    print(Fore.MAGENTA + "THE DREAM COLLAPSES!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Mash SPACE 15 times in 5 seconds to escape!" + Style.RESET_ALL)
+    
+    presses = 0
+    start_time = time.time()
+    
+    while time.time() - start_time < 5 and presses < 15:
+        key = get_key()
+        if key == ' ':
+            presses += 1
+            sys.stdout.write(f"\r{Fore.CYAN}Presses: {presses}/15{Style.RESET_ALL}")
+            sys.stdout.flush()
+    
+    print()
+    
+    if presses >= 15:
+        print(Fore.GREEN + "✓ YOU BREAK FREE FROM THE DREAM!" + Style.RESET_ALL)
+    else:
+        total_damage += 15
+        print(Fore.RED + f"💥 TRAPPED! Only {presses}/15! (-15 HP)" + Style.RESET_ALL)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★ YOU RESISTED THE DREAMING GOD! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def cthulhu_cultist_summon():
+    """Cthulhu summons Deep One cultists to attack"""
+    print(Fore.LIGHTBLACK_EX + "\n🐟 CULTIST FISH SWARM FROM THE DEPTHS! 🐟\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.MAGENTA + "*Cthulhu's will commands the Deep Ones!*" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Defeat the cultist fish!" + Style.RESET_ALL)
+    print()
+    
+    # Three waves of cultists
+    for wave in range(3):
+        print(Fore.CYAN + f"Wave {wave + 1}: Cultist approaches!" + Style.RESET_ALL)
+        
+        # Show cultist
+        cultist_hp = 3
+        
+        for attack_num in range(3):
+            if cultist_hp <= 0:
+                break
+                
+            print(Fore.WHITE + f"Cultist HP: {cultist_hp}/3" + Style.RESET_ALL)
+            print(Fore.YELLOW + "Attack! (Press A):" + Style.RESET_ALL)
+            
+            start_time = time.time()
+            response = get_key()
+            elapsed = time.time() - start_time
+            
+            if response == 'a' and elapsed < 1.5:
+                cultist_hp -= 1
+                print(Fore.GREEN + "✓ HIT!" + Style.RESET_ALL)
+            else:
+                total_damage += 5
+                print(Fore.RED + "💥 The cultist strikes! (-5 HP)" + Style.RESET_ALL)
+            
+            time.sleep(0.3)
+        
+        if cultist_hp > 0:
+            total_damage += 8
+            print(Fore.RED + f"💥 Cultist {wave + 1} survives and deals extra damage! (-8 HP)" + Style.RESET_ALL)
+        else:
+            print(Fore.GREEN + f"✓ Cultist {wave + 1} defeated!" + Style.RESET_ALL)
+        
+        print()
+        time.sleep(0.5)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★ ALL CULTISTS VANQUISHED! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def cthulhu_ultimate_awakening():
+    """Cthulhu begins to awaken - ultimate attack"""
+    print(Fore.RED + "\n💀 CTHULHU STIRS! THE STARS ARE RIGHT! 💀\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.MAGENTA + "*The Great Old One's eyes begin to open...*" + Style.RESET_ALL)
+    print(Fore.YELLOW + "*Reality itself trembles!*" + Style.RESET_ALL)
+    print()
+    
+    # Multi-phase ultimate
+    
+    # Phase 1: Cosmic Horror
+    print(Fore.LIGHTMAGENTA_EX + "Phase 1: THE COSMIC HORROR REVEALED!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Look away! (Type 'CLOSE' in 2 seconds):" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start_time
+        
+        if response == "CLOSE" and elapsed < 2.0:
+            print(Fore.GREEN + "✓ You shield your eyes!" + Style.RESET_ALL)
+        else:
+            total_damage += 18
+            print(Fore.RED + "💥 THE SIGHT BURNS YOUR MIND! (-18 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 18
+    
+    time.sleep(1)
+    
+    # Phase 2: R'lyeh Rises
+    print()
+    print(Fore.GREEN + "Phase 2: THE SUNKEN CITY RISES!" + Style.RESET_ALL)
+    
+    # Avoid falling pillars
+    positions = list(range(10))
+    safe_pos = random.choice(positions)
+    
+    print(Fore.YELLOW + "Pillars of R'lyeh crash down!" + Style.RESET_ALL)
+    print(Fore.CYAN + f"Move to position 0-9:" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if choice == safe_pos:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            total_damage += 15
+            print(Fore.RED + "💥 CRUSHED BY ANCIENT STONE! (-15 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 15
+    
+    time.sleep(1)
+    
+    # Phase 3: The Call
+    print()
+    print(Fore.MAGENTA + "Phase 3: THE CALL OF CTHULHU!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Resist by typing the OPPOSITE of what appears!" + Style.RESET_ALL)
+    print()
+    
+    opposites = [
+        ("SLEEP", "WAKE"),
+        ("OBEY", "RESIST"),
+        ("SUBMIT", "FIGHT"),
+        ("JOIN", "FLEE")
+    ]
+    
+    test_pair = random.choice(opposites)
+    print(Fore.RED + f"Command: {test_pair[0]}" + Style.RESET_ALL)
+    print(Fore.CYAN + "You must type:" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == test_pair[1]:
+            print(Fore.GREEN + "✓ YOU RESIST THE CALL!" + Style.RESET_ALL)
+        else:
+            total_damage += 20
+            print(Fore.RED + "💥 YOUR WILL CRUMBLES! (-20 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 20
+    
+    print()
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★★★ IMPOSSIBLE! YOU SURVIVED THE AWAKENING! ★★★" + Style.RESET_ALL)
+        print(Fore.CYAN + "*Cthulhu returns to his slumber... for now...*" + Style.RESET_ALL)
+    else:
+        print(Fore.LIGHTBLACK_EX + "*Your mind will never be the same...*" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
                                 _..--+~/@-@--.
@@ -1883,15 +2239,15 @@ LOCH_NESS_MONSTER = Boss(
     defense=5,
 attacks=[
         # Original attacks (kept for variety)
-        BossAttack("Wave Crash", loch_ness_wave_attack, (12, 25), "Sends powerful waves"),
-        BossAttack("Water Blast", loch_ness_water_blast, (15, 22), "Fires a concentrated water jet"),
+        BossAttack("Wave Crash", loch_ness_wave_attack, (8, 18), "Sends powerful waves"),
+        BossAttack("Water Blast", loch_ness_water_blast, (10, 16), "Fires a concentrated water jet"),
         # NEW Enhanced attacks
-        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 35), "Multi-wave barrage!"),
-        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 25), "Spinning vortex trap!"),
-        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 28), "Massive tail attack!"),
-        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 32), "Two-phase combo!"),
-        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 18), "Vision obscured!"),
-        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 30), "Devastating triple attack!")
+        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 25), "Multi-wave barrage!"),
+        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 18), "Spinning vortex trap!"),
+        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 20), "Massive tail attack!"),
+        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 24), "Two-phase combo!"),
+        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 14), "Vision obscured!"),
+        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 22), "Devastating triple attack!")
     ],
     ascii_art=LOCH_NESS_ASCII,
     dialogue={
@@ -1927,14 +2283,14 @@ RIVER_GUARDIAN_ASCII = """
 
 RIVER_GUARDIAN = Boss(
     name="The River Guardian",
-    hp=800,
-    defense=15,
+    hp=400,  # Reduced from 800 - was way too high for 2nd boss
+    defense=10,  # Reduced from 15
     attacks=[
-        BossAttack("Rapids Rush", river_rapids_dodge, (0, 28), "Navigate treacherous rapids!"),
-        BossAttack("Torrential Bite", river_bite_sequence, (0, 38), "Dodge rapid bite attacks!"),
-        BossAttack("Whirlpool Spin", river_current_spin, (0, 24), "Escape the spinning vortex!"),
-        BossAttack("Tail Strike", river_tail_strike, (0, 30), "Perfect timing required!"),
-        BossAttack("RIVER'S WRATH", river_wrath_combo, (0, 55), "The Guardian's ultimate fury!")
+        BossAttack("Rapids Rush", river_rapids_dodge, (0, 32), "Navigate treacherous rapids!"),
+        BossAttack("Torrential Bite", river_bite_sequence, (0, 42), "Dodge rapid bite attacks!"),
+        BossAttack("Whirlpool Spin", river_current_spin, (0, 28), "Escape the spinning vortex!"),
+        BossAttack("Tail Strike", river_tail_strike, (0, 35), "Perfect timing required!"),
+        BossAttack("RIVER'S WRATH", river_wrath_combo, (0, 60), "The Guardian's ultimate fury!")
     ],
     ascii_art=RIVER_GUARDIAN_ASCII,
     dialogue={
@@ -2019,14 +2375,14 @@ PIRATE_SHIP_ASCII = """
 
 PIRATE_SHIP = Boss(
     name="The Crimson Tide",
-    hp=350,
+    hp=450,  # Increased from 350
     defense=12,
     attacks=[
-        BossAttack("Cannon Barrage", pirate_cannon_barrage, (0, 50), "Dodge incoming cannonballs!"),
-        BossAttack("Harpoon Strike", pirate_harpoon_strike, (0, 28), "Duck the harpoon!"),
-        BossAttack("Broadside Ram", pirate_broadside_ram, (0, 35), "Avoid the ramming ship!"),
-        BossAttack("Net Toss", pirate_net_toss, (0, 22), "Cut yourself free!"),
-        BossAttack("ALL HANDS ASSAULT", pirate_ultimate_assault, (0, 48), "The crew's full might!")
+        BossAttack("Cannon Barrage", pirate_cannon_barrage, (0, 55), "Dodge incoming cannonballs!"),
+        BossAttack("Harpoon Strike", pirate_harpoon_strike, (0, 32), "Duck the harpoon!"),
+        BossAttack("Broadside Ram", pirate_broadside_ram, (0, 40), "Avoid the ramming ship!"),
+        BossAttack("Net Toss", pirate_net_toss, (0, 26), "Cut yourself free!"),
+        BossAttack("ALL HANDS ASSAULT", pirate_ultimate_assault, (0, 65), "The crew's full might!")
     ],
     ascii_art=PIRATE_SHIP_ASCII,
     dialogue={
@@ -2126,15 +2482,15 @@ KRAKEN_ASCII = """
 
 KRAKEN = Boss(
     name="The Kraken",
-    hp=500,
+    hp=600,  # Increased from 500
     defense=18,
     attacks=[
-        BossAttack("Tentacle Slam", kraken_tentacle_slam, (0, 75), "Dodge the massive tentacles!"),
-        BossAttack("Ink Cloud", kraken_ink_cloud, (0, 30), "Navigate through the murky ink!"),
-        BossAttack("Whirlpool Grab", kraken_whirlpool_grab, (0, 35), "Escape the pulling vortex!"),
-        BossAttack("Beak Strike", kraken_beak_strike, (0, 40), "Avoid the crushing beak!"),
-        BossAttack("Crushing Grip", kraken_crushing_grip, (0, 45), "Break free from tentacles!"),
-        BossAttack("TIDAL FURY", kraken_tidal_fury, (0, 50), "The Kraken's ultimate wrath!")
+        BossAttack("Tentacle Slam", kraken_tentacle_slam, (0, 80), "Dodge the massive tentacles!"),
+        BossAttack("Ink Cloud", kraken_ink_cloud, (0, 35), "Navigate through the murky ink!"),
+        BossAttack("Whirlpool Grab", kraken_whirlpool_grab, (0, 42), "Escape the pulling vortex!"),
+        BossAttack("Beak Strike", kraken_beak_strike, (0, 48), "Avoid the crushing beak!"),
+        BossAttack("Crushing Grip", kraken_crushing_grip, (0, 52), "Break free from tentacles!"),
+        BossAttack("TIDAL FURY", kraken_tidal_fury, (0, 70), "The Kraken's ultimate wrath!")
     ],
     ascii_art=KRAKEN_ASCII,
     dialogue={
@@ -2229,15 +2585,15 @@ JORMUNGANDR_ASCII = """
 
 JORMUNGANDR = Boss(
     name="Jörmungandr",
-    hp=750,
-    defense=22,
+    hp=800,  # Increased from 750 - this is the final boss
+    defense=25,  # Increased from 22 - highest defense
     attacks=[
-        BossAttack("World Coil", jormungandr_world_coil, (0, 35), "Break free from the crushing coils!"),
-        BossAttack("Venom Rain", jormungandr_venom_rain, (0, 40), "Dodge the poisonous droplets!"),
-        BossAttack("Tidal Wave", jormungandr_tidal_wave, (0, 30), "Swim against the massive waves!"),
-        BossAttack("Serpent's Gaze", jormungandr_serpent_gaze, (0, 20), "Resist the hypnotic stare!"),
-        BossAttack("Tail Whip", jormungandr_tail_whip, (0, 25), "React quickly to dodge!"),
-        BossAttack("RAGNARÖK FURY", jormungandr_ragnarok_fury, (0, 45), "The World Serpent's ultimate power!")
+        BossAttack("World Coil", jormungandr_world_coil, (0, 45), "Break free from the crushing coils!"),
+        BossAttack("Venom Rain", jormungandr_venom_rain, (0, 50), "Dodge the poisonous droplets!"),
+        BossAttack("Tidal Wave", jormungandr_tidal_wave, (0, 40), "Swim against the massive waves!"),
+        BossAttack("Serpent's Gaze", jormungandr_serpent_gaze, (0, 30), "Resist the hypnotic stare!"),
+        BossAttack("Tail Whip", jormungandr_tail_whip, (0, 35), "React quickly to dodge!"),
+        BossAttack("RAGNARÖK FURY", jormungandr_ragnarok_fury, (0, 85), "The World Serpent's ultimate power!")
     ],
     ascii_art=JORMUNGANDR_ASCII,
     dialogue={
@@ -2321,6 +2677,122 @@ JORMUNGANDR = Boss(
     spare_threshold=35
 )
 
+# ===== CTHULHU - THE DREAMING GOD =====
+
+CTHULHU_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         🐙 CTHULHU - THE DREAMING GOD 🐙                  ║
+    ║              [High Priest of the Great Old Ones]           ║
+    ║                     [Ph'nglui mglw'nafh...]                ║
+    ╚════════════════════════════════════════════════════════════╝
+    
+        ⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⣀⣤⣶⣾⣿⣿⣷⣶⣤⣀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠜⠉⣿⡆⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢰⣿⠉⠃⠀⠀⠀⠀⠀
+        ⠀⢀⣤⣴⣦⣄⣴⠟⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡎⢻⣦⣠⣴⣦⣄⠀⠀
+        ⠀⡞⠁⣠⣾⢿⣧⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣽⡿⣷⣄⠈⢷⠀
+        ⠀⣠⣾⠟⠁⢸⣿⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⣿⡇⠈⠻⣷⣄⠀
+        ⣰⡿⠁⠀⢀⣾⣏⣾⣄⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣰⣷⣹⣷⠀⠀⠈⢿⣆
+        ⣿⡇⠀⢠⣾⠏⢸⣿⣿⣿⣿⠋⢻⣿⣿⣿⣿⡟⠙⣿⣿⣿⣿⡇⠹⣷⡀⠀⢸⣿
+        ⠹⣿⣴⡿⠋⠀⠈⠛⠉⣹⣿⣦⣄⡹⣿⣿⣋⣠⣶⣿⣏⠉⠛⠁⠀⠙⢿⣦⣿⠏
+        ⠀⣸⣿⠿⠿⣿⣾⣿⡿⠿⣿⣿⣿⣿⡆⢰⣿⣿⣿⣿⠿⢿⣿⣶⣿⠿⠿⣻⣇⠀
+        ⠀⣿⡇⢀⣴⣶⣤⣀⣴⣿⠿⣻⡿⣿⣧⣾⣿⢿⣟⠿⣿⣦⣀⣤⣶⣦⠀⢸⣿⠀
+        ⠀⢿⣧⠈⠃⢀⣵⣿⡋⠁⢀⣿⡷⣿⡇⢻⣿⣿⣿⡀⠈⢛⣿⣮⡀⠘⠀⣼⡟⠀
+        ⠀⠈⠻⣷⣤⣟⣋⣿⣧⣴⡿⠋⠀⣿⡇⢸⣿⠀⠙⢿⣦⣼⣿⣙⣻⣤⣾⠟⠁⠀
+        ⠀⠀⠀⠈⢽⣿⠛⢻⣏⢉⣤⣶⣶⣿⠁⠈⣿⣶⣶⣤⡉⣽⡟⠛⣿⡏⠁⠀⠀⠀
+        ⠀⠀⠀⠀⠈⠿⣷⣾⣾⣟⣉⣠⣿⢿⡇⢸⠿⣿⣄⣙⣻⣷⣷⣾⠿⠁⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⠿⠛⢁⡼⠃⠘⢦⡈⠛⠿⠟⠃⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+
+CTHULHU = Boss(
+    name="Cthulhu",
+    hp=666,  # Appropriately eldritch number
+    defense=20,
+    attacks=[
+        BossAttack("Madness Gaze", cthulhu_madness_gaze, (0, 35), "The Dreaming God's psychic assault!"),
+        BossAttack("Tentacles of R'lyeh", cthulhu_tentacle_rlyeh, (0, 28), "Massive tentacles from the sunken city!"),
+        BossAttack("Dream Paralysis", cthulhu_dream_paralysis, (0, 50), "Reality bends in the nightmare!"),
+        BossAttack("Summon Deep Ones", cthulhu_cultist_summon, (0, 45), "Cultist fish swarm to his will!"),
+        BossAttack("THE AWAKENING", cthulhu_ultimate_awakening, (0, 75), "Cthulhu begins to rise!")
+    ],
+    ascii_art=CTHULHU_ASCII,
+    dialogue={
+        "intro": [
+            "*The Deep Sea grows deathly silent...*",
+            "*An ancient presence stirs below...*",
+            "*Non-Euclidean geometry warps the water around you...*",
+            "*You see it... the sunken city of R'LYEH rising from the abyss!*",
+            "*Massive stone monoliths covered in incomprehensible symbols!*",
+            "*And there... in the center... a THRONE...*",
+            "*Something sits upon it... something that should not exist...*",
+            "*CTHULHU THE DREAMING GOD!*",
+            "*Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn!*",
+            "*Your mind reels as you behold the cosmic horror!*"
+        ],
+        "default": [
+            "*Cthulhu remains motionless on his throne*",
+            "*Is he... sleeping? Or watching?*",
+            "*The stars seem wrong... the angles impossible...*",
+            "*Whispers echo in languages older than humanity*"
+        ],
+        "hit": [
+            "*The Great Old One shifts slightly*",
+            "*Reality ripples around the impact*",
+            "*Did you hurt it? Or did it merely... dream of pain?*",
+            "*The whispers grow louder... angrier*"
+        ],
+        "low_hp": [
+            "*Cthulhu's form seems... less solid?*",
+            "*The city of R'lyeh begins to sink again*",
+            "*'The stars are not yet right...'*",
+            "*The Dreaming God's eyes begin to close once more*"
+        ],
+        "merciful": [
+            "*You cease your assault and float peacefully*",
+            "*Cthulhu's massive eyes regard you with... curiosity?*",
+            "*The psychic pressure on your mind... lessens*",
+            "*'Interesting... this one does not seek to wake me...'*",
+            "*You sense ancient intelligence evaluating you*"
+        ],
+        "spare_ready": [
+            "*CTHULHU can be SPARED*",
+            "*The Dreaming God awaits your choice*",
+            "*'Will you let me dream... or force me to wake?'*"
+        ],
+        "spared": [
+            "*You bow respectfully before the cosmic entity*",
+            "*'Sleep, Great Dreamer. The stars are not yet right.'*",
+            "*Cthulhu's eyes slowly close...*",
+            "*The whispers become... grateful? Understanding?*",
+            "*'You... comprehend. Rare among your kind.'*",
+            "*'When the stars ARE right... you will be remembered.'*",
+            "*The city of R'lyeh sinks back into the depths*",
+            "*Reality stabilizes around you*",
+            "*You feel a strange blessing upon your mind*",
+            "*You can now perceive things beyond mortal ken...*",
+            "🐙 Cthulhu has blessed you with eldritch sight! 🐙",
+            "*In his house at R'lyeh, dead Cthulhu waits dreaming... peacefully*"
+        ],
+        "killed": [
+            "*NO... IMPOSSIBLE!*",
+            "*Cthulhu RISES from his throne!*",
+            "*'You DARE?! You DARE wake me from my slumber?!'*",
+            "*Reality itself begins to tear apart!*",
+            "*The Great Old One's form destabilizes...*",
+            "*'The stars... not right... cannot... maintain...'*",
+            "*Cthulhu's physical form dissolves into cosmic horror!*",
+            "*R'lyeh crumbles and sinks into the eternal abyss*",
+            "*But you know... you KNOW... this is not death*",
+            "*'That is not dead which can eternal lie...'*",
+            "*'And with strange aeons... even death may die...'*",
+            "*The Deep Sea grows dark and cold*",
+            "*Your mind will forever bear the scars of what you saw*",
+            "*You have not killed Cthulhu... merely forced him back to dreaming*",
+            "*But now... he dreams of YOU*"
+        ]
+    },
+    spare_threshold=25  # Lower threshold - Cthulhu is more willing to return to sleep
+)
+
 # Boss item that triggers the fight
 class BossItem:
     def __init__(self, name, boss, description, location):
@@ -2358,6 +2830,12 @@ BOSS_ITEMS = {
         "Serpent Rune",
         JORMUNGANDR,
         "An ancient Norse rune stone pulsing with primordial power. It whispers of the World Serpent...",
+        "Deep Sea"
+    ),
+    "Fragment of R'lyeh": BossItem(
+        "Fragment of R'lyeh",
+        CTHULHU,
+        "A non-Euclidean stone fragment from the sunken city. Gazing at it too long causes strange dreams...",
         "Deep Sea"
     ),
     # Add more boss items for other locations here
@@ -2694,7 +3172,22 @@ deep_sea_fish = [
     Fish("Fallen Starfish", 0.8, 1.5, "Uncommon", 4.0, 10,"A fish that glows softly and seems to hum a familiar tune.", 40),
     Fish("Determined Eel", 3, 6, "Epic", 0.8, 22, "An eel that refuses to flee. Its eyes burn with fierce courage.", 120),
     Fish("Headcrab Eel", 6, 10, "Epic", 0.8, 30, "An eel with odd, grasping fins that latch onto anything nearby.", 150),
-    Fish("Corrupt Bass", 1, 3, "Rare", 1.5, 16, "A bass infected by a spreading blue-purple corruption.", 60)
+    Fish("Corrupt Bass", 1, 3, "Rare", 1.5, 16, "A bass infected by a spreading blue-purple corruption.", 60),
+    # Eldritch/Cosmic fish - unlocked after Cthulhu encounter
+    Fish("Star-Spawn Minnow", 0.5, 2.0, "Rare", 2.5, 65, "A small fish with too many eyes and angles that shouldn't exist.", 180),
+    Fish("Non-Euclidean Cod", 3.0, 15.0, "Rare", 2.0, 75, "Its shape seems to change depending on how you look at it.", 220),
+    Fish("Dreaming Squid", 8.0, 30.0, "Legendary", 0.8, 120, "Sleeps eternally but still hunts in dreams.", 450),
+    Fish("Shoggoth Tadpole", 0.1, 0.8, "Uncommon", 5.0, 45, "A protoplasmic mass with temporary features. 'Tekeli-li! Tekeli-li!'", 95),
+    Fish("Elder Thing Hatchling", 2.0, 12.0, "Rare", 1.8, 85, "Barrel-shaped organism with strange appendages.", 280),
+    Fish("Deep One Hybrid", 15.0, 65.0, "Legendary", 0.6, 150, "Part fish, part something else. Whispers in dead languages.", 580),
+    Fish("Byakhee Eel", 5.0, 25.0, "Legendary", 0.7, 130, "Interstellar eel that shouldn't exist in water.", 520),
+    Fish("Mi-Go Surgeonfish", 3.0, 18.0, "Rare", 1.5, 95, "Fungoid crustacean-fish hybrid from beyond.", 340),
+    Fish("Colour Out of Space", 0.0, 0.0, "Mythical", 0.005, 8000, "It has no weight or form, only an impossible color.", 100000),
+    Fish("Azathoth's Spawn", 100.0, 500.0, "Mythical", 0.002, 12000, "Nuclear chaos incarnate. Piping flutes echo around it.", 200000),
+    Fish("Yog-Sothoth Fragment", 50.0, 200.0, "Mythical", 0.003, 10000, "A fragment of the key and the gate. All time exists within it.", 180000),
+    Fish("Nyarlathotep's Messenger", 10.0, 80.0, "Legendary", 0.4, 160, "The crawling chaos sends its regards.", 650),
+    Fish("Dagon", 800.0, 3500.0, "Mythical", 0.001, 15000, "High priest of the Deep Ones. Father of horrors.", 350000),
+    Fish("Hydra of R'lyeh", 200.0, 900.0, "Mythical", 0.008, 9000, "Each head whispers a different madness.", 160000)
 ]
 volcanic_lake_fish = [
     Fish("Ember Minnow", 0.1, 0.5, "Common", 12, 25, "Tiny fish that sparkles like hot coals.", 35),
@@ -3198,7 +3691,7 @@ class LocationMap:
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
             # Allow movement on walkable tiles (including all water types and NPC)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F']:
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
@@ -3254,6 +3747,10 @@ class LocationMap:
         """Check if location has the NPC fisherman"""
         return self.layout[y][x] == 'F'
     
+    def is_npc_mactavish(self, x, y):
+        """Check if location has MacTavish - only visible if Loch Ness defeated"""
+        return self.layout[y][x] == 'M'
+    
     def render_tile(self, tile, is_player, is_spot, is_golden):
         """Render a single tile with appropriate coloring"""
         if is_player:
@@ -3292,6 +3789,12 @@ class LocationMap:
             return Fore.LIGHTCYAN_EX + '⚓' + Style.RESET_ALL
         elif tile == 'F':  # NPC Fisherman
             return Fore.GREEN + '🎣' + Style.RESET_ALL
+        elif tile == 'M':  # MacTavish - only visible if Loch Ness defeated
+            if "Loch Ness Monster" in self.game.defeated_bosses:
+                return Fore.YELLOW + '🧓' + Style.RESET_ALL
+            else:
+                # Show as water if not unlocked yet
+                return Fore.BLUE + '≈' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -3311,7 +3814,7 @@ HUB_ISLAND_LAYOUT = [
     ['█', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '≈', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.',  '.', 'F', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', 'M', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⚓', '.', '🌳', '🌳', '🌳', '█'],
@@ -3841,6 +4344,9 @@ class Game:
                 'hp': self.equipped_combat_items['hp'].name if self.equipped_combat_items['hp'] else None
             },
             'received_pirate_gift': self.received_pirate_gift,
+            'mactavish_daily_quest': getattr(self, 'mactavish_daily_quest', None),
+            'mactavish_quest_progress': getattr(self, 'mactavish_quest_progress', 0),
+            'mactavish_last_quest_date': getattr(self, 'mactavish_last_quest_date', None),
         }
         
         # Create hash-based filename
@@ -3988,6 +4494,9 @@ class Game:
             
             # Load NPC interactions
             self.received_pirate_gift = data.get('received_pirate_gift', False)
+            self.mactavish_daily_quest = data.get('mactavish_daily_quest', None)
+            self.mactavish_quest_progress = data.get('mactavish_quest_progress', 0)
+            self.mactavish_last_quest_date = data.get('mactavish_last_quest_date', None)
             
             print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
@@ -4049,6 +4558,18 @@ class Game:
     def choose_fish(self):
         """Weighted random fish selection from current location"""
         fish_pool = self.current_location.fish_pool[:]
+        
+        # Filter out eldritch fish if Cthulhu hasn't been encountered yet
+        eldritch_fish_names = [
+            "Star-Spawn Minnow", "Non-Euclidean Cod", "Dreaming Squid", 
+            "Shoggoth Tadpole", "Elder Thing Hatchling", "Deep One Hybrid",
+            "Byakhee Eel", "Mi-Go Surgeonfish", "Colour Out of Space",
+            "Azathoth's Spawn", "Yog-Sothoth Fragment", "Nyarlathotep's Messenger",
+            "Dagon", "Hydra of R'lyeh"
+        ]
+        
+        if "Cthulhu" not in self.defeated_bosses:
+            fish_pool = [fish for fish in fish_pool if fish.name not in eldritch_fish_names]
         
         # Apply rod and bait bonuses
         rarity_bonus = self.current_rod.bonus_chance + self.current_bait.bonus_rarity
@@ -4188,6 +4709,25 @@ class Game:
         
         # Add to inventory and encyclopedia
         self.inventory.append(caught_fish)
+        
+        # Track MacTavish daily quest progress
+        if hasattr(self, 'mactavish_daily_quest') and self.mactavish_daily_quest:
+            quest = self.mactavish_daily_quest
+            if quest['type'] == 'any':
+                # Any fish counts
+                self.mactavish_quest_progress += 1
+            elif quest['type'] == 'specific':
+                # Specific fish type
+                if caught_fish.name == quest['target']:
+                    self.mactavish_quest_progress += 1
+            elif quest['type'] == 'rare':
+                # Rare or better fish
+                if caught_fish.rarity in ['Rare', 'Legendary', 'Mythical']:
+                    self.mactavish_quest_progress += 1
+            
+            # Check if quest completed
+            if self.mactavish_quest_progress >= quest['count']:
+                print(Fore.LIGHTYELLOW_EX + f"✓ MacTavish's daily quest completed! Visit him to claim your reward!" + Style.RESET_ALL)
         
         if caught_fish.name in self.encyclopedia:
             self.encyclopedia[caught_fish.name] += 1
@@ -5019,6 +5559,248 @@ class Game:
                 print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
                 time.sleep(1)
     
+    def interact_with_groundskeeper_mactavish(self):
+        """Talk to Old Groundskeeper MacTavish - unlocked after defeating Loch Ness Monster"""
+        
+        # Initialize MacTavish quest data if not exists
+        if not hasattr(self, 'mactavish_daily_quest'):
+            self.mactavish_daily_quest = None
+            self.mactavish_quest_progress = 0
+            self.mactavish_last_quest_date = None
+        
+        while True:
+            self.clear_screen()
+            
+            mactavish_art = """
+            
+                🧓 Old Groundskeeper MacTavish 🧓
+            
+                        _____
+                      /       \\
+                     |  o   o  |
+                     |    ^    |     "Och aye!"
+                     |  \\___/  |
+                      \\_______/
+                        | | |
+                      __| | |__
+                     |  \\___/  |
+                    /    ⚒️⚒️    \\
+                   |  GROUNDSKEEPER |
+                    \\____________/
+            """
+            
+            print(Fore.GREEN + mactavish_art + Style.RESET_ALL)
+            print()
+            
+            # Greeting based on karma
+            if random.random() < 0.3:
+                if self.karma >= 50:
+                    greetings = [
+                        "Och aye! If it isn't the mighty hero who saved Nessie!",
+                        "Aye, the Guardian Savior! The loch is blessed by yer mercy!",
+                        "Well met, protector! Nessie herself told me of yer kindness!",
+                        "The ancient one speaks highly o' ye, brave fisher!",
+                    ]
+                    print(Fore.LIGHTGREEN_EX + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= 10:
+                    greetings = [
+                        "Och aye, good to see ye again, laddie!",
+                        "Ah, me favorite angler returns!",
+                        "Welcome back to the loch, friend!",
+                        "Top o' the mornin' to ye!",
+                    ]
+                    print(Fore.CYAN + random.choice(greetings) + Style.RESET_ALL)
+                elif self.karma >= -10:
+                    greetings = [
+                        "Aye... back again, are ye?",
+                        "Hmm. What brings ye by?",
+                        "Oh. It's you.",
+                    ]
+                    print(Fore.WHITE + random.choice(greetings) + Style.RESET_ALL)
+                else:
+                    greetings = [
+                        "*Narrows eyes* What do ye want, slayer?",
+                        "Ye've got some nerve showin' yer face here...",
+                        "The loch weeps fer what ye've done.",
+                    ]
+                    print(Fore.RED + random.choice(greetings) + Style.RESET_ALL)
+                print()
+            
+            print(Fore.YELLOW + "What would ye like to discuss?" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Hear a story about Nessie" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Ask about daily quests" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Browse special bait shop" + Style.RESET_ALL)
+            print(Fore.WHITE + "4. Ask about the loch" + Style.RESET_ALL)
+            print(Fore.WHITE + "5. Leave" + Style.RESET_ALL)
+            
+            choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                self.hear_mactavish_story()
+            elif choice == '2':
+                self.check_mactavish_daily_quest()
+            elif choice == '3':
+                self.browse_mactavish_shop()
+            elif choice == '4':
+                self.mactavish_loch_info()
+            elif choice == '5':
+                break
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
+    
+    def hear_mactavish_story(self):
+        """MacTavish tells a random story about Nessie"""
+        stories = [
+            "Back in '82, I saw Nessie breach right in front o' me boat! Nearly capsized, I did! She was chasin' a school o' salmon the size o' me arm!",
+            "Me grandfather used tae tell tales o' the monster. Said she's been here since the days o' Bonnie Prince Charlie himself!",
+            "Once found a tourist tryin' tae fish with bread! BREAD! I says to 'em, 'This ain't no duck pond, laddie!' Nessie wouldnae give that the time o' day!",
+            "The loch gets mighty temperamental in winter. Ice as thick as me thumb, and strange lights beneath... Nessie doesna hibernate, ye see.",
+            "I remember the day the scientists came with their sonar equipment. Nessie played hide-n-seek with 'em fer three whole days! She's a clever one, she is!",
+            "There's an old cave system beneath the loch. Me father sealed most of it off, but sometimes ye can still hear rumblin'... *whispers* That's where she nests.",
+            "Ye know what Nessie's favorite food is? Haggis! Aye, I'm serious! Toss a bit in the water and she'll come right up. Though I dinnae recommend tryin' it...",
+            "The ancient Picts carved images o' her on standing stones. She's been guardin' these waters fer thousands o' years, she has!"
+        ]
+        
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║      MACTAVISH'S STORIES              ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        print(Fore.GREEN + random.choice(stories) + Style.RESET_ALL)
+        print()
+        print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+        get_key()
+    
+    def check_mactavish_daily_quest(self):
+        """Check or assign daily quest from MacTavish"""
+        from datetime import datetime
+        
+        today = datetime.now().strftime("%Y-%m-%d")
+        
+        # Check if we need a new quest
+        if self.mactavish_last_quest_date != today:
+            # Generate new daily quest
+            quest_types = [
+                {'name': 'Clear Debris', 'desc': 'Catch any 5 fish to clear debris from spots', 'type': 'any', 'target': None, 'count': 5, 'reward': 150, 'xp': 100},
+                {'name': 'Invasive Species', 'desc': 'Catch 3 Northern Pike (invasive species)', 'type': 'specific', 'target': 'Northern Pike', 'count': 3, 'reward': 200, 'xp': 150},
+                {'name': 'Water Quality', 'desc': 'Catch 2 Rare or better fish for testing', 'type': 'rare', 'target': None, 'count': 2, 'reward': 250, 'xp': 200},
+            ]
+            
+            quest = random.choice(quest_types)
+            self.mactavish_daily_quest = quest
+            self.mactavish_quest_progress = 0
+            self.mactavish_last_quest_date = today
+        
+        # Display quest status
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║        DAILY QUEST                    ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + f"Quest: {self.mactavish_daily_quest['name']}" + Style.RESET_ALL)
+        print(Fore.WHITE + f"{self.mactavish_daily_quest['desc']}" + Style.RESET_ALL)
+        print()
+        print(Fore.GREEN + f"Progress: {self.mactavish_quest_progress}/{self.mactavish_daily_quest['count']}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"Reward: ${self.mactavish_daily_quest['reward']} | {self.mactavish_daily_quest['xp']} XP" + Style.RESET_ALL)
+        print()
+        
+        if self.mactavish_quest_progress >= self.mactavish_daily_quest['count']:
+            print(Fore.LIGHTGREEN_EX + "✓ QUEST COMPLETE! Return to MacTavish to claim your reward!" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Claim Reward" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Back" + Style.RESET_ALL)
+            
+            choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+            if choice == '1':
+                self.money += self.mactavish_daily_quest['reward']
+                self.xp += self.mactavish_daily_quest['xp']
+                print(Fore.GREEN + f"\n✓ Received ${self.mactavish_daily_quest['reward']} and {self.mactavish_daily_quest['xp']} XP!" + Style.RESET_ALL)
+                print(Fore.YELLOW + "\"Och aye! Good work, laddie! Come back tomorrow fer another task!\"" + Style.RESET_ALL)
+                self.mactavish_daily_quest = None
+                time.sleep(2)
+        else:
+            print(Fore.YELLOW + "Complete this quest by fishing around the loch!" + Style.RESET_ALL)
+            print()
+            print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+            get_key()
+    
+    def browse_mactavish_shop(self):
+        """Browse MacTavish's special bait shop"""
+        special_baits = [
+            {'name': 'Highland Mist Lure', 'desc': 'Mystical bait infused with Scottish morning mist', 'price': 300, 'rare': 15, 'mythic': 5},
+            {'name': "Nessie's Favorite", 'desc': 'Special blend that attracts legendary creatures', 'price': 500, 'rare': 20, 'mythic': 10},
+            {'name': 'Loch Water Extract', 'desc': "Pure loch water concentrate - fish can't resist!", 'price': 150, 'rare': 10, 'mythic': 3},
+        ]
+        
+        while True:
+            self.clear_screen()
+            print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.CYAN + "║      MACTAVISH'S BAIT SHOP            ║" + Style.RESET_ALL)
+            print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            print(Fore.GREEN + f"Your Money: ${self.money}" + Style.RESET_ALL)
+            print()
+            
+            for i, bait in enumerate(special_baits, 1):
+                print(Fore.YELLOW + f"{i}. {bait['name']} - ${bait['price']}" + Style.RESET_ALL)
+                print(Fore.WHITE + f"   {bait['desc']}" + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + f"   Rare +{bait['rare']}% | Mythic +{bait['mythic']}%" + Style.RESET_ALL)
+                print()
+            
+            print(Fore.WHITE + "4. Back" + Style.RESET_ALL)
+            
+            choice = input(Fore.CYAN + "\nChoice: " + Style.RESET_ALL)
+            
+            if choice == '4':
+                break
+            elif choice in ['1', '2', '3']:
+                bait = special_baits[int(choice) - 1]
+                if self.money >= bait['price']:
+                    confirm = input(Fore.YELLOW + f"Buy {bait['name']} for ${bait['price']}? (Y/N): " + Style.RESET_ALL).lower()
+                    if confirm == 'y':
+                        self.money -= bait['price']
+                        # Add as regular bait to owned baits
+                        from dataclasses import dataclass
+                        @dataclass
+                        class SpecialBait:
+                            name: str
+                            bonus_rare: int = 0
+                            bonus_mythic: int = 0
+                            price: int = 0
+                        
+                        new_bait = SpecialBait(bait['name'], bait['rare'], bait['mythic'], bait['price'])
+                        self.owned_baits.append(new_bait)
+                        print(Fore.GREEN + f"✓ Purchased {bait['name']}!" + Style.RESET_ALL)
+                        print(Fore.YELLOW + "\"Aye! This'll bring ye good fortune on the loch!\"" + Style.RESET_ALL)
+                        time.sleep(2)
+                else:
+                    print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                    time.sleep(1)
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
+    
+    def mactavish_loch_info(self):
+        """MacTavish shares wisdom about the loch"""
+        self.clear_screen()
+        print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
+        print(Fore.CYAN + "║         ABOUT THE LOCH                ║" + Style.RESET_ALL)
+        print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
+        print()
+        print(Fore.GREEN + "\"I've been tendin' these waters fer nigh on forty years...\"" + Style.RESET_ALL)
+        print()
+        print(Fore.WHITE + "The loch is ancient, older than any o' us can imagine." + Style.RESET_ALL)
+        print(Fore.WHITE + "It's home to Nessie, the guardian of these waters." + Style.RESET_ALL)
+        print(Fore.WHITE + "Treat her with respect, and ye'll be blessed with bountiful catches." + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + "The best fishing is at dawn and dusk, when the mist rolls in." + Style.RESET_ALL)
+        print(Fore.YELLOW + "And if ye ever see strange ripples... that's Nessie sayin' hello!" + Style.RESET_ALL)
+        print()
+        print(Fore.LIGHTBLACK_EX + "Press any key to continue..." + Style.RESET_ALL)
+        get_key()
+    
     def interact_with_npc_fisherman(self):
         """Talk to the NPC fisherman and get a random fact"""
         while True:  # Keep dialog open until player chooses to leave
@@ -5350,7 +6132,10 @@ class Game:
             print()
             print(Fore.YELLOW + hub_map.message + Style.RESET_ALL)
             print()
-            print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            if "Loch Ness Monster" in self.defeated_bosses:
+                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | 🧓 MacTavish | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            else:
+                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                     print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             else:
@@ -5374,6 +6159,12 @@ class Game:
                 if hub_map.is_npc_fisherman(hub_map.player_x, hub_map.player_y):
                     # Talk to the NPC fisherman
                     self.interact_with_npc_fisherman()
+                elif hub_map.is_npc_mactavish(hub_map.player_x, hub_map.player_y):
+                    # Talk to MacTavish (only if Loch Ness defeated)
+                    if "Loch Ness Monster" in self.defeated_bosses:
+                        self.interact_with_groundskeeper_mactavish()
+                    else:
+                        hub_map.message = "The water seems calm here..."
                 elif hub_map.is_fishing_spot(hub_map.player_x, hub_map.player_y):
                     is_golden = hub_map.is_golden_spot(hub_map.player_x, hub_map.player_y)
                     
@@ -5706,6 +6497,16 @@ class Game:
                     if boss.name not in self.defeated_bosses:
                         self.defeated_bosses.append(boss.name)
                     
+                    # Special message for Cthulhu
+                    if boss.name == "Cthulhu":
+                        print()
+                        print(Fore.MAGENTA + "=" * 60 + Style.RESET_ALL)
+                        print(Fore.LIGHTMAGENTA_EX + "🐙 THE FRAGMENT OF R'LYEH PULSES WITH POWER! 🐙" + Style.RESET_ALL)
+                        print(Fore.CYAN + "Your perception has been forever altered..." + Style.RESET_ALL)
+                        print(Fore.GREEN + "You can now catch ELDRITCH and COSMIC fish variants!" + Style.RESET_ALL)
+                        print(Fore.YELLOW + "Strange creatures from beyond the stars now swim in the Deep Sea..." + Style.RESET_ALL)
+                        print(Fore.MAGENTA + "=" * 60 + Style.RESET_ALL)
+                    
                     input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
                     return
                 else:
@@ -5768,6 +6569,17 @@ class Game:
                 # Mark boss as defeated
                 if boss.name not in self.defeated_bosses:
                     self.defeated_bosses.append(boss.name)
+                
+                # Special message for Cthulhu
+                if boss.name == "Cthulhu":
+                    print()
+                    print(Fore.MAGENTA + "=" * 60 + Style.RESET_ALL)
+                    print(Fore.RED + "🐙 THE DREAMING GOD'S INFLUENCE LINGERS! 🐙" + Style.RESET_ALL)
+                    print(Fore.LIGHTBLACK_EX + "Though banished, Cthulhu's presence has tainted the waters..." + Style.RESET_ALL)
+                    print(Fore.GREEN + "You can now catch ELDRITCH and COSMIC fish variants!" + Style.RESET_ALL)
+                    print(Fore.YELLOW + "Things that should not be now swim in the Deep Sea..." + Style.RESET_ALL)
+                    print(Fore.LIGHTBLACK_EX + "*You hear whispers in your dreams...*" + Style.RESET_ALL)
+                    print(Fore.MAGENTA + "=" * 60 + Style.RESET_ALL)
                 
                 input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
                 return
@@ -6287,7 +7099,7 @@ if __name__ == "__main__":
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
     print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
     print(Fore.CYAN + "║       BOSS BATTLES UPDATE             ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         V.0.6.0 BETA                  ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║         V.0.7.1 BETA                  ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(
