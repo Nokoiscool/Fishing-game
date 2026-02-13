@@ -5401,11 +5401,11 @@ class LocationMap:
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
             # Allow movement on walkable tiles (including all water types and NPC)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M', 'H', 'Φ']:
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M', 'H', 'Φ', '🍺', '📚', 'D', '═', 'R', 'O', 'W', 'T', '1', '2', '3', '4', 'Ξ']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
-            elif tile == '█' or tile == '🌳' or tile == '▓':
+            elif tile == '█' or tile == '🌳' or tile == '▓' or tile == 'c':
                 self.message = "Can't walk through that!"
             else:
                 self.message = "Can't walk there!"
@@ -5422,7 +5422,7 @@ class LocationMap:
     def is_building(self, x, y):
         """Check if location is a building entrance"""
         tile = self.layout[y][x]
-        return tile in ['🏪', '🏛️', '📋', '🏠', '⚓']
+        return tile in ['🏪', '🏛️', '📋', '🏠', '⚓', '🍺', '📚']
     
     def get_building_type(self, x, y):
         """Get the type of building at this position"""
@@ -5432,7 +5432,9 @@ class LocationMap:
             '🏛️': 'aquarium',
             '📋': 'quests',
             '🏠': 'home',
-            '⚓': 'dock'
+            '⚓': 'dock',
+            '🍺': 'pub',
+            '📚': 'library'
         }
         return building_map.get(tile, None)
     
@@ -5468,6 +5470,46 @@ class LocationMap:
     def is_npc_prometheus(self, x, y):
         """Check if location has Prometheus - only visible after Ifrit defeated"""
         return self.layout[y][x] == 'Φ'
+    
+    def is_door(self, x, y):
+        """Check if location is a door/exit"""
+        return self.layout[y][x] == 'D'
+    
+    def is_pub_npc(self, x, y):
+        """Check if location has a pub NPC"""
+        tile = self.layout[y][x]
+        return tile in ['R', 'O', 'W']  # maRina, Old salt, Widow
+    
+    def get_pub_npc(self, x, y):
+        """Get which pub NPC is at this location"""
+        tile = self.layout[y][x]
+        npc_map = {
+            'R': 'marina',
+            'O': 'sailor', 
+            'W': 'widow'
+        }
+        return npc_map.get(tile, None)
+    
+    def is_library_npc(self, x, y):
+        """Check if location has the librarian"""
+        return self.layout[y][x] == 'T'
+    
+    def is_bookshelf(self, x, y):
+        """Check if location is a bookshelf"""
+        tile = self.layout[y][x]
+        return tile in ['1', '2', '3', '4', 'Ξ']
+    
+    def get_bookshelf_type(self, x, y):
+        """Get which bookshelf type - different books on different shelves"""
+        tile = self.layout[y][x]
+        book_map = {
+            '1': 'waters',      # Red books - The Waters That Remember
+            '2': 'guardians',   # Green books - Guardians of the Deep  
+            '3': 'fishers',     # Blue books - The First Fishers
+            '4': 'aquatech',    # Yellow books - AquaTech Warning
+            'Ξ': 'general'      # Gray books - General
+        }
+        return book_map.get(tile, 'general')
     
     def render_tile(self, tile, is_player, is_spot, is_golden, game=None):
         """Render a single tile with appropriate coloring"""
@@ -5505,6 +5547,10 @@ class LocationMap:
             return Fore.LIGHTRED_EX + '🏠' + Style.RESET_ALL
         elif tile == '⚓':  # Dock
             return Fore.LIGHTCYAN_EX + '⚓' + Style.RESET_ALL
+        elif tile == '🍺':  # Pub
+            return Fore.LIGHTYELLOW_EX + '🍺' + Style.RESET_ALL
+        elif tile == '📚':  # Library
+            return Fore.LIGHTBLUE_EX + '📚' + Style.RESET_ALL
         elif tile == 'F':  # NPC Fisherman
             return Fore.GREEN + '🎣' + Style.RESET_ALL
         elif tile == 'M':  # MacTavish - only visible if Loch Ness defeated
@@ -5525,6 +5571,30 @@ class LocationMap:
             else:
                 # Show as lava if not unlocked yet
                 return Fore.RED + '≋' + Style.RESET_ALL
+        elif tile == 'c':  # Chair (pub/library)
+            return Fore.YELLOW + '⌂' + Style.RESET_ALL
+        elif tile == '═':  # Bar counter
+            return Fore.LIGHTYELLOW_EX + '═' + Style.RESET_ALL
+        elif tile == 'D':  # Door/Exit
+            return Fore.LIGHTGREEN_EX + '▒' + Style.RESET_ALL
+        elif tile == 'R':  # maRina (bartender) 
+            return Fore.YELLOW + '@' + Style.RESET_ALL
+        elif tile == 'O':  # Old Salt (sailor) 
+            return Fore.LIGHTCYAN_EX + '@' + Style.RESET_ALL
+        elif tile == 'W':  # Widow (Elara)
+            return Fore.LIGHTBLUE_EX + '@' + Style.RESET_ALL
+        elif tile == 'T':  # Thalia (librarian)
+            return Fore.LIGHTMAGENTA_EX + '@' + Style.RESET_ALL
+        elif tile == '1':  # Bookshelf 1 - Red books (Waters)
+            return Fore.RED + '║' + Style.RESET_ALL
+        elif tile == '2':  # Bookshelf 2 - Green books (Guardians)
+            return Fore.GREEN + '║' + Style.RESET_ALL
+        elif tile == '3':  # Bookshelf 3 - Blue books (Fishers)
+            return Fore.BLUE + '║' + Style.RESET_ALL
+        elif tile == '4':  # Bookshelf 4 - Yellow books (AquaTech)
+            return Fore.YELLOW + '║' + Style.RESET_ALL
+        elif tile == 'Ξ':  # General books
+            return Fore.LIGHTBLACK_EX + '║' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -5540,12 +5610,12 @@ HUB_ISLAND_LAYOUT = [
     ['█', '🌳', '.', '.', '.', '▓', '▓', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '◉', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🏠', '.', '.', 'P', '.', '.', '.', '🌳', '🌳', '≋', '≋', '≋', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '.', '.', '.', '.', '.', '.', '🌳', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '.', '.', '🏪', '.', '.', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '📚', '.', '🏪', '.', '.', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '📋', '.', '.', '≈', '≈', '≈', '≈', '◉', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '.', '.', '.',  '.', 'F', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '.', '.', '.',  '.', '.', '≈', '≈', '≈', 'M', '≈', '≈', '≈', '≈', '≈', '≋', '≋', '🌳', '🌳', '🌳', '█'],
-    ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
+    ['█', '🌳', '🌳', '🌳', '🌳', '.', '🍺', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '≋', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '≈', '≈', '≈', '≈', '≈', '≈', '≈', '🌳', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '.', '.', '.', '.', '⚓', '.', '🌳', '🌳', '🌳', '█'],
     ['█', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '.', '.', '.', '.', '.', '.', '.', '.', '🌳', '🌳', '🌳', '█'],
@@ -5641,6 +5711,36 @@ ARCTIC_LAYOUT = [
     ['A', '▓', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
     ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
+]
+
+# Pub Interior Layout
+PUB_LAYOUT = [
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'D', '█'],
+    ['█', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', 'c', 'c', '.', '.', '.', '.', '.', 'W', '.', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '═', '═', '═', '═', '═', '═', '█'],
+    ['█', 'P', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '═', 'R', '.', '.', 'O', '═', '█'],
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
+]
+
+# Library Interior Layout
+LIBRARY_LAYOUT = [
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'D', '█'],
+    ['█', '.', '1', '1', '1', '.', '.', '2', '2', '2', '.', '.', '3', '3', '3', '.', '.', '.', '.', '█'],
+    ['█', '.', '1', '1', '1', '.', '.', '2', '2', '2', '.', '.', '3', '3', '3', '.', '.', '.', '.', '█'],
+    ['█', '.', '1', '1', '1', '.', '.', '2', '2', '2', '.', '.', '3', '3', '3', '.', '.', '.', '.', '█'],
+    ['█', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', '4', '4', '4', '.', '.', 'Ξ', 'Ξ', 'Ξ', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', '4', '4', '4', '.', '.', 'Ξ', 'Ξ', 'Ξ', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '.', '4', '4', '4', '.', '.', 'Ξ', 'Ξ', 'Ξ', '.', '.', 'c', '.', '.', 'c', '.', '.', '.', '█'],
+    ['█', 'P', '.', '.', '.', '.', '.', '.', 'T', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '█'],
+    ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
 ]
 
 # Add maps to locations
@@ -8489,6 +8589,674 @@ class Game:
                 # Invalid choice - loop again
                 continue
     
+    def visit_pub(self):
+        """Visit The Drowned Mermaid pub - with interior map"""
+        # Create pub map
+        pub_map = LocationMap("The Drowned Mermaid", PUB_LAYOUT, "A warm tavern filled with the smell of ale and sea shanties.")
+        
+        while True:
+            self.clear_screen()
+            
+            print(Fore.LIGHTYELLOW_EX + "╔════════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.LIGHTYELLOW_EX + "║     🍺 THE DROWNED MERMAID PUB 🍺      ║" + Style.RESET_ALL)
+            print(Fore.LIGHTYELLOW_EX + "╚════════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            
+            # Render the pub interior
+            for y, row in enumerate(pub_map.layout):
+                line = ""
+                for x, tile in enumerate(row):
+                    is_player = (x == pub_map.player_x and y == pub_map.player_y)
+                    line += pub_map.render_tile(tile, is_player, False, False, self)
+                print(line)
+            
+            print()
+            print(Fore.YELLOW + pub_map.message + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "@ Marina (Bartender) | @ Old Salt (Sailor) | @ Widow | ▒ Door" + Style.RESET_ALL)
+            print(Fore.WHITE + "[WASD] Move | [E] Talk/Exit | [Q] Leave" + Style.RESET_ALL)
+            
+            key = get_key()
+            
+            if key == 'w':
+                pub_map.move_player(0, -1)
+            elif key == 's':
+                pub_map.move_player(0, 1)
+            elif key == 'a':
+                pub_map.move_player(-1, 0)
+            elif key == 'd':
+                pub_map.move_player(1, 0)
+            elif key == 'e':
+                # Check for door
+                if pub_map.is_door(pub_map.player_x, pub_map.player_y):
+                    print(Fore.GREEN + "Leaving the pub..." + Style.RESET_ALL)
+                    time.sleep(0.5)
+                    return
+                
+                # Check for NPCs
+                if pub_map.is_pub_npc(pub_map.player_x, pub_map.player_y):
+                    npc = pub_map.get_pub_npc(pub_map.player_x, pub_map.player_y)
+                    self.talk_to_pub_npc(npc)
+                else:
+                    pub_map.message = "Nobody here to talk to. Walk to an NPC and press [E]."
+            elif key == 'q':
+                return
+    
+    def talk_to_pub_npc(self, npc_type):
+        """Talk to a specific pub NPC"""
+        self.clear_screen()
+        
+        if npc_type == 'marina':
+            # Marina - Bartender
+            print(Fore.LIGHTYELLOW_EX + "Marina - The Bartender" + Style.RESET_ALL)
+            print()
+            print(Fore.YELLOW + "*A weathered woman with kind eyes wipes down the bar*" + Style.RESET_ALL)
+            time.sleep(1)
+            
+            greetings = [
+                "\"Welcome, fisher. What'll it be?\"",
+                "\"Heard you've been making waves out there.\"",
+                "\"The waters have been... restless lately.\"",
+                "\"You have the look of someone who's seen things.\"",
+            ]
+            print(Fore.WHITE + random.choice(greetings) + Style.RESET_ALL)
+            time.sleep(1.5)
+            print()
+            
+            if self.karma >= 50:
+                print(Fore.GREEN + "\"The guardians speak highly of you. Drink's on the house.\"" + Style.RESET_ALL)
+            elif self.karma >= 10:
+                print(Fore.CYAN + "\"I've heard good things about your work with the guardians.\"" + Style.RESET_ALL)
+            elif self.karma <= -50:
+                print(Fore.RED + "\"The waters remember what you've done. Every drop remembers.\"" + Style.RESET_ALL)
+            else:
+                print(Fore.WHITE + "\"Be careful out there. The deep holds more secrets than fish.\"" + Style.RESET_ALL)
+                
+        elif npc_type == 'sailor':
+            # Old Salt - Sailor
+            print(Fore.LIGHTCYAN_EX + "Old Salt - The Sailor" + Style.RESET_ALL)
+            print()
+            print(Fore.LIGHTBLACK_EX + "*An ancient sailor nursing a mug, eyes distant*" + Style.RESET_ALL)
+            time.sleep(1)
+            
+            sailor_tales = [
+                ("\"Saw something in the deep once. Bigger than any ship.\"",
+                 "\"It looked at me... and I knew it was older than the ocean itself.\""),
+                ("\"The Kraken? Oh, it's real alright.\"",
+                 "\"But it's not the monster they say. It's... protecting something.\""),
+                ("\"I sailed with Redbeard once, before he turned pirate.\"",
+                 "\"Good man, till the sea took his family. Changed him, it did.\""),
+                ("\"The waters are all connected, you know.\"",
+                 "\"What you do in one place ripples everywhere else.\""),
+            ]
+            
+            tale = random.choice(sailor_tales)
+            print(Fore.CYAN + tale[0] + Style.RESET_ALL)
+            time.sleep(2)
+            print(Fore.WHITE + tale[1] + Style.RESET_ALL)
+            
+        elif npc_type == 'widow':
+            # Elara - Fisher's Widow
+            print(Fore.LIGHTBLUE_EX + "Elara - Fisher's Widow" + Style.RESET_ALL)
+            print()
+            print(Fore.LIGHTBLACK_EX + "*A quiet woman stares into her drink*" + Style.RESET_ALL)
+            time.sleep(1)
+            
+            widow_lines = [
+                ("\"My husband used to fish these waters.\"",
+                 "\"Never came back from the deep. They say the guardian took him.\"",
+                 "\"But I know better. He went down there willingly. Looking for answers.\""),
+                ("\"This island has always been special.\"",
+                 "\"The waters choose who comes here. You didn't find this place.\"",
+                 "\"It found you.\""),
+                ("\"Be kind to the waters, and they'll be kind to you.\"",
+                 "\"Be cruel, and... well.\"",
+                 "\"Some debts can only be paid in salt and tears.\""),
+            ]
+            
+            lines = random.choice(widow_lines)
+            for line in lines:
+                print(Fore.WHITE + line + Style.RESET_ALL)
+                time.sleep(1.5)
+        
+        time.sleep(2)
+        print()
+        input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    def visit_library(self):
+        """Visit the Island Library - with interior map"""
+        # Create library map
+        library_map = LocationMap("Island Library", LIBRARY_LAYOUT, "A peaceful library filled with ancient tomes and the scent of old parchment.")
+        
+        while True:
+            self.clear_screen()
+            
+            print(Fore.LIGHTBLUE_EX + "╔════════════════════════════════════════╗" + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "║         📚 ISLAND LIBRARY 📚           ║" + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "╚════════════════════════════════════════╝" + Style.RESET_ALL)
+            print()
+            
+            # Render the library interior
+            for y, row in enumerate(library_map.layout):
+                line = ""
+                for x, tile in enumerate(row):
+                    is_player = (x == library_map.player_x and y == library_map.player_y)
+                    line += library_map.render_tile(tile, is_player, False, False, self)
+                print(line)
+            
+            print()
+            print(Fore.CYAN + library_map.message + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "║ Red=Waters | ║ Green=Guardians | ║ Blue=Fishers | ║ Yellow=AquaTech | @ Thalia | ▒ Door" + Style.RESET_ALL)
+            print(Fore.WHITE + "[WASD] Move | [E] Read/Talk/Exit | [Q] Leave" + Style.RESET_ALL)
+            
+            key = get_key()
+            
+            if key == 'w':
+                library_map.move_player(0, -1)
+            elif key == 's':
+                library_map.move_player(0, 1)
+            elif key == 'a':
+                library_map.move_player(-1, 0)
+            elif key == 'd':
+                library_map.move_player(1, 0)
+            elif key == 'e':
+                # Check for door
+                if library_map.is_door(library_map.player_x, library_map.player_y):
+                    print(Fore.GREEN + "Leaving the library..." + Style.RESET_ALL)
+                    time.sleep(0.5)
+                    return
+                
+                # Check for librarian
+                if library_map.is_library_npc(library_map.player_x, library_map.player_y):
+                    self.talk_to_librarian()
+                # Check for bookshelves
+                elif library_map.is_bookshelf(library_map.player_x, library_map.player_y):
+                    book_type = library_map.get_bookshelf_type(library_map.player_x, library_map.player_y)
+                    self.read_library_book(book_type)
+                else:
+                    library_map.message = "Walk to a bookshelf or Thalia and press [E]."
+            elif key == 'q':
+                return
+    
+    def talk_to_librarian(self):
+        """Talk to Keeper Thalia"""
+        self.clear_screen()
+        print(Fore.LIGHTMAGENTA_EX + "Keeper Thalia - The Librarian" + Style.RESET_ALL)
+        print()
+        print(Fore.LIGHTBLACK_EX + "*An elderly woman with sharp eyes looks up from her reading*" + Style.RESET_ALL)
+        time.sleep(1)
+        
+        librarian_greetings = [
+            "\"Knowledge is power, but wisdom is knowing when to use it.\"",
+            "\"The old texts speak of fishers like you. Chosen by the waters.\"",
+            "\"Every book here has been touched by the sea. They remember.\"",
+            "\"Read carefully. Some truths are dangerous to know.\"",
+        ]
+        
+        print(Fore.MAGENTA + random.choice(librarian_greetings) + Style.RESET_ALL)
+        time.sleep(2)
+        print()
+        
+        if len(self.encyclopedia) > len(UNIQUE_FISH_NAMES) * 0.7:
+            print(Fore.GREEN + "\"Your encyclopedia grows impressive. You're becoming a true keeper of knowledge.\"" + Style.RESET_ALL)
+        elif len(self.defeated_bosses) >= 3:
+            print(Fore.CYAN + "\"The guardians test you, and you've shown great courage.\"" + Style.RESET_ALL)
+        else:
+            print(Fore.WHITE + "\"The waters have much to teach you yet, young fisher.\"" + Style.RESET_ALL)
+        
+        time.sleep(2)
+        print()
+        input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    def read_library_book(self, book_type):
+        """Read a book from the library shelves"""
+        self.clear_screen()
+        
+        if book_type == 'waters':
+            # The Waters That Remember
+            print(Fore.CYAN + "═══ THE WATERS THAT REMEMBER ═══" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "\"In the time before time, the waters were alive with consciousness" + Style.RESET_ALL)
+            print(Fore.WHITE + "ancient, patient, and watching.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.CYAN + "\"The First Current flowed from a source no mortal has ever found," + Style.RESET_ALL)
+            print(Fore.CYAN + "carrying with it the memory of creation itself.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.LIGHTBLUE_EX + "\"The waters remember everything. Every raindrop that fell." + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "Every creature born and died beneath the surface." + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "Water does not forget.\"" + Style.RESET_ALL)
+            
+        elif book_type == 'guardians':
+            # Guardians of the Deep
+            print(Fore.CYAN + "═══ GUARDIANS OF THE DEEP ═══" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "\"From the memory of ages, the Guardians emerged—" + Style.RESET_ALL)
+            print(Fore.WHITE + "not created, but condensed from millennia of accumulated will.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.GREEN + "\"The River Guardian: Patience incarnate, bearer of ancient scars.\"" + Style.RESET_ALL)
+            time.sleep(1.5)
+            print(Fore.BLUE + "\"The Loch's Sorrow: Born of grief, longing to remember love.\"" + Style.RESET_ALL)
+            time.sleep(1.5)
+            print(Fore.MAGENTA + "\"The Kraken: Guardian not just of ocean, but of reality itself.\"" + Style.RESET_ALL)
+            time.sleep(1.5)
+            print(Fore.CYAN + "\"Jörmungandr: The World Serpent, whose coils hold the ocean together.\"" + Style.RESET_ALL)
+            time.sleep(1.5)
+            print(Fore.RED + "\"Cthulhu: The Deep Dreamer, whose thoughts shape the abyss.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.YELLOW + "\"Each Guardian can be defeated through force..." + Style.RESET_ALL)
+            print(Fore.YELLOW + "or understood through compassion. The choice defines the fisher.\"" + Style.RESET_ALL)
+            
+        elif book_type == 'fishers':
+            # The First Fishers
+            print(Fore.CYAN + "═══ THE FIRST FISHERS ═══" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "\"Not everyone who casts a line is a Fisher.\"" + Style.RESET_ALL)
+            print(Fore.WHITE + "\"A Fisher feels the tug before the line goes taut.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.CYAN + "\"The gift manifests differently in each person.\"" + Style.RESET_ALL)
+            print(Fore.CYAN + "\"Some sense the mood of a river. Others hear the fish themselves.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.YELLOW + "\"The elders speak of an old prophecy:\"" + Style.RESET_ALL)
+            print(Fore.YELLOW + "\"A Fisher will determine the fate of the waters.\"" + Style.RESET_ALL)
+            print(Fore.YELLOW + "\"Not save or doom—but whether humanity learns what fishing truly means.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.LIGHTBLUE_EX + "\"Fishing is not about catching.\"" + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "\"It is about the relationship between fisher and water.\"" + Style.RESET_ALL)
+            print(Fore.LIGHTBLUE_EX + "\"The line does not catch the fish. The water decides.\"" + Style.RESET_ALL)
+            
+        elif book_type == 'aquatech':
+            # AquaTech Warning
+            print(Fore.CYAN + "═══ AQUATECH: A WARNING ═══" + Style.RESET_ALL)
+            print()
+            print(Fore.RED + "\"[This appears to be a modern addition to the library]\"" + Style.RESET_ALL)
+            time.sleep(1)
+            print()
+            print(Fore.WHITE + "\"AquaTech Corporation presents itself as progress.\"" + Style.RESET_ALL)
+            print(Fore.WHITE + "\"Sustainable harvesting. Efficient extraction. Ocean management.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.YELLOW + "\"But their deep-sea drilling operations disturb ancient places.\"" + Style.RESET_ALL)
+            print(Fore.YELLOW + "\"Places that have slept since before humanity.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.RED + "\"The guardians grow agitated. They sense the intrusion.\"" + Style.RESET_ALL)
+            print(Fore.RED + "\"What AquaTech sees as resources, the waters see as violation.\"" + Style.RESET_ALL)
+            time.sleep(2)
+            print()
+            print(Fore.MAGENTA + "\"If you encounter AquaTech's forces...\"" + Style.RESET_ALL)
+            print(Fore.MAGENTA + "\"Remember: not all battles are fought with strength.\"" + Style.RESET_ALL)
+            print(Fore.MAGENTA + "\"Sometimes understanding is the greatest weapon.\"" + Style.RESET_ALL)
+        
+        elif book_type == 'general':
+            # Random citations from famous books
+            citations = [
+                # ============================================
+                # CLASSIC SEA & ADVENTURE FICTION
+                # ============================================
+                
+                ("Moby-Dick", "Herman Melville", 
+                 "\"Call me Ishmael. Some years ago never mind how long precisely\n having little or no money in my purse, and nothing particular to interest me on shore,\nI thought I would sail about a little and see the watery part of the world."),
+                
+                ("The Old Man and the Sea", "Ernest Hemingway",
+                 "\"He was an old man who fished alone in a skiff in the Gulf Stream\nand he had gone eighty-four days now without taking a fish.\""),
+                
+                ("Twenty Thousand Leagues Under the Sea", "Jules Verne",
+                 "\"The sea is everything. It covers seven tenths of the terrestrial globe.\nIts breath is pure and healthy. It is an immense desert, where man is never lonely,\nfor he feels life stirring on all sides.\""),
+                
+                ("Treasure Island", "Robert Louis Stevenson",
+                 "\"Fifteen men on the dead man's chestâ€ \nYo-ho-ho, and a bottle of rum!\""),
+                
+                ("The Sea Wolf", "Jack London",
+                 "\"The sea was angry that day, my friends, like an old man trying to send back soup\nin a deli.\" Wait, that's not right... \"I scarcely know where to begin,\nthough I sometimes facetiously place the cause of it all to Charley Furuseth's credit.\""),
+                
+                ("Robinson Crusoe", "Daniel Defoe",
+                 "\"I had been on shore, and made it to dry land, when immediately I fell\non my knees and gave God thanks for my deliverance.\""),
+                
+                ("Master and Commander", "Patrick O'Brian",
+                 "\"There is nothing, nothing whatsoever, which is not improved by a good bottle.\""),
+                
+                # ============================================
+                # MODERN FICTION
+                # ============================================
+                
+                ("Life of Pi", "Yann Martel",
+                 "\"I must say a word about fear. It is life's only true opponent.\nOnly fear can defeat life. You must fight hard to express it.\""),
+                
+                ("The Sea", "John Banville",
+                    "\"The sea is a place of beginnings and endings, a place where the past and future meet in the present moment.\""),
+                
+                ("Jaws", "Peter Benchley",
+                 "\"The great fish moved silently through the night water,\npropelled by short sweeps of its crescent tail.\""),
+                
+                ("The Perfect Storm", "Sebastian Junger",
+                 "\"Eventually the Florida fishermen gave up and went home,\nbut Tyne kept pushing east, away from the other boats.\""),
+                
+                # ============================================
+                # POETRY & DRAMA
+                # ============================================
+                
+                ("The Rime of the Ancient Mariner", "Samuel Taylor Coleridge",
+                 "\"Water, water, every where,\nAnd all the boards did shrink;\nWater, water, every where,\nNor any drop to drink.\""),
+                
+                ("The Tempest", "William Shakespeare",
+                 "\"We are such stuff as dreams are made on,\nand our little life is rounded with a sleep.\""),
+                
+                ("Songs of Experience", "William Blake",
+                    "\"Man has no Body distinct from his Soul;\nfor that called Body is a portion of Soul\ndiscerned by the five Senses.\""),
+                
+                ("Leaves of Grass", "Walt Whitman",
+                    "\"I believe a leaf of grass is no less than the journey-work of the stars,\nAnd the pismire is equally perfect,\nAnd a grain of sand, and the egg of the wren.\""),
+                
+                # ============================================
+                # EPIC & CLASSICAL LITERATURE
+                # ============================================
+                
+                ("The Odyssey", "Homer",
+                 "\"Sing to me of the man, Muse, the man of twists and turns\ndriven time and again off course, once he had plundered\nthe hallowed heights of Troy.\""),
+                
+                ("Gulliver's Travels", "Jonathan Swift",
+                 "\"And he gave it for his opinion, that whoever could make two ears of corn,\nor two blades of grass, to grow upon a spot of ground where only one grew before,\nwould deserve better of mankind than the whole race of politicians put together.\""),
+                
+                ("In Search of Lost Time", "Marcel Proust",
+                 "\"The real voyage of discovery consists not in seeking new landscapes,\nbut in having new eyes.\""),
+                
+                ("Frankenstein", "Mary Shelley",
+                    "\"The mighty Alps, whose white and shining pyramids and domes towered above all,\nspoke of a power mighty as Omnipotence,\nand I ceased to fear or to bend before any being less almighty than that.\""),
+                
+                # ============================================
+                # AMERICAN TRANSCENDENTALISM & NATURE WRITING
+                # ============================================
+                
+                ("Walden", "Henry David Thoreau",
+                    "\"Heaven is under our feet as well as over our heads.\nThe surface of the earth is soft and impressible by the feet of men;\nand so with the paths which the mind travels.\""),
+                
+                ("Walking", "Henry David Thoreau",
+                    "\"In Wildness is the preservation of the World.\nEvery tree sends its fibres forth in search of the Wild.\nThe cities import it at any price.\""),
+                
+                ("Nature", "Ralph Waldo Emerson",
+                    "\"The ancient precept, Know thyself,â€™ and the modern precept, Study nature,â€™\nbecome at last one maxim.\""),
+                
+                ("Self-Reliance", "Ralph Waldo Emerson",
+                    "\"Society everywhere is in conspiracy against the manhood of every one of its members.\nWhoso would be a man must be a nonconformist.\""),
+                
+                # ============================================
+                # VICTORIAN LITERATURE & CRITICISM
+                # ============================================
+                
+                ("The Stones of Venice", "John Ruskin",
+                    "\"It is the greatest of all mistakes to do nothing because you can only do little.\nDo what you can.\nThe ocean itself is made of drops.\""),
+                
+                ("A Vindication of Natural Diet", "Percy Bysshe Shelley",
+                    "\"The abuse of animals dead or alive is one of the most universal\nand enormous crimes of the human species.\""),
+
+                ("On the Origin of Species", "Charles Darwin",
+                    "\"It is not the strongest of the species that survive, nor the most intelligent,\nbut the one most responsive to change.\""),
+                
+                # ============================================
+                # PHILOSOPHY & POLITICAL THEORY
+                # ============================================
+                
+                ("The Communist Manifesto", "Karl Marx and Friedrich Engels",
+                    "\"The history of all hitherto existing society is the history of class struggles.\""),
+
+                ("Capital", "Karl Marx",
+                    "\"The production of too many useful things results in too many useless people.\""),
+                
+                ("The Art of War", "Sun Tzu",
+                    "\"If you know the enemy and know yourself, you need not fear the result of a hundred battles.\""),
+                
+                ("The Prince", "Niccolò Machiavelli",
+                    "\"It is better to be feared than loved, if you cannot be both.\""),
+                
+                ("Analects", "Confucius",
+                    "\"The Master said, The gentleman understands what is morally right, whereas the small man understands what is profitable.\""),
+                
+                ("The State and Revolution", "Vladimir Lenin",
+                    "\"The state is a product of society at a certain stage of development; it is the admission that this society has become entangled in an insoluble contradiction with itself, and that it needs a machine, a state, to be set up to manage the struggle of the classes.\""),
+
+                ("Friedrich Nietzsche, Thus Spoke Zarathustra",
+                    "\"The snake which cannot cast its skin has to die. As well the minds which are prevented from changing their opinions; they cease to be mind.\""),
+
+                ("John Maynard Keynes, The General Theory of Employment, Interest and Money",
+                    "\"The long run is a misleading guide to current affairs. In the long run we are all dead.\""),
+
+                ("Mao Zedong, Quotations from Chairman Mao Tse-tung",
+                    "\"Political power grows out of the barrel of a gun.\""),
+                
+                # ============================================
+                # NON-FICTION & HISTORY
+                # ============================================
+
+                ("Sapiens", "Yuval Noah Harari",
+                 "\"The most important thing to know about the history of humanity is that it is a history of cooperation.\""),
+
+                ("Sapiens", "Yuval Noah Harari",
+                    "\"Modern industrial agriculture might well be the greatest crime in history.\""),
+
+                ("Guns, Germs, and Steel", "Jared Diamond",
+                    "\"History followed different courses for different peoples because of differences among peoples' environments, not because of biological differences among peoples themselves.\""),
+                
+                # ============================================
+                # RELIGIOUS & SPIRITUAL TEXTS
+                # ============================================
+                
+                ("Genesis", "The Bible (King James Version)",
+                    "\"And God said, Let them have dominion over the fish of the sea.\nAnd God saw every thing that he had made,\nand, behold, it was very good.\""),
+
+                ("Ecclesiastes", "The Bible (King James Version)",
+                    "\"All the rivers run into the sea;\nyet the sea is not full.\nUnto the place from whence the rivers come,\nthither they return again.\""),
+
+                ("Psalms", "The Bible (King James Version)",
+                    "\"The earth is the Lordâ€™s, and the fulness thereof;\nthe world, and they that dwell therein.\nFor he hath founded it upon the seas.\""),
+
+                ("Job", "The Bible (King James Version)",
+                    "\"Who shut up the sea with doors,\nwhen it brake forth, as if it had issued out of the womb;\nAnd said, Hitherto shalt thou come, but no further?\""),
+
+                ("Matthew", "The Bible (King James Version)",
+                 "\"Again I say to you, it is easier for a camel to go through the eye of a needle, than for a rich man to enter the kingdom of God.\""),
+
+                ("The Book of Psalms", "The Bible (King James Version)",
+                    "\"They that go down to the sea in ships,\nthat do business in great waters;\nThese see the works of the Lord,\nand his wonders in the deep.\""),
+
+                ("Surah An-Nahl", "The Quran",
+                    "\"And it is He who has made the sea subject to you, that you may eat from it tender meat and extract from it ornaments which you wear.\" "),
+                
+                ("The Tao Te Ching", "Laozi (trans. James Legge)",
+                    "\"The highest good is like water.\nWater gives life to the ten thousand things and does not strive.\nIt flows in places men reject,\nand so is like the Tao.\""),
+
+                ("The Tao Te Ching", "Laozi (trans. James Legge)",
+                    "\"Nothing in the world is softer or weaker than water.\nYet nothing surpasses it in overcoming the hard and strong.\""),
+
+                ("The Dhammapada", "Attributed to the Buddha (trans. Max MÃ¼ller)",
+                    "\"The earth is insulted, abused, and oppressed,\nyet the wise man remains gentle,\nlike the earth itself.\""),
+
+                ("The Bhagavad Gita", "Vyasa (trans. Charles Wilkins)",
+                    "\"He who sees the Supreme Lord existing equally in all beings,\ndoes not destroy himself by himself,\nand thus attains the supreme path.\""),
+
+                ("The Bhagavad Gita", "Vyasa (trans. Charles Wilkins)",
+                    "\"All beings are sustained by food;\nfood is produced by rain;\nrain arises from sacrifice;\nand sacrifice is born of duty.\""),
+                
+                # ============================================
+                # SCIENCE FICTION & HORROR
+                # ============================================
+                
+                ("H.P. Lovecraft, The Call of Cthulhu",
+                    "\"Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn.\""),
+
+                ("Arthur C. Clarke, 2001: A Space Odyssey",
+                    "\"Any sufficiently advanced technology is indistinguishable from magic.\""),
+
+                ("Philip K., Do Androids Dream of Electric Sheep?",
+                    "\"The electric things have their lives, too. Paltry as those lives are.\""),
+                
+                # ============================================
+                # REFERENCE & ENCYCLOPEDIAS
+                # ============================================
+                
+                ("Encyclopædia Britannica", "Various Authors",
+                    "\"The ocean is the lifeblood of our planet, covering over 70% of the Earth's surface and containing 97% of its water.\""),
+                
+                ("Encyclopædia Britannica", "Various Authors",
+                    "\"Fish are a diverse group of aquatic animals that have gills, fins, and typically a streamlined body.\""),
+                
+                ("Wikipedia, the free encyclopedia",
+                    "\"Fishing is the activity of trying to catch fish, either in the wild or in captivity.\""),
+                
+                # ============================================
+                # OCCULT & ALTERNATIVE SPIRITUALITY
+                # ============================================
+                
+                ("Anton Szandor LaVey, The Satanic Bible",
+                    "\"Do what thou wilt shall be the whole of the Law.\""),
+
+                ("Aleister Crowley, The Book of the Law",
+                    "\"Do what thou wilt shall be the whole of the Law.\nLove is the law, love under will.\""),
+                
+                # ============================================
+                # MODERN POLITICAL SPEECHES & STATEMENTS
+                # ============================================
+
+                ("Donald Trump, Twitter",
+                    "\"I have the best words, but there's no better word than 'fish'. Everyone loves fish. Fish are tremendous.\""),
+
+                ("Joe Biden, Speech",
+                    "\"My fellow Americans, I promise to protect our oceans and the fish that call it home. Together, we can build back better for our planet.\""),
+                
+                ("Greta Thunberg, Speech",
+                    "\"The ocean is rising, and so are we. We must act now to save our fish and our future.\""),
+
+                ("Barack Obama, Speech",
+                    "\"The ocean is a source of wonder and sustenance. We have a responsibility to protect it for future generations.\""),
+
+                ("Bernie Sanders, Speech",
+                    "\"The ocean is not a dumping ground for pollution. We need to invest in clean energy and sustainable fishing practices.\""),
+                
+                ("local politician, Speech",
+                    "\"I support our local fishermen and the fishing industry. We need to balance economic growth with environmental protection.\""),
+
+                # ============================================
+                # MUSIC LYRICS
+                # ============================================
+
+                ("Song lyric book, The Beatles, 'Octopus's Garden'",
+                    "\"I'd like to be under the sea\nIn an octopus's garden in the shade.\""),
+
+                ("Song lyric book, King gizzard & The Lizard Wizard, 'Fishing for fishies'",
+                    "\"Fishing for fishies\nDon't make them happy\nOr me neither.\n I feel so sorry for fishies.\""),
+
+                ("Song lyric book, Bob dylan, 'Master of war'",
+                    "\"Come you masters of war\nYou that build all the guns\nYou that build the death planes\nYou that build the big bombs\nYou that hide behind walls\nYou that hide behind desks\nI just want you to know\nI can see through your masks.\""),
+                    
+                ("Song lyric book, Pink Floyd, 'Wish You Were Here'",
+                    "\"We're just two lost souls swimming in a fish bowl, year after year.\""),
+
+                ("Song lyric book, Simon & Garfunkel, 'The Sound of Silence'",
+                    "\"Hello darkness, my old friend\nI've come to talk with you again.\""),
+
+                ("Song lyric book, Radiohead, 'Karma Police'",
+                    "\"Karma police, arrest this man\nHe talks in maths, he buzzes like a fridge\nHe's like a detuned radio.\""),
+
+                ("Song lyric book, Nirvana, 'Something in the way'",
+                    "\"It's okay to eat fish 'cause they don't have any feelings.\""),
+
+                ("Song lyric book, The Doors, 'Riders on the Storm'",
+                    "\"Riders on the storm\nThere's a killer on the road\nHis brain is squirtin' like a poisonous mushroom\nRiders on the storm\nThere's a killer on the road\nHis brain is squirmin' like a poisonous mushroom\""),
+                
+                ("Song lyric book, Gotye, 'Somebody That I Used to Know'",
+                    "\"Now and then I think of when we were together\nLike when you said you felt so happy you could die.\""),
+
+                ("Song lyric book, The Rolling Stones, 'Paint It Black'",
+                    "\"I see a red door and I want it painted black\nNo colors anymore, I want them to turn black.\""),
+
+                ("Song lyric book, Kanye West, 'Gorgeus'",
+                    "\" Choke a South Park writer with a fishstick\""),
+
+                #didnt know where to put this but i think music kinda works
+                ("Dr. Seuss, 'One Fish Two Fish Red Fish Blue Fish'",
+                    "\"One fish, two fish, red fish, blue fish.\nBlack fish, blue fish, old fish, new fish.\""),
+
+                # ============================================
+                # VIDEO GAME QUOTES
+                # ============================================
+                ("Final Fantasy VII", "Planetary Life",
+                    "\"The Planet is screaming.\nThe people who live on it are listening too late.\""),
+
+                ("Journey", "Ancient Glyphs",
+                    "\"To walk this desert is to remember\nwhat was lost beneath the sand.\""),
+
+                ("Subnautica", "Alien Data Logs",
+                    "\"What is a wave without the ocean?\nA beginning without an end.\""),
+
+                ("Shadow of the Colossus", "Dormin",
+                    "\"Thou art not welcomed here.\nThis land was not meant for thee.\""),
+
+                ("Disco Elysium", "The Deserter",
+                    "\"The future teaches you to be alone.\nThe present tells you who abandoned it.\""),
+
+                ("Outer Wilds", "Nomai Writing",
+                    "\"Every decision is made in the shadow of things we do not yet understand.\""),
+
+                ("NieR: Automata", "Machine Network",
+                    "\"Everything that lives is designed to end.\nWe are perpetually trapped in a never-ending spiral of life and death.\""),
+
+                ("Hollow Knight", "Monomon the Teacher",
+                    "\"The world is smaller than it once was.\nAnd yet its weight grows heavier.\""),
+
+                ("Metal Gear Solid 2", "Colonel AI",
+                    "\"Too much freedom can be a form of control.\""),
+
+                ("The Legend of Zelda: Wind Waker", "King of Red Lions",
+                    "\"The wind… it is blowing.\""),
+
+                ("Fallout", "narrator",
+                 "\"War. war never changes.\""),
+
+                # ============================================
+                # IN GAME CHARACTER QUOTES
+                # ============================================
+
+                ("Hub Island Library", "Thalia, the Librarian",
+                    "\"The waters have many stories to tell. You just have to listen.\""),
+
+                ("Manual for Unlicensed Sailors", "Redbeard (Anonymous)",
+                    "\"If the law tells you the sea can be owned,\nyou are not required to believe it.\nSome truths float best without permission.\""),
+
+                ("AquaTech Corporation Internal Memo", "Corporate Communications",
+                    "\"Our drilling operations are conducted with the utmost care and respect for the environment.\nWe are committed to sustainable practices and minimizing our impact on marine ecosystems.\""),
+
+                ("Local Fisherman Interview", "Anonymous Fisherman",
+                    "\"Fishing is in my blood. It's not just a job, it's a way of life. The sea is my home.\""),
+
+                
+
+
+
+                ]
+            
+            # Pick a random citation
+            title, author, quote = random.choice(citations)
+            
+            print(Fore.LIGHTBLACK_EX + "*You pull a dusty tome from the shelf*" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + f"═══ {title.upper()} ═══" + Style.RESET_ALL)
+            print(Fore.YELLOW + f"by {author}" + Style.RESET_ALL)
+            print()
+            time.sleep(1)
+            print(Fore.WHITE + quote + Style.RESET_ALL)
+        
+        time.sleep(2)
+        print()
+        input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+    
+    
     def hub_island_interaction(self, building_type):
         """Handle interactions with buildings on hub island"""
         if building_type == 'shop':
@@ -8497,6 +9265,10 @@ class Game:
             self.visit_aquarium()
         elif building_type == 'quests':
             self.view_quests()
+        elif building_type == 'pub':
+            self.visit_pub()
+        elif building_type == 'library':
+            self.visit_library()
         elif building_type == 'home':
             self.clear_screen()
             print(Fore.LIGHTRED_EX + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
@@ -8583,9 +9355,9 @@ class Game:
             print(Fore.YELLOW + hub_map.message + Style.RESET_ALL)
             print()
             if "Loch Ness Monster" in self.defeated_bosses:
-                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | 🧓 MacTavish | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🍺 Pub | 📚 Library | 🎣 NPC | 🧓 MacTavish | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             else:
-                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+                print(Fore.WHITE + "🏪 Shop | 🏛️ Aquarium | 📋 Quests | 🏠 Home | ⚓ Dock | 🍺 Pub | 📚 Library | 🎣 NPC | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                     print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Interact | [I] Inventory | [C] Stats | [Q] Quit" + Style.RESET_ALL)
             else:
