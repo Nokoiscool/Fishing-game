@@ -9158,6 +9158,9 @@ class Game:
                 ("Song lyric book, Pink Floyd, 'Wish You Were Here'",
                     "\"We're just two lost souls swimming in a fish bowl, year after year.\""),
 
+                ("Song lyric book, The Police, 'Message in a Bottle'",
+                    "\"Just a castaway, an island lost at sea, oh\nAnother lonely day, no one here but me, oh\nMore loneliness than any man could bear\nRescue me before I fall into despair, oh\""),
+
                 ("Song lyric book, Simon & Garfunkel, 'The Sound of Silence'",
                     "\"Hello darkness, my old friend\nI've come to talk with you again.\""),
 
@@ -9178,6 +9181,9 @@ class Game:
 
                 ("Song lyric book, Kanye West, 'Gorgeus'",
                     "\" Choke a South Park writer with a fishstick\""),
+
+                ("Song lyric book, Childish Gambino, 'This is America'",
+                    "\"This is America\nDon't catch you slippin' now\nLook at how I'm livin' now\nPolice be trippin' now\""),
 
                 #didnt know where to put this but i think music kinda works
                 ("Dr. Seuss, 'One Fish Two Fish Red Fish Blue Fish'",
@@ -9220,6 +9226,27 @@ class Game:
                  "\"War. war never changes.\""),
 
                 # ============================================
+                # MOVIES AND TV SHOWS
+                # ============================================
+                ("The Lord of the Rings: The Two Towers", "Gollum",
+                    "\"We wants it, we needs it. Must have the precious.\"\n\"It came to me, my own, my love... my... precious.\""),
+
+                ("The Matrix", "Morpheus",
+                    "\"What is real? How do you define real? If you're talking about what you can feel, what you can smell, what you can taste and see, then real is simply electrical signals interpreted by your brain.\""),
+
+                ("Breaking Bad", "Walter White",
+                    "\"I am not in danger, Skyler. I am the danger. A guy opens his door and gets shot and you think that of me? No. I am the one who knocks.\""),
+
+                ("Game of Thrones", "Tyrion Lannister",
+                    "\"A mind needs books as a sword needs a whetstone, if it is to keep its edge.\""),
+
+                ("Star Wars: The Empire Strikes Back", "Yoda",
+                    "\"Do, or do not. There is no try.\""),
+
+                ("The Dark Knight", "The Joker",
+                    "\"Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos.\""),
+
+                # ============================================
                 # IN GAME CHARACTER QUOTES
                 # ============================================
 
@@ -9232,8 +9259,15 @@ class Game:
                 ("AquaTech Corporation Internal Memo", "Corporate Communications",
                     "\"Our drilling operations are conducted with the utmost care and respect for the environment.\nWe are committed to sustainable practices and minimizing our impact on marine ecosystems.\""),
 
+                ("AquaTech Corporation slogans", "AquaTech Marketing",
+                    "\"Innovating for a better ocean future.\"\n\"Harnessing the power of the sea, responsibly.\""),
+
                 ("Local Fisherman Interview", "Anonymous Fisherman",
                     "\"Fishing is in my blood. It's not just a job, it's a way of life. The sea is my home.\""),
+
+                ("The Book of Flames", "Prometheus the fire monk",
+                    "\"The fire that burns within us is the same fire that burns in the heart of the ocean.\nTo master one is to understand the other.\""),
+
 
                 
 
