@@ -2430,6 +2430,199 @@ def ifrit_volcanic_fury():
     return total_damage
 
 
+# ===== MEGALODON'S GHOST ATTACKS =====
+def megalodon_phantom_bite():
+    """The ghost shark lunges with spectral jaws"""
+    print(Fore.LIGHTCYAN_EX + "\n👻🦈 PHANTOM BITE! 👻🦈\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.CYAN + "The spectral Megalodon phases through the lava!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Its ghostly jaws open wide!" + Style.RESET_ALL)
+    print()
+    
+    # Three-wave attack with dodging
+    for wave in range(3):
+        print(Fore.WHITE + f"Bite {wave+1}/3 approaching!" + Style.RESET_ALL)
+        
+        # Direction choice
+        direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+        direction_map = {'UP': 'w', 'DOWN': 's', 'LEFT': 'a', 'RIGHT': 'd'}
+        correct_key = direction_map[direction]
+        
+        # Show warning
+        print(Fore.LIGHTBLACK_EX + f"💭 The phantom lunges from the {direction}!" + Style.RESET_ALL)
+        time.sleep(0.5)
+        
+        print(Fore.YELLOW + f"Dodge! Press the correct key:" + Style.RESET_ALL)
+        start_time = time.time()
+        response = get_key()
+        reaction_time = time.time() - start_time
+        
+        if response == correct_key and reaction_time < 1.0:
+            print(Fore.GREEN + "✓ Dodged the spectral jaws!" + Style.RESET_ALL)
+        else:
+            damage = 12
+            total_damage += damage
+            if reaction_time >= 1.0:
+                print(Fore.RED + f"💥 TOO SLOW! The ghost bites! (-{damage} HP)" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + f"💥 WRONG DIRECTION! Bitten! (-{damage} HP)" + Style.RESET_ALL)
+        
+        time.sleep(0.5)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★ PERFECT EVASION! The phantom cannot touch you! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def megalodon_primal_rage():
+    """Ancient fury unleashed - the ghost goes berserk"""
+    print(Fore.LIGHTRED_EX + "\n⚡🦈 PRIMAL RAGE! 🦈⚡\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.RED + "*The ancient predator remembers its hunting glory!*" + Style.RESET_ALL)
+    print(Fore.YELLOW + "*The spectral shark becomes a whirlwind of teeth and fury!*" + Style.RESET_ALL)
+    print()
+    
+    # Rapid sequence challenge
+    print(Fore.LIGHTYELLOW_EX + "INCOMING FRENZY!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Follow the dodge sequence:" + Style.RESET_ALL)
+    
+    sequence = ''.join(random.choices(['W', 'A', 'S', 'D'], k=5))
+    print(Fore.GREEN + ' → '.join(sequence) + Style.RESET_ALL)
+    time.sleep(2.5)
+    
+    # Obscure with ghostly effects
+    for _ in range(8):
+        print(Fore.LIGHTCYAN_EX + "👻" * 30 + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type the dodge sequence:" + Style.RESET_ALL)
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == sequence:
+            print(Fore.GREEN + "✓ Dodged the frenzy!" + Style.RESET_ALL)
+        else:
+            total_damage += 25
+            print(Fore.RED + "💥 CAUGHT IN THE RAGE! (-25 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 25
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Survive the circling
+    print()
+    print(Fore.LIGHTCYAN_EX + "The ghost circles you..." + Style.RESET_ALL)
+    print(Fore.YELLOW + "Hold SPACE to brace yourself!" + Style.RESET_ALL)
+    
+    start_time = time.time()
+    hold_time = 0
+    last_press = time.time()
+    
+    while time.time() - start_time < 3:
+        key = get_key()
+        if key == ' ':
+            last_press = time.time()
+            
+        # Check if they're still holding
+        if time.time() - last_press < 0.3:
+            hold_time = time.time() - start_time
+            sys.stdout.write(f"\r{Fore.CYAN}Bracing: {hold_time:.1f}s / 3.0s{Style.RESET_ALL}")
+            sys.stdout.flush()
+        else:
+            break
+    
+    print()
+    
+    if hold_time >= 2.5:
+        print(Fore.GREEN + "✓ You withstood the rage!" + Style.RESET_ALL)
+    else:
+        total_damage += 20
+        print(Fore.RED + "💥 OVERWHELMED BY FURY! (-20 HP)" + Style.RESET_ALL)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★ SURVIVED THE PRIMAL RAGE! ★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def megalodon_tectonic_tremor():
+    """The ghost's power shakes the very earth beneath the lava lake"""
+    print(Fore.YELLOW + "\n🌋🦈 TECTONIC TREMOR! 🦈🌋\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.RED + "*The Megalodon's spectral form slams into the lake floor!*" + Style.RESET_ALL)
+    print(Fore.YELLOW + "*The volcanic earth cracks and splits!*" + Style.RESET_ALL)
+    print(Fore.LIGHTRED_EX + "*Lava erupts from the fissures!*" + Style.RESET_ALL)
+    print()
+    
+    # Phase 1: Navigate the tremors
+    print(Fore.LIGHTYELLOW_EX + "Phase 1: EARTHQUAKE!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Stay balanced by timing your movements!" + Style.RESET_ALL)
+    print()
+    
+    # Rhythm challenge
+    for i in range(4):
+        print(Fore.YELLOW + f"Tremor wave {i+1}/4!" + Style.RESET_ALL)
+        
+        wait_time = random.uniform(0.6, 1.2)
+        time.sleep(wait_time)
+        
+        print(Fore.RED + "STEADY NOW! " + Style.RESET_ALL, end='')
+        
+        start_time = time.time()
+        response = get_key()
+        reaction_time = time.time() - start_time
+        
+        if response == ' ' and reaction_time < 0.6:
+            print(Fore.GREEN + "✓ Balanced!" + Style.RESET_ALL)
+        elif reaction_time >= 0.6:
+            total_damage += 8
+            print(Fore.RED + "💥 FELL! (-8 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 8
+            print(Fore.RED + "💥 LOST BALANCE! (-8 HP)" + Style.RESET_ALL)
+        
+        time.sleep(0.3)
+    
+    print()
+    
+    # Phase 2: Lava fissures
+    print(Fore.LIGHTRED_EX + "Phase 2: LAVA ERUPTIONS!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Avoid the molten spray! Type 'JUMP' when the lava erupts!" + Style.RESET_ALL)
+    print()
+    
+    for i in range(3):
+        print(Fore.RED + f"Fissure {i+1} opening..." + Style.RESET_ALL)
+        time.sleep(random.uniform(1.0, 1.8))
+        
+        print(Fore.LIGHTRED_EX + "🌋 ERUPTION! " + Style.RESET_ALL)
+        
+        start_time = time.time()
+        try:
+            response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+            elapsed = time.time() - start_time
+            
+            if response == "JUMP" and elapsed < 1.5:
+                print(Fore.GREEN + "✓ Avoided the lava!" + Style.RESET_ALL)
+            else:
+                total_damage += 10
+                print(Fore.RED + "💥 BURNED! (-10 HP)" + Style.RESET_ALL)
+        except:
+            total_damage += 10
+        
+        time.sleep(0.4)
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★★★ PERFECT STABILITY! You rode out the tremor! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 def cthulhu_ultimate_awakening():
     """Cthulhu begins to awaken - ultimate attack"""
     print(Fore.RED + "\n💀 CTHULHU STIRS! THE STARS ARE RIGHT! 💀\n" + Style.RESET_ALL)
@@ -3591,6 +3784,186 @@ IFRIT = Boss(
     spare_threshold=30
 )
 
+# ===== MEGALODON'S GHOST =====
+
+MEGALODON_GHOST_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║      👻🦈 THE MEGALODON'S GHOST 🦈👻                     ║
+    ║         [Spectral Prehistoric Predator]                    ║
+    ║        [Trapped in the Volcanic Waters]                    ║
+    ╚════════════════════════════════════════════════════════════╝
+    
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⢠⣾⣿⣏⠉⠉⠉⠉⠉⠉⢡⣶⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠻⢿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⡄⠀
+        ⠈⣿⣿⣿⣿⣦⣽⣦⡀⠀⠀⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣿⣿⠀⠀
+        ⠀⠘⢿⣿⣿⣿⣿⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⠇⠀⠀
+        ⠀⠀⠈⠻⣿⣿⣿⣿⡟⢿⠻⠛⠙⠉⠋⠛⠳⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣿⡟⠀⠀⠀
+        ⠀⠀⠀⠀⠈⠙⢿⡇⣠⣤⣶⣶⣾⡉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣰⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠾⢇⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⠃⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠱⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠤⢤⣀⣀⣀⣀⣀⣀⣠⣤⣤⣤⣬⣭⣿⣿⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⣶⣤⣄⣀⣀⣠⣴⣾⣿⣿⣿⣷⣤⣀⡀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣾⣿⣿⣿⣿⡿⠿⠛⠛⠻⣿⣿⣿⣿⣇⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣘⡛⠿⢿⡿⠟⠛⠉⠁⠀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣦⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⢿⣿⣿⣿⣿⣿⣶⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⡄⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⣿⠿⠛⠉⠁⠀⠈⠉⠙⠛⠛⠻⠿⠿⠿⠿⠟⠛⠃⠀⠀⠀⠉⠉⠉⠛⠛⠛⠿⠿⠿⣶⣦⣄⡀⠀⠀⠀⠀⠀⠈⠙⠛⠂
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠿⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀
+            [An ancient apex predator, now eternally hunting...]
+"""
+
+MEGALODON_GHOST = Boss(
+    name="The Megalodon's Ghost",
+    hp=650,
+    defense=18,
+    attacks=[
+        BossAttack("Phantom Bite", megalodon_phantom_bite, (0, 36), "The spectral jaws strike from nowhere!"),
+        BossAttack("Primal Rage", megalodon_primal_rage, (0, 45), "Ancient fury unleashed!"),
+        BossAttack("Tectonic Tremor", megalodon_tectonic_tremor, (0, 50), "The earth itself shakes!")
+    ],
+    ascii_art=MEGALODON_GHOST_ASCII,
+    dialogue={
+        "intro": [
+            "*The lava lake grows eerily still*",
+            "*No bubbles, no heat waves... just silence*",
+            "*Then the temperature DROPS*",
+            "*Impossible in this volcanic crater, yet you can see your breath*",
+            "*Something moves beneath the molten surface*",
+            "*But it's not swimming... it's GLIDING*",
+            "*A massive shape rises from the lava*",
+            "*Spectral. Translucent. Ancient.*",
+            "*A MEGALODON*",
+            "*The greatest predator to ever rule the seas*",
+            "*Dead for millions of years*",
+            "*Yet here it swims in volcanic fire*",
+            "*Eyes like pale moons fix upon you*",
+            "*The ghost shark's jaws open*",
+            "*Revealing rows of spectral teeth*",
+            "*Each one the size of your hand*",
+            "*'HUNGRY...'*",
+            "*The voice echoes not in your ears, but in your mind*",
+            "*'ALWAYS... HUNGRY...'*",
+            "*'CANNOT... REST...'*",
+            "*'MUST... HUNT...'*",
+            "*The ancient hunter has found new prey*",
+            "*You.*"
+        ],
+        "default": [
+            "*The ghost shark circles endlessly*",
+            "*Driven by an eternal hunger it can never satisfy*",
+            "*'Hunt... forever... hunt...'*",
+            "*'This prison of fire... cannot escape...'*",
+            "*Spectral fins cut through lava like water*"
+        ],
+        "hit": [
+            "*Your attack passes through the ghost!*",
+            "*But the spectral form flickers and wavers*",
+            "*'Pain... I remember pain...'*",
+            "*'When I was... alive...'*",
+            "*'When the oceans were MINE'*",
+            "*The shark becomes slightly more solid*",
+            "*As if your strike reminded it of mortality*"
+        ],
+        "low_hp": [
+            "*The ghost's form grows dim*",
+            "*Fading in and out of visibility*",
+            "*'Dying... again...'*",
+            "*'No... not again...'*",
+            "*'Died once in the cold dark*",
+            "*'Trapped here in burning light'*",
+            "*'Let me... rest...'*",
+            "*'Or let me... HUNT ETERNAL'*",
+            "*The predator's final choice approaches*"
+        ],
+        "merciful": [
+            "*You lower your weapon*",
+            "*And speak to the ancient spirit*",
+            "*'You don't belong here'*",
+            "*The shark stops circling*",
+            "*For the first time in eons, it stops*",
+            "*'No... I do not...'*",
+            "*'This fire... not my ocean'*",
+            "*'Cannot taste the prey I catch'*",
+            "*'Cannot feel the water flow past my gills'*",
+            "*'I am GHOST of what I was'*",
+            "*'Shadow of the apex'*",
+            "*'I remember... deep water... darkness... peace'*",
+            "*'Before the fire came'*",
+            "*'Before I was BOUND here'*",
+            "*'How did you know... I suffer?'*"
+        ],
+        "spare_ready": [
+            "*THE MEGALODON'S GHOST can be SPARED*",
+            "*'You... you understand hunting'*",
+            "*'Not for sport... for survival'*",
+            "*'And you understand... when the hunt must END'*",
+            "*The ghostly predator waits*",
+            "*Ancient eyes showing something like... hope*"
+        ],
+        "spared": [
+            "*You reach out toward the spectral form*",
+            "*And in your hand appears something*",
+            "*A tooth. Physical. Real.*",
+            "*The last tooth from the Megalodon's mortal body*",
+            "*The anchor binding it to this place*",
+            "*You cast it into the deepest part of the volcanic lake*",
+            "*Where it sinks into darkness*",
+            "*Releasing it*",
+            "*The ghost ROARS*",
+            "*But not in rage*",
+            "*In RELIEF*",
+            "*Its form begins to dissolve*",
+            "*'Free... finally... free...'*",
+            "*'Thank you... hunter'*",
+            "*'The ocean calls... I can hear it again'*",
+            "*'The deep... the dark... the cold...'*",
+            "*'I return to the abyss'*",
+            "*The Megalodon's spirit fades*",
+            "*But before it vanishes completely*",
+            "*It circles you one last time*",
+            "*Gentle. Grateful.*",
+            "*'Take this... my blessing'*",
+            "*A spectral scale falls and becomes solid*",
+            "*'Call upon me... when you hunt the deep'*",
+            "*'I am free... but not forgotten'*",
+            "*The ghost shark descends*",
+            "*Through the lava, through the earth*",
+            "*Back to the ocean depths where it belongs*",
+            "*The volcanic waters warm again*",
+            "*You have freed an ancient hunter*",
+            "*And gained its eternal respect*"
+        ],
+        "killed": [
+            "*Your final strike pierces the ghost's heart*",
+            "*The spectral form SHATTERS*",
+            "*Like broken glass dissolving in water*",
+            "*'NO... NOT AGAIN...'*",
+            "*'I SURVIVED THE ICE AGE'*",
+            "*'I SURVIVED THE EXTINCTION'*",
+            "*'I WAS THE APEX'*",
+            "*'THE OCEAN'S PERFECT HUNTER'*",
+            "*'AND YOU... YOU...'*",
+            "*The voice fades to nothing*",
+            "*The ghost fragments scatter*",
+            "*Some dissolve into the lava*",
+            "*But others... others scream*",
+            "*Wordless, agonized screaming*",
+            "*The sound of a predator dying twice*",
+            "*As the last fragment fades*",
+            "*You feel something change*",
+            "*The lake grows colder*",
+            "*Spirits of other extinct creatures stir*",
+            "*They felt the Megalodon die*",
+            "*And now they are ANGRY*",
+            "*What have you done?*",
+            "*You didn't just kill a ghost*",
+            "*You destroyed a piece of prehistory itself*",
+            "*The volcanic waters will never be the same*",
+            "*Something ancient and irreplaceable is gone*",
+            "*Forever.*"
+        ]
+    },
+    spare_threshold=35
+)
+
 # Boss item that triggers the fight
 class BossItem:
     def __init__(self, name, boss, description, location):
@@ -3640,6 +4013,12 @@ BOSS_ITEMS = {
         "Volcanic Rune",
         IFRIT,
         "A rune of binding etched in cooled lava. It radiates intense heat and pulses with elemental fire...",
+        "Volcanic Lake"
+    ),
+    "Spectral Tooth": BossItem(
+        "Spectral Tooth",
+        MEGALODON_GHOST,
+        "A ghostly tooth from the prehistoric apex predator. It phases in and out of reality, cold to the touch despite the volcanic heat...",
         "Volcanic Lake"
     ),
     # Add more boss items for other locations here
@@ -5085,6 +5464,10 @@ class LocationMap:
         """Check if location has Dr. Holloway - only visible after Cthulhu defeated"""
         return self.layout[y][x] == 'H'
     
+    def is_npc_prometheus(self, x, y):
+        """Check if location has Prometheus - only visible after Ifrit defeated"""
+        return self.layout[y][x] == 'Φ'
+    
     def render_tile(self, tile, is_player, is_spot, is_golden, game=None):
         """Render a single tile with appropriate coloring"""
         if is_player:
@@ -5135,6 +5518,12 @@ class LocationMap:
             else:
                 # Show as water if not unlocked yet
                 return Fore.BLUE + '~' + Style.RESET_ALL
+        elif tile == 'Φ':  # Prometheus - Fire Monk at Volcanic Lake
+            if game and "Ifrit the Flamebringer" in game.defeated_bosses:
+                return Fore.LIGHTRED_EX + '🔥' + Style.RESET_ALL
+            else:
+                # Show as lava if not unlocked yet
+                return Fore.RED + '≋' + Style.RESET_ALL
         elif tile == '.':  # Ground
             return Fore.LIGHTBLACK_EX + '·' + Style.RESET_ALL
         else:
@@ -5207,7 +5596,7 @@ VOLCANIC_LAYOUT = [
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
-    ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'P', 'V', 'V', '◉', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
+    ['V', 'V', 'V', 'Φ', 'V', 'V', 'V', 'P', 'V', 'V', '◉', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'],
     ['V', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', 'V'],
     ['V', '▓', '▓', '▓', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', '▓', '▓', '▓', 'V'],
@@ -7519,6 +7908,348 @@ class Game:
                 print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
                 time.sleep(1)
     
+    def interact_with_prometheus(self):
+        """Talk to Prometheus the Fire Monk - unlocked after defeating Ifrit"""
+        
+        while True:
+            self.clear_screen()
+            
+            prometheus_art = """
+            
+                🔥 Prometheus - The Fire Monk 🔥
+            
+                        _____
+                      /       \\
+                     |  ō   ō   |
+                     |    △     |     "Balance..."
+                     | \_____/  |
+                      \\_______/
+                        |🔥🔥🔥|
+                      __| | | |__
+                     |  \\___/  |
+                    /  FIRE &   \\
+                   | WATER SAGE |
+                    \\___________/
+                
+                [A robed figure meditates by the molten shore]
+            """
+            
+            print(Fore.LIGHTRED_EX + prometheus_art + Style.RESET_ALL)
+            print()
+            
+            # Intro message on first encounter
+            if not hasattr(self, 'met_prometheus'):
+                self.met_prometheus = True
+                print(Fore.LIGHTBLACK_EX + "*Near the volcanic shore, a figure sits in perfect stillness*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Robed in heat-resistant fabric, their face shadowed by a deep hood*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Volcanic glass prayer beads click softly in the superheated air*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.LIGHTRED_EX + "Prometheus:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"...A seeker approaches.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*The monk's eyes open - reflecting firelight that isn't there*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"You freed the Flamebringer. The volcano thanks you.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"And so do I. This lake has known true peace for the first time in millennia.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"I am Prometheus. I study the impossible union...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"Fire and water. Transformation and flow.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Here, where they meet, I meditate on the nature of all things.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+            
+            # Menu
+            print(Fore.YELLOW + "What wisdom do you seek?" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Learn about fire fishing" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Ask about the balance of fire and water" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Ask about fishing and life" + Style.RESET_ALL)
+            print(Fore.CYAN + "4. Browse heat-resistant gear" + Style.RESET_ALL)
+            print(Fore.CYAN + "5. Browse volcanic bait" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + "6. Meditate and leave" + Style.RESET_ALL)
+            print()
+            
+            choice = input(Fore.LIGHTYELLOW_EX + "Your choice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                # Learn about fire fishing
+                self.clear_screen()
+                print(Fore.LIGHTRED_EX + prometheus_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTRED_EX + "Prometheus:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Fire fishing. The ancient art of transformation.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Gestures to the molten lake*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Most see only danger here. Lava that burns. Heat that kills.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But the wise fisher sees opportunity.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"The fish here are not like others. They have adapted.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Their scales are volcanic glass. Their blood runs molten.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"To catch them, you must understand extremes.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Use bait that can survive the heat. Gear that won't melt.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Pulls a glowing fish from the lava with bare hands*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"And most importantly... respect the transformation.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"These waters remember when they were pure magma.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"The fish here are children of that ancient fire.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Fish here with patience. With reverence.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"And the volcanic waters will reward you beyond measure.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '2':
+                # About balance
+                self.clear_screen()
+                print(Fore.LIGHTRED_EX + prometheus_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTRED_EX + "Prometheus:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Fire and water. They seem opposite, yes?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Holds one hand in the lava, the other in a pool of water*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Fire destroys. Water preserves.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Fire transforms. Water shapes.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"But look closer. What is steam?\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "*Steam rises around the monk*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"It is both. Neither. The space between.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"This lake exists in that space.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"Hot enough to melt stone, yet still... water.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Life thrives here because it learned the secret:\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"True strength comes not from being one thing or another...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"But from harmonizing seeming opposites.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*The monk smiles serenely*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"The Flamebringer understood this. That's why he could be freed.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"He wasn't fire OR the lake. He was the binding between them.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"And when you released him, you restored balance.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '3':
+                # About fishing and life
+                self.clear_screen()
+                print(Fore.LIGHTRED_EX + prometheus_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTRED_EX + "Prometheus:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"You seek wisdom about fishing? Let me tell you a truth.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Casts a line into the lava with impossible calm*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Fishing is not about catching fish.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"It's about understanding the relationship between fisher and water.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"When you cast your line, you're not asserting dominance.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"You're offering partnership. Asking permission.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"The water decides if you are worthy.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Pulls up a magnificent lava carp*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"See? The lake trusts me. Not because I'm strong.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But because I respect it.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"In life, as in fishing, the secret is this:\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"Do not try to control what you cannot control.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Instead, learn to flow with it.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"The fish come when they're ready. The lake gives when it chooses.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"Your only job is to be present. Patient. Respectful.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTRED_EX + "\"That is the way of the true Fisher.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"And that is the way of a meaningful life.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '4':
+                # Browse heat-resistant gear (combat items shop)
+                self.prometheus_shop_heat_gear()
+                
+            elif choice == '5':
+                # Browse volcanic bait
+                self.prometheus_shop_volcanic_bait()
+                
+            elif choice == '6':
+                # Leave
+                self.clear_screen()
+                print(Fore.LIGHTRED_EX + prometheus_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTRED_EX + "Prometheus:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Go in balance, seeker.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.YELLOW + "\"Remember: Fire transforms, water shapes.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTYELLOW_EX + "\"Be both. Be neither. Be the harmony between.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*The monk closes their eyes and returns to meditation*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                break
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
+    
+    def prometheus_shop_heat_gear(self):
+        """Prometheus's shop for heat-resistant combat items"""
+        self.clear_screen()
+        print(Fore.LIGHTRED_EX + "═══ 🔥 HEAT-RESISTANT GEAR 🔥 ═══" + Style.RESET_ALL)
+        print(Fore.GREEN + f"💰 Money: ${self.money}" + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + "Prometheus: \"Gear forged in volcanic fire. Essential for these waters.\"" + Style.RESET_ALL)
+        print()
+        
+        # Create special volcanic gear if not exists
+        if not hasattr(self, 'prometheus_gear'):
+            self.prometheus_gear = [
+                CombatItem("Obsidian Shield", "defense", 25, 500, "Volcanic glass shield. Reflects heat and attacks. +25 DEF", 15),
+                CombatItem("Magma Heart Amulet", "hp", 75, 600, "Pulsing core of ancient lava. Massive HP boost. +75 HP", 18),
+                CombatItem("Flamebringer's Blessing", "attack", 35, 700, "Ifrit's residual power. Devastating attacks. +35 ATK", 20),
+            ]
+        
+        for i, item in enumerate(self.prometheus_gear, 1):
+            # Check ownership across all categories
+            owned = False
+            equipped = ""
+            for category in ['attack', 'defense', 'hp']:
+                if item in self.owned_combat_items[category]:
+                    owned = True
+                    if item == self.equipped_combat_items[category]:
+                        equipped = "⭐ EQUIPPED"
+                    break
+            
+            owned_str = "✓ Owned" if owned else f"${item.price}"
+            locked = "" if self.level >= item.unlock_level else f"🔒 Lvl{item.unlock_level}"
+            print(f"{i}. {item.name} - {owned_str} {locked} {equipped}")
+            print(f"   {item.description}")
+        
+        print()
+        choice = input(Fore.CYAN + "Buy item (number) or 0 to cancel: " + Style.RESET_ALL)
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(self.prometheus_gear):
+                item = self.prometheus_gear[idx]
+                
+                # Check if already owned
+                already_owned = False
+                for category in ['attack', 'defense', 'hp']:
+                    if item in self.owned_combat_items[category]:
+                        already_owned = True
+                        break
+                
+                if self.level < item.unlock_level:
+                    print(Fore.RED + f"Requires level {item.unlock_level}!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif already_owned:
+                    print(Fore.YELLOW + "You already own this item!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif self.money >= item.price:
+                    self.money -= item.price
+                    # Add to correct category
+                    self.owned_combat_items[item.item_type].append(item)
+                    print(Fore.GREEN + f"Bought {item.name} for ${item.price}!" + Style.RESET_ALL)
+                    print(Fore.YELLOW + "Prometheus: \"May it serve you well in battle.\"" + Style.RESET_ALL)
+                    time.sleep(2)
+                else:
+                    print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                    time.sleep(1)
+        except ValueError:
+            pass
+    
+    def prometheus_shop_volcanic_bait(self):
+        """Prometheus's shop for volcanic bait"""
+        self.clear_screen()
+        print(Fore.LIGHTRED_EX + "═══ 🔥 VOLCANIC BAIT 🔥 ═══" + Style.RESET_ALL)
+        print(Fore.GREEN + f"💰 Money: ${self.money}" + Style.RESET_ALL)
+        print()
+        print(Fore.YELLOW + "Prometheus: \"Bait that survives the heat. Attracts the rarest volcanic fish.\"" + Style.RESET_ALL)
+        print()
+        
+        # Create special volcanic baits if not exists
+        if not hasattr(self, 'prometheus_baits'):
+            from dataclasses import dataclass
+            
+            @dataclass
+            class Bait:
+                name: str
+                bonus: int
+                price: int
+                description: str
+            
+            self.prometheus_baits = [
+                Bait("Lava Worm", 15, 300, "Heat-resistant worm. Great for volcanic fish. +15% rare catch"),
+                Bait("Obsidian Flakes", 25, 500, "Shimmering volcanic glass. Attracts legendary fish. +25% rare catch"),
+                Bait("Phoenix Feather", 40, 800, "Mythical firebird feather. Supreme volcanic bait. +40% rare catch"),
+            ]
+        
+        for i, bait in enumerate(self.prometheus_baits, 1):
+            owned = bait in self.owned_baits
+            owned_str = "✓ Owned" if owned else f"${bait.price}"
+            equipped = "⭐ EQUIPPED" if self.current_bait == bait else ""
+            print(f"{i}. {bait.name} - {owned_str} {equipped}")
+            print(f"   {bait.description}")
+        
+        print()
+        choice = input(Fore.CYAN + "Buy bait (number) or 0 to cancel: " + Style.RESET_ALL)
+        
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(self.prometheus_baits):
+                bait = self.prometheus_baits[idx]
+                if bait in self.owned_baits:
+                    print(Fore.YELLOW + "You already own this bait!" + Style.RESET_ALL)
+                    time.sleep(1)
+                elif self.money >= bait.price:
+                    self.money -= bait.price
+                    self.owned_baits.append(bait)
+                    print(Fore.GREEN + f"Bought {bait.name} for ${bait.price}!" + Style.RESET_ALL)
+                    print(Fore.YELLOW + "Prometheus: \"Fish with reverence, and the lake will provide.\"" + Style.RESET_ALL)
+                    time.sleep(2)
+                else:
+                    print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                    time.sleep(1)
+        except ValueError:
+            pass
+    
     def interact_with_npc_fisherman(self):
         """Talk to the NPC fisherman and get a random fact"""
         while True:  # Keep dialog open until player chooses to leave
@@ -7967,6 +8698,8 @@ class Game:
             # Show NPC hint for Deep Sea if Cthulhu defeated
             if location.name == "Deep Sea" and "Cthulhu" in self.defeated_bosses:
                 print(Fore.CYAN + "🔬 Dr. Holloway's Research Station | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            elif location.name == "Volcanic Lake" and "Ifrit the Flamebringer" in self.defeated_bosses:
+                print(Fore.LIGHTRED_EX + "🔥 Prometheus the Fire Monk | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                 print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Fish | [Q] Return to Hub" + Style.RESET_ALL)
             else:
@@ -7991,6 +8724,12 @@ class Game:
                         self.interact_with_dr_holloway()
                     else:
                         location_map.message = "The dark waters seem still here..."
+                elif location_map.is_npc_prometheus(location_map.player_x, location_map.player_y):
+                    # Talk to Prometheus (only if Ifrit defeated)
+                    if "Ifrit the Flamebringer" in self.defeated_bosses:
+                        self.interact_with_prometheus()
+                    else:
+                        location_map.message = "The heat shimmers, but nothing is there..."
                 elif location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
                     
@@ -8736,7 +9475,7 @@ class Game:
     def dev_unlock_locations(self):
         """Unlock all locations by marking bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost"]
         # Ensure positive karma for Captain Redbeard
         if self.karma < 1:
             self.karma = 10
@@ -8758,7 +9497,7 @@ class Game:
     def dev_mark_all_bosses(self):
         """Mark all bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost"]
         # Also ensure positive karma so Captain Redbeard appears
         if self.karma < 1:
             self.karma = 10
