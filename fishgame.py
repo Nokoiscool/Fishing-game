@@ -3792,6 +3792,7 @@ MEGALODON_GHOST_ASCII = """
     ║         [Spectral Prehistoric Predator]                    ║
     ║        [Trapped in the Volcanic Waters]                    ║
     ╚════════════════════════════════════════════════════════════╝
+
     
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -5400,7 +5401,7 @@ class LocationMap:
         if 0 <= new_y < len(self.layout) and 0 <= new_x < len(self.layout[new_y]):
             tile = self.layout[new_y][new_x]
             # Allow movement on walkable tiles (including all water types and NPC)
-            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M', 'H']:
+            if tile in ['.', '≈', '≋', '~', 'V', 'A', 'S', '⊙', '◉', '🏠', '🏪', '🏛️', '📋', '⚓', 'F', 'M', 'H', 'Φ']:
                 self.player_x = new_x
                 self.player_y = new_y
                 self.message = f"Moved to ({new_x}, {new_y})"
@@ -7920,9 +7921,9 @@ class Game:
             
                         _____
                       /       \\
-                     |  ō   ō   |
-                     |    △     |     "Balance..."
-                     | \_____/  |
+                     |  ō   ō  |
+                     |    △    |     "Balance..."
+                     |  \\_____/  |
                       \\_______/
                         |🔥🔥🔥|
                       __| | | |__
@@ -9198,7 +9199,7 @@ class Game:
         print(Fore.CYAN + "5. Jormungandr (Deep sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "6. Cthulhu (Deep Sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "7. ifrit (Volcanic lake)" + Style.RESET_ALL) 
-        print(Fore.CYAN + "8. Megalodon ghost (Volcanic lake)" + Style.RESET_ALL)
+        print(Fore.CYAN + "8. Megalodon ghost (volcanic lake) " + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -9219,6 +9220,10 @@ class Game:
             self.start_boss_fight(IFRIT)
         elif choice == '8':
             self.start_boss_fight(MEGALODON_GHOST)
+        elif choice == '0':
+            return
+        else:
+            print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
     
     def dev_menu(self):
         """DEV MODE: Comprehensive testing and stat editing menu"""
