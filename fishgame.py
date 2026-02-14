@@ -197,6 +197,7 @@ DID_YOU_KNOW_FACTS = [
     "Ancient Polynesians navigated oceans by watching fish behavior.",
     "Vikings believed certain fish could predict storms and weather changes.",
     "Also try Minecraft!",
+    "Also try Stardew Valley!",
     "Visit the Hub Island shop to upgrade your gear!",
     "The Aquarium displays all your trophy catches!",
     "Complete quests for rare rewards and unlock new locations!",
