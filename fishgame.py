@@ -5603,6 +5603,8 @@ class LocationMap:
 
 # Create Hub Island map layout
 #litteral torture
+#TODO: make a map editor for this so I don't have to do it by hand +
+#TODO: stop uing emojis for map tiles, it's a nightmare to align and render properly across platforms
 HUB_ISLAND_LAYOUT = [
     ['█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█', '█',  '█', '█', '█', '█', '█', '█', '█', '█', '█', '█'],
     ['█', '🌳', '🌳', '▓', '▓', '▓', '▓', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '🌳', '█'],
@@ -8926,7 +8928,7 @@ class Game:
                 # ============================================
                 # MODERN FICTION
                 # ============================================
-                
+
                 ("Life of Pi", "Yann Martel",
                  "\"I must say a word about fear. It is life's only true opponent.\nOnly fear can defeat life. You must fight hard to express it.\""),
                 
@@ -8938,6 +8940,12 @@ class Game:
                 
                 ("The Perfect Storm", "Sebastian Junger",
                  "\"Eventually the Florida fishermen gave up and went home,\nbut Tyne kept pushing east, away from the other boats.\""),
+
+                ("Animal farm", "George Orwell",
+                 "\"All animals are equal, but some animals are more equal than others.\""),
+
+                ("1984", "George Orwell",
+                 "\"War is peace. Freedom is slavery. Ignorance is strength.\""),
                 
                 # ============================================
                 # POETRY & DRAMA
@@ -9030,9 +9038,12 @@ class Game:
 
                 ("Mao Zedong, Quotations from Chairman Mao Tse-tung",
                     "\"Political power grows out of the barrel of a gun.\""),
+
+                ("Napoleon Bonaparte, Memoirs of Napoleon Bonaparte",
+                    "\"History is a set of lies agreed upon.\""),
                 
                 # ============================================
-                # NON-FICTION & HISTORY
+                # NON-FICTION & HISTORICAL
                 # ============================================
 
                 ("Sapiens", "Yuval Noah Harari",
@@ -9044,6 +9055,11 @@ class Game:
                 ("Guns, Germs, and Steel", "Jared Diamond",
                     "\"History followed different courses for different peoples because of differences among peoples' environments, not because of biological differences among peoples themselves.\""),
                 
+                ("Julius Caesar, Commentarii de Bello Gallico",
+                    "\"I have come, I have seen, I have conquered.\""),
+
+                ("Abraham Lincoln, Gettysburg Address",
+                    "\"Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all\"")
                 # ============================================
                 # RELIGIOUS & SPIRITUAL TEXTS
                 # ============================================
@@ -9055,7 +9071,7 @@ class Game:
                     "\"All the rivers run into the sea;\nyet the sea is not full.\nUnto the place from whence the rivers come,\nthither they return again.\""),
 
                 ("Psalms", "The Bible (King James Version)",
-                    "\"The earth is the Lordâ€™s, and the fulness thereof;\nthe world, and they that dwell therein.\nFor he hath founded it upon the seas.\""),
+                    "\"The earth is the Lord's, and the fulness thereof;\nthe world, and they that dwell therein.\nFor he hath founded it upon the seas.\""),
 
                 ("Job", "The Bible (King James Version)",
                     "\"Who shut up the sea with doors,\nwhen it brake forth, as if it had issued out of the womb;\nAnd said, Hitherto shalt thou come, but no further?\""),
@@ -9119,6 +9135,9 @@ class Game:
 
                 ("Aleister Crowley, The Book of the Law",
                     "\"Do what thou wilt shall be the whole of the Law.\nLove is the law, love under will.\""),
+
+                ("Rumi, The Essential Rumi",
+                    "\"You were born with wings, why prefer to crawl through life?\""),
                 
                 # ============================================
                 # MODERN POLITICAL SPEECHES & STATEMENTS
@@ -9129,6 +9148,9 @@ class Game:
 
                 ("Joe Biden, Speech",
                     "\"My fellow Americans, I promise to protect our oceans and the fish that call it home. Together, we can build back better for our planet.\""),
+
+                ("Bill Clinton, Speech",
+                    "\"I did not have relations with that fish. \""),
                 
                 ("Greta Thunberg, Speech",
                     "\"The ocean is rising, and so are we. We must act now to save our fish and our future.\""),
@@ -9144,6 +9166,7 @@ class Game:
 
                 ("Environmental activist, Speech",
                     "\"The fish are dying, the waters are polluted, and we are running out of time. We need to take bold action to save our oceans.\""),
+
 
 
                 # ============================================
@@ -9171,11 +9194,14 @@ class Game:
                 ("Song lyric book, Radiohead, 'Karma Police'",
                     "\"Karma police, arrest this man\nHe talks in maths, he buzzes like a fridge\nHe's like a detuned radio.\""),
 
+                ("Song lyric book, The Smiths, 'How Soon is Now?'",
+                    "\"I am the son and the heir of a shyness that is criminally vulgar\nI am the son and heir of nothing in particular.\""),
+
                 ("Song lyric book, Nirvana, 'Something in the way'",
                     "\"It's okay to eat fish 'cause they don't have any feelings.\""),
 
                 ("Song lyric book, The Doors, 'Riders on the Storm'",
-                    "\"Riders on the storm\nThere's a killer on the road\nHis brain is squirtin' like a poisonous mushroom\nRiders on the storm\nThere's a killer on the road\nHis brain is squirmin' like a poisonous mushroom\""),
+                    "\"Riders on the storm\nThere's a killer on the road\nHis brain is squirtin' like a poisonous mushroom\nRiders on the storm\nThere's a killer on the road\nHis brain is squirmin' like a toad\""),
                 
                 ("Song lyric book, Gotye, 'Somebody That I Used to Know'",
                     "\"Now and then I think of when we were together\nLike when you said you felt so happy you could die.\""),
@@ -9226,7 +9252,7 @@ class Game:
                 ("The Legend of Zelda: Wind Waker", "King of Red Lions",
                     "\"The wind… it is blowing.\""),
 
-                ("Fallout", "narrator",
+                ("Fallout", "Narrator",
                  "\"War. war never changes.\""),
 
                 ("Bioshock", "Andrew Ryan",
