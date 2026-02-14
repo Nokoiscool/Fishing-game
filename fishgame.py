@@ -6128,14 +6128,35 @@ class Game:
         # NPC interactions
         self.received_pirate_gift = False
         
+        # Playtime tracking
+        self.playtime_seconds = 0  # Total playtime in seconds
+        self.session_start_time = time.time()  # Track when current session started
+        
         # Debug
         self.debug_mode = False
     
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
     
+    def update_playtime(self):
+        """Update total playtime with current session time"""
+        current_time = time.time()
+        session_time = current_time - self.session_start_time
+        self.playtime_seconds += session_time
+        self.session_start_time = current_time  # Reset session start
+    
+    def get_playtime_formatted(self):
+        """Return playtime formatted as hours and minutes"""
+        total_seconds = int(self.playtime_seconds)
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        return hours, minutes
+    
     def save_game(self):
         """Save game to JSON file"""
+        # Update playtime before saving
+        self.update_playtime()
+        
         save_data = {
             'version': GAME_VERSION,
             'name': self.name,
@@ -6179,6 +6200,7 @@ class Game:
             'mactavish_daily_quest': getattr(self, 'mactavish_daily_quest', None),
             'mactavish_quest_progress': getattr(self, 'mactavish_quest_progress', 0),
             'mactavish_last_quest_date': getattr(self, 'mactavish_last_quest_date', None),
+            'playtime_seconds': self.playtime_seconds,
         }
         
         # Create hash-based filename
@@ -6329,6 +6351,10 @@ class Game:
             self.mactavish_daily_quest = data.get('mactavish_daily_quest', None)
             self.mactavish_quest_progress = data.get('mactavish_quest_progress', 0)
             self.mactavish_last_quest_date = data.get('mactavish_last_quest_date', None)
+            
+            # Load playtime and reset session start
+            self.playtime_seconds = data.get('playtime_seconds', 0)
+            self.session_start_time = time.time()
             
             print(Fore.GREEN + f"Loaded save for {self.name}!" + Style.RESET_ALL)
             time.sleep(1)
@@ -7830,7 +7856,7 @@ class Game:
                       /       \\
                      |  *   *  |
                      |    -    |     "Fascinating..."
-                     |  \\___/  |
+                     |  \___/  |
                       \\_______/
                         | | |
                       __| | |__
@@ -9055,11 +9081,11 @@ class Game:
                 ("Guns, Germs, and Steel", "Jared Diamond",
                     "\"History followed different courses for different peoples because of differences among peoples' environments, not because of biological differences among peoples themselves.\""),
                 
-                ("Julius Caesar, Commentarii de Bello Gallico",
+                ("Julius Caesar", "Commentarii de Bello Gallico",
                     "\"I have come, I have seen, I have conquered.\""),
 
-                ("Abraham Lincoln, Gettysburg Address",
-                    "\"Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all\"")
+                ("Abraham Lincoln", "Gettysburg Address",
+                    "\"Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all\""),
                 # ============================================
                 # RELIGIOUS & SPIRITUAL TEXTS
                 # ============================================
@@ -9371,6 +9397,9 @@ class Game:
     
     def view_character_stats(self):
         """Display character information"""
+        # Update playtime before displaying
+        self.update_playtime()
+        
         self.clear_screen()
         print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
         print(Fore.CYAN + "║          CHARACTER STATS              ║" + Style.RESET_ALL)
@@ -9395,6 +9424,12 @@ class Game:
         print(Fore.YELLOW + f"Species Discovered: {len(self.encyclopedia)}/{len(UNIQUE_FISH_NAMES)}" + Style.RESET_ALL)
         print(Fore.MAGENTA + f"Trophy Fish: {len(self.trophy_room)}" + Style.RESET_ALL)
         print()
+        
+        # Display playtime
+        hours, minutes = self.get_playtime_formatted()
+        print(Fore.CYAN + f"⏱️  Playtime: {hours}h {minutes}m" + Style.RESET_ALL)
+        print()
+        
         print(Fore.WHITE + "Press any key to return..." + Style.RESET_ALL)
         get_key()
     
