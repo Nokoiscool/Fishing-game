@@ -3635,24 +3635,24 @@ JORMUNGANDR = Boss(
     spare_threshold=35
 )
 
-# =====  (NORSE SEA GIANT) =====
+# ===== ÆGIR (NORSE SEA GIANT) =====
 
 AEGIR_ASCII = """
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⣤⡄⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣧⡀⢀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠉⠁⢀⣀⠀⢲⣿⠋⣀⠙⠛⠛⠋⣁⡀⢻⣿⠟⢠⣤⣀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⣾⣿⠋⠠⠿⢿⡄⢻⡷⠞⠓⠶⢿⠟⢀⡏⢠⣿⣿⣿⣿⣦⣄⡀⠀⠀
-        ⠀⠀⠀⠀⣹⣷⢶⣶⡶⠀⢻⣄⠳⠶⠶⠖⠀⠀⡟⠀⠘⠿⣿⣿⣍⣁⡀⠀⠀⠀
-        ⠀⠀⠀⠴⢋⣠⣴⡿⠀⠀⢸⣿⣷⣄⠐⠆⢸⣦⠀⠀⠀⠀⠹⣿⣿⣿⣇⠀⠀⠀
-        ⠀⠀⠀⠀⣿⣿⣿⠃⠀⠀⢸⣿⣿⠙⢷⣄⢸⣿⣧⠀⠀⠀⠀⢻⣿⠙⠿⡄⠀⠀
-        ⠀⠀⠀⠸⠟⠉⠏⠀⠀⠀⠀⠻⡏⢠⡈⢻⣿⠿⢋⠀⠤⢴⣦⠬⠏⢀⣦⡄⠀⠀
-        ⠀⠀⠀⣠⣶⣧⠀⠀⠀⢀⣦⠀⠀⣼⣷⣄⢁⣴⣿⠇⠀⠀⠁⠀⠀⢸⠋⠉⠀⠀
-        ⠀⠀⠀⠉⠀⠈⠁⠀⢀⣾⣿⣧⠈⠛⠋⠉⠻⠿⠛⠀⣾⣧⡀⠀⠀⢀⣄⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⡄⠀⠀⠀⠀⠘⢿⣿⣿⣿⡆⠀⠈⠛⠁⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠸⡟⠸⡿⠓⠺⡿⠂⠀⠀⠀⠀⠘⡿⠙⣿⡇⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠁⡀⢁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣦⠈⠁⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⣾⣧⣤⡆⢰⣷⣿⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣷⡄⣶⣶⣤⡴⠀⠀
-        ⠀⠀⠀⠀⠉⠉⠉⠁⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⣤⡄⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣧⡀⢀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠉⠁⢀⣀⠀⢲⣿⠋⣀⠙⠛⠛⠋⣁⡀⢻⣿⠟⢠⣤⣀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⣾⣿⠋⠠⠿⢿⡄⢻⡷⠞⠓⠶⢿⠟⢀⡏⢠⣿⣿⣿⣿⣦⣄⡀⠀⠀
+    ⠀⠀⠀⠀⣹⣷⢶⣶⡶⠀⢻⣄⠳⠶⠶⠖⠀⠀⡟⠀⠘⠿⣿⣿⣍⣁⡀⠀⠀⠀
+    ⠀⠀⠀⠴⢋⣠⣴⡿⠀⠀⢸⣿⣷⣄⠐⠆⢸⣦⠀⠀⠀⠀⠹⣿⣿⣿⣇⠀⠀⠀
+    ⠀⠀⠀⠀⣿⣿⣿⠃⠀⠀⢸⣿⣿⠙⢷⣄⢸⣿⣧⠀⠀⠀⠀⢻⣿⠙⠿⡄⠀⠀
+    ⠀⠀⠀⠸⠟⠉⠏⠀⠀⠀⠀⠻⡏⢠⡈⢻⣿⠿⢋⠀⠤⢴⣦⠬⠏⢀⣦⡄⠀⠀
+    ⠀⠀⠀⣠⣶⣧⠀⠀⠀⢀⣦⠀⠀⣼⣷⣄⢁⣴⣿⠇⠀⠀⠁⠀⠀⢸⠋⠉⠀⠀
+    ⠀⠀⠀⠉⠀⠈⠁⠀⢀⣾⣿⣧⠈⠛⠋⠉⠻⠿⠛⠀⣾⣧⡀⠀⠀⢀⣄⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⡄⠀⠀⠀⠀⠘⢿⣿⣿⣿⡆⠀⠈⠛⠁⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠸⡟⠸⡿⠓⠺⡿⠂⠀⠀⠀⠀⠘⡿⠙⣿⡇⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠀⠁⡀⢁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣦⠈⠁⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⣾⣧⣤⡆⢰⣷⣿⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣷⡄⣶⣶⣤⡴⠀⠀
+    ⠀⠀⠀⠀⠉⠉⠉⠁⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀
             [The frost giant who brews storms in his hall...]
 """
 
@@ -4414,7 +4414,7 @@ FROST_WYRM_ASCII = """
   (__ ' /x  / x _/ (                                  \___'          \     /
  , x / ( '  . / .  /                                      |           \   /
     /  /  _/ /    +                                      /              \/
-   '  (__/                                             /                  \
+   '  (__/                                             /                  \⠀⠀⠀
           [A dragon of crystalline ice, breath that freezes time itself...]
 """
 
@@ -6116,6 +6116,10 @@ class LocationMap:
         """Check if location has Prometheus - only visible after Ifrit defeated"""
         return self.layout[y][x] == 'Φ'
     
+    def is_npc_gro(self, x, y):
+        """Check if location has Gro the Ice Fisher - Arctic Waters"""
+        return self.layout[y][x] == 'G'
+    
     def is_door(self, x, y):
         """Check if location is a door/exit"""
         return self.layout[y][x] == 'D'
@@ -6216,6 +6220,8 @@ class LocationMap:
             else:
                 # Show as lava if not unlocked yet
                 return Fore.RED + '≋' + Style.RESET_ALL
+        elif tile == 'G':  # Gro the Ice Fisher - Arctic Waters
+            return Fore.LIGHTCYAN_EX + '🧊' + Style.RESET_ALL
         elif tile == 'c':  # Chair (pub/library)
             return Fore.YELLOW + '⌂' + Style.RESET_ALL
         elif tile == '═':  # Bar counter
@@ -6346,7 +6352,7 @@ ARCTIC_LAYOUT = [
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', 'A'],
     ['A', '▓', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A'],
-    ['A', 'A', '▓', '▓', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
+    ['A', 'A', '▓', '▓', 'A', 'A', 'A', 'A', 'G', 'A', 'A', 'A', 'A', 'A', 'A', '▓', '▓', '▓', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', '▓', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
     ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A'],
@@ -9127,6 +9133,423 @@ class Game:
         except ValueError:
             pass
     
+    def interact_with_gro(self):
+        """Talk to Gro the Ice Fisher - Arctic Waters NPC"""
+        
+        while True:
+            self.clear_screen()
+            
+            gro_art = """
+            
+                🧊 Gro the Ice Fisher 🧊
+            
+                       _____
+                     /       \\
+                    | □   □  |
+                    |    >    |     
+                    | \\_____/  |
+                     \\_______/
+                       |     |
+                     __| | | |__
+                    |  \\___/  |
+                   /  ICE      \\
+                  |   FISHER    |
+                   \\___________/
+                
+               [A hardy woman sits on an ice block, 
+                a massive polar bear snoozing beside her]
+            """
+            
+            print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+            print()
+            
+            # Intro message on first encounter
+            if not hasattr(self, 'met_gro'):
+                self.met_gro = True
+                self.gro_fish_gifts = 0  # Track how many times polar bear has given fish
+                print(Fore.LIGHTBLACK_EX + "*A stout figure sits on the frozen lake, drilling through thick ice*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Beside her, an enormous polar bear yawns and stretches*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*The woman looks up and grins, weathered face crinkling with warmth*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Hah! Another fisher dares the ice! Welcome, welcome!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"I am Gro Bjornsdottir. Been fishing these waters forty winters now!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLUE_EX + "*The polar bear huffs and waddles over, sniffing you curiously*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Don't mind Björn - he's friendlier than he looks!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"We've survived ice storms, wyrm attacks, and forty years of winter!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTCYAN_EX + "\"The old ways, the old gods - they keep us strong up here.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+            
+            # Random chance for polar bear to bring fish (10% chance per interaction)
+            if random.random() < 0.10 and not hasattr(self, '_bear_gift_this_visit'):
+                self._bear_gift_this_visit = True
+                print()
+                print(Fore.LIGHTBLUE_EX + "*Björn waddles over and drops a frozen fish at your feet!*" + Style.RESET_ALL)
+                time.sleep(1)
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Hah! He likes you! That's his way of saying 'friend'!\"" + Style.RESET_ALL)
+                time.sleep(1)
+                
+                # Generate a random arctic fish as gift
+                arctic_fish_pool = [f for f in arctic_fish if f.rarity in ["Common", "Uncommon", "Rare"]]
+                if arctic_fish_pool:
+                    gift_fish = random.choice(arctic_fish_pool)
+                    generated_fish = Fish(
+                        gift_fish.name,
+                        gift_fish.min_weight,
+                        gift_fish.max_weight,
+                        gift_fish.rarity,
+                        gift_fish.chance,
+                        gift_fish.price,
+                        gift_fish.description,
+                        gift_fish.unlock_level
+                    )
+                    generated_fish.weight = random.uniform(gift_fish.min_weight, gift_fish.max_weight)
+                    self.inventory.append(generated_fish)
+                    self.update_encyclopedia(generated_fish)
+                    self.gro_fish_gifts += 1
+                    print(Fore.GREEN + f"✓ Björn gifted you a {generated_fish.get_display_name()} ({generated_fish.weight:.2f} lbs)!" + Style.RESET_ALL)
+                    time.sleep(2)
+                print()
+            else:
+                # Reset flag for next visit
+                if hasattr(self, '_bear_gift_this_visit'):
+                    delattr(self, '_bear_gift_this_visit')
+            
+            # Menu
+            print(Fore.LIGHTCYAN_EX + "\"What brings you to my ice hole?\"" + Style.RESET_ALL)
+            print()
+            print(Fore.WHITE + "1. Learn about ice fishing" + Style.RESET_ALL)
+            print(Fore.WHITE + "2. Hear stories of the old gods" + Style.RESET_ALL)
+            print(Fore.WHITE + "3. Ask about survival in the Arctic" + Style.RESET_ALL)
+            print(Fore.WHITE + "4. Ask about ancient catches" + Style.RESET_ALL)
+            print(Fore.CYAN + "5. Browse cold-weather gear" + Style.RESET_ALL)
+            print(Fore.CYAN + "6. Browse ice drills and tools" + Style.RESET_ALL)
+            print(Fore.WHITE + "7. Pet Björn the polar bear" + Style.RESET_ALL)
+            print(Fore.LIGHTBLACK_EX + "8. Leave" + Style.RESET_ALL)
+            print()
+            
+            choice = input(Fore.LIGHTCYAN_EX + "Your choice: " + Style.RESET_ALL)
+            
+            if choice == '1':
+                # Learn about ice fishing
+                self.clear_screen()
+                print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Ice fishing! The truest test of patience and endurance!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLACK_EX + "*Gestures to her ice drill and frozen hole*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"First - you need a good drill. Ice here is thick as castle walls!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Takes strength and time to breach. But the wyrm guards its waters well.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTCYAN_EX + "\"Second - you need WARMTH. Frostbite takes fingers before you notice!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"Good furs. Good boots. Respect for the cold.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.CYAN + "\"Third - you need PATIENCE. Fish move slow under ice.\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLUE_EX + "*Pulls up a massive frozen fish*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.WHITE + "\"But when they bite... worth every frozen moment!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTCYAN_EX + "\"And remember - the ice speaks. Listen to it. It warns before it breaks.\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '2':
+                # Stories of old gods
+                self.clear_screen()
+                print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+                print()
+                
+                stories = [
+                    {
+                        "title": "\"The gods of the frozen north still watch, you know.\"",
+                        "lines": [
+                            "\"My grandmother told me stories...\"",
+                            "\"Of Ægir, the great sea giant, who brews storms in his hall.\"",
+                            "\"Of Jörmungandr, the world serpent, coiled beneath all oceans.\"",
+                            "\"Of Skadi, goddess of winter, who hunts across frozen peaks.\"",
+                            "\"They say she sometimes skis across this very lake...\"",
+                            "\"Leaving trails of frost in her wake.\"",
+                            "\"The old ways aren't dead. They're just sleeping.\"",
+                            "\"Like the wyrm beneath us.\""
+                        ]
+                    },
+                    {
+                        "title": "\"You know about the Frost Wyrm?\"",
+                        "lines": [
+                            "\"That dragon's been here longer than memory.\"",
+                            "\"My people - we know the stories.\"",
+                            "\"It came during the last great ice age.\"",
+                            "\"When glaciers covered everything and the world froze.\"",
+                            "\"The wyrm made this lake its hoard - filling it with frozen fish.\"",
+                            "\"Perfectly preserved. Ancient catches from extinct waters.\"",
+                            "\"Some say the wyrm is lonely. Guards its hoard because...\"",
+                            "\"...because that's all it has left of a frozen world long gone.\""
+                        ]
+                    },
+                    {
+                        "title": "\"The old gods taught us respect.\"",
+                        "lines": [
+                            "\"Never take more than you need.\"",
+                            "\"Always thank the waters for their gift.\"",
+                            "\"Speak to the fish before you catch them.\"",
+                            "\"Honor the ones who gave their lives so you might eat.\"",
+                            "\"Björn knows this too - watch how he hunts.\"",
+                            "\"He takes one seal, feeds for days, thanks the ice.\"",
+                            "\"The gods don't demand much. Just... remembrance.\"",
+                            "\"Remember the old ways. Remember where food comes from.\""
+                        ]
+                    }
+                ]
+                
+                story = random.choice(stories)
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.CYAN + story["title"] + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                for line in story["lines"]:
+                    print(Fore.WHITE + line + Style.RESET_ALL)
+                    time.sleep(1.5)
+                print()
+                time.sleep(1)
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '3':
+                # Survival tips
+                self.clear_screen()
+                print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Forty winters I've survived! Let me share what I've learned!\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                
+                tips = [
+                    "🧤 \"Always carry spare mittens. Wet mittens mean dead fingers.\"",
+                    "🔥 \"Fire is life. Learn to start one with wet wood.\"",
+                    "🐟 \"Fish is brain food! Keeps you sharp when the cold makes you slow.\"",
+                    "🏠 \"Build a windbreak. Even small shelter saves precious warmth.\"",
+                    "💧 \"Eat snow only if desperate - it costs body heat to melt!\"",
+                    "🧭 \"Moss grows on north side of rocks. But up here, all sides are north!\"",
+                    "⏰ \"In winter, the sun tricks you. Keep track of time or you'll freeze in dark.\"",
+                    "🐻 \"If you meet a polar bear without Björn... play dead and pray!\"",
+                    "❄️ \"Ice fog means water is warmer than air. Good sign for fishing!\"",
+                    "🌙 \"Aurora borealis? That's the gods fishing with light! Good omen!\""
+                ]
+                
+                selected_tips = random.sample(tips, 5)
+                for tip in selected_tips:
+                    print(Fore.CYAN + tip + Style.RESET_ALL)
+                    time.sleep(1.5)
+                
+                print()
+                print(Fore.WHITE + "\"Remember these and you might last forty winters too!\"" + Style.RESET_ALL)
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '4':
+                # Ancient catches
+                self.clear_screen()
+                print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + "\"Ancient catches! Oh, the things I've pulled from this ice...\"" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                
+                tales = [
+                    {
+                        "catch": "Frozen Sabertooth Salmon",
+                        "story": "\"Caught it fifteen winters ago. Still frozen, perfectly preserved! The wyrm's hoard leaked it out. A fish from when mammoths walked! Scientists offered me fortune for it. I said no - it belongs to the ice.\""
+                    },
+                    {
+                        "catch": "Ice Age Sturgeon",
+                        "story": "\"As long as my fishing hut! Took me three days to reel in. It had ice crystals INSIDE its scales. Like it was half-water, half-fish. The wyrm was NOT happy I took it. Had to leave offerings for a month.\""
+                    },
+                    {
+                        "catch": "Ghostfin Pike",
+                        "story": "\"This one was strange... transparent as ice. Could see through it. Björn refused to eat it - bears know things we don't. I released it. Sometimes you catch things that shouldn't be caught.\""
+                    }
+                ]
+                
+                tale = random.choice(tales)
+                print(Fore.LIGHTBLUE_EX + f"📖 The {tale['catch']}" + Style.RESET_ALL)
+                time.sleep(1)
+                print()
+                print(Fore.WHITE + tale["story"] + Style.RESET_ALL)
+                time.sleep(3)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '5':
+                # Browse gear
+                self.gro_shop_gear()
+                
+            elif choice == '6':
+                # Browse tools/bait
+                self.gro_shop_tools()
+                
+            elif choice == '7':
+                # Pet the bear
+                self.clear_screen()
+                print(Fore.LIGHTCYAN_EX + gro_art + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTBLUE_EX + "*You carefully approach the massive polar bear*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTBLUE_EX + "*Björn opens one eye and huffs*" + Style.RESET_ALL)
+                time.sleep(1.5)
+                
+                bear_reactions = [
+                    {
+                        "action": "*Björn leans into your hand and rumbles contentedly*",
+                        "gro": "\"Hah! He REALLY likes you! That's rare!\"",
+                        "bonus": "+5 Luck"
+                    },
+                    {
+                        "action": "*Björn tolerates the petting with dignity*",
+                        "gro": "\"He accepts you! That's high praise from a bear!\"",
+                        "bonus": "+3 Luck"
+                    },
+                    {
+                        "action": "*Björn sneezes and goes back to sleep*",
+                        "gro": "\"Ha! You bored him! That means he trusts you!\"",
+                        "bonus": "+1 Luck"
+                    }
+                ]
+                
+                reaction = random.choice(bear_reactions)
+                print(Fore.WHITE + reaction["action"] + Style.RESET_ALL)
+                time.sleep(1.5)
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                print(Fore.WHITE + reaction["gro"] + Style.RESET_ALL)
+                time.sleep(1.5)
+                print()
+                print(Fore.GREEN + f"✓ Björn's approval grants you {reaction['bonus']} temporarily!" + Style.RESET_ALL)
+                
+                # Small temporary luck boost (could implement this with a timer/flag if desired)
+                self.current_bait.rarity_boost += int(reaction["bonus"].split("+")[1])
+                time.sleep(2)
+                print()
+                input(Fore.LIGHTBLACK_EX + "Press Enter to continue..." + Style.RESET_ALL)
+                
+            elif choice == '8':
+                # Leave
+                print(Fore.LIGHTCYAN_EX + "Gro:" + Style.RESET_ALL)
+                farewell = random.choice([
+                    "\"Skål! May your lines never freeze!\"",
+                    "\"Stay warm out there! The ice is unforgiving!\"",
+                    "\"Come back soon! Björn will miss you!\"",
+                    "\"The old gods watch over you, fisher!\"",
+                    "\"May the wyrm leave you in peace!\""
+                ])
+                print(Fore.WHITE + farewell + Style.RESET_ALL)
+                time.sleep(1.5)
+                break
+            else:
+                print(Fore.RED + "Invalid choice!" + Style.RESET_ALL)
+                time.sleep(1)
+    
+    def gro_shop_gear(self):
+        """Gro's shop for cold-weather combat items"""
+        while True:
+            self.clear_screen()
+            print(Fore.LIGHTCYAN_EX + "=== GRO'S COLD-WEATHER GEAR ===" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "Gro: \"Gear that's kept me alive forty winters! Won't let you down!\"" + Style.RESET_ALL)
+            print()
+            
+            # Filter for cold/defense items
+            cold_items = [item for item in Game.COMBAT_ITEMS if item.item_type in ["defense", "hp"] and item.unlock_level <= self.level]
+            
+            for i, item in enumerate(cold_items, 1):
+                owned = "✓ OWNED" if item in self.combat_items else ""
+                print(Fore.WHITE + f"{i}. {item.name} - ${item.price} {owned}" + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + f"   {item.description}" + Style.RESET_ALL)
+                print()
+            
+            print(Fore.LIGHTBLACK_EX + f"0. Leave shop (Money: ${self.money})" + Style.RESET_ALL)
+            print()
+            
+            try:
+                choice = int(input(Fore.LIGHTCYAN_EX + "Buy which item? " + Style.RESET_ALL))
+                if choice == 0:
+                    break
+                elif 1 <= choice <= len(cold_items):
+                    item = cold_items[choice - 1]
+                    if item in self.combat_items:
+                        print(Fore.YELLOW + "You already own this item!" + Style.RESET_ALL)
+                        time.sleep(1)
+                    elif self.money >= item.price:
+                        self.money -= item.price
+                        self.combat_items.append(item)
+                        print(Fore.GREEN + f"Bought {item.name} for ${item.price}!" + Style.RESET_ALL)
+                        print(Fore.CYAN + "Gro: \"Good choice! That'll keep you alive out there!\"" + Style.RESET_ALL)
+                        time.sleep(2)
+                    else:
+                        print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                        time.sleep(1)
+            except ValueError:
+                pass
+    
+    def gro_shop_tools(self):
+        """Gro's shop for arctic-specific bait and tools"""
+        while True:
+            self.clear_screen()
+            print(Fore.LIGHTCYAN_EX + "=== GRO'S ICE DRILLS & ARCTIC BAIT ===" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "Gro: \"Special bait for special waters! And tools that won't fail you!\"" + Style.RESET_ALL)
+            print()
+            
+            # Show arctic/high-level bait
+            arctic_baits = [bait for bait in BAITS if bait.unlock_level >= 20 and bait.unlock_level <= self.level]
+            
+            for i, bait in enumerate(arctic_baits, 1):
+                owned = "✓ OWNED" if bait in self.owned_baits else ""
+                print(Fore.WHITE + f"{i}. {bait.name} - ${bait.price} {owned}" + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + f"   {bait.description}" + Style.RESET_ALL)
+                print()
+            
+            print(Fore.LIGHTBLACK_EX + f"0. Leave shop (Money: ${self.money})" + Style.RESET_ALL)
+            print()
+            
+            try:
+                choice = int(input(Fore.LIGHTCYAN_EX + "Buy which item? " + Style.RESET_ALL))
+                if choice == 0:
+                    break
+                elif 1 <= choice <= len(arctic_baits):
+                    bait = arctic_baits[choice - 1]
+                    if bait in self.owned_baits:
+                        print(Fore.YELLOW + "You already own this bait!" + Style.RESET_ALL)
+                        time.sleep(1)
+                    elif self.money >= bait.price:
+                        self.money -= bait.price
+                        self.owned_baits.append(bait)
+                        print(Fore.GREEN + f"Bought {bait.name} for ${bait.price}!" + Style.RESET_ALL)
+                        print(Fore.CYAN + "Gro: \"That'll bring in the big ones! Fish with courage!\"" + Style.RESET_ALL)
+                        time.sleep(2)
+                    else:
+                        print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
+                        time.sleep(1)
+            except ValueError:
+                pass
+    
     def interact_with_npc_fisherman(self):
         """Talk to the NPC fisherman and get a random fact"""
         while True:  # Keep dialog open until player chooses to leave
@@ -10333,6 +10756,8 @@ class Game:
                 print(Fore.CYAN + "🔬 Dr. Holloway's Research Station | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             elif location.name == "Volcanic Lake" and "Ifrit the Flamebringer" in self.defeated_bosses:
                 print(Fore.LIGHTRED_EX + "🔥 Prometheus the Fire Monk | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
+            elif location.name == "Arctic Waters":
+                print(Fore.LIGHTCYAN_EX + "🧊 Gro the Ice Fisher | ⊙ Fish Spot | ◉ Golden Spot" + Style.RESET_ALL)
             if self.debug_mode:
                 print(Fore.MAGENTA + "[DEV] [M]ain Menu | [B]oss Spawner | [WASD] Move | [E] Fish | [Q] Return to Hub" + Style.RESET_ALL)
             else:
@@ -10363,6 +10788,9 @@ class Game:
                         self.interact_with_prometheus()
                     else:
                         location_map.message = "The heat shimmers, but nothing is there..."
+                elif location_map.is_npc_gro(location_map.player_x, location_map.player_y):
+                    # Talk to Gro the Ice Fisher
+                    self.interact_with_gro()
                 elif location_map.is_fishing_spot(location_map.player_x, location_map.player_y):
                     is_golden = location_map.is_golden_spot(location_map.player_x, location_map.player_y)
                     
@@ -10838,9 +11266,8 @@ class Game:
         print(Fore.CYAN + "6. Cthulhu (Deep Sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "7. ifrit (Volcanic lake)" + Style.RESET_ALL) 
         print(Fore.CYAN + "8. Megalodon ghost (volcanic lake) " + Style.RESET_ALL)
-        print(Fore.CYAN + "9. Ægir (frozen lake)" + Style.RESET_ALL)
-        print(Fore.CYAN + "10. The frost wyrm (frozen lake)" + Style.RESET_ALL)
-        print()
+        print(Fore.CYAN + "9. Ægir (Arctic waters)" + Style.RESET_ALL)
+        print(Fore.CYAN + "10. Frost wyrm (Arctic waters)" + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -10861,6 +11288,10 @@ class Game:
             self.start_boss_fight(IFRIT)
         elif choice == '8':
             self.start_boss_fight(MEGALODON_GHOST)
+        elif choice == '9':
+            self.start_boss_fight(AEGIR)
+        elif choice == '10':
+            self.start_boss_fight(FROST_WYRM)
         elif choice == '0':
             return
         else:
