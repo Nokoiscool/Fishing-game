@@ -9479,6 +9479,7 @@ class Game:
             elif key == 'c':
                 self.view_character_stats()
             elif key == 'q':
+                game.save_game()
                 print(Fore.YELLOW + "\nThanks for playing! 🎣" + Style.RESET_ALL)
                 break
             elif key == 'm' and self.debug_mode:
