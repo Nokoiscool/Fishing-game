@@ -9056,16 +9056,16 @@ class Game:
                 ("The State and Revolution", "Vladimir Lenin",
                     "\"The state is a product of society at a certain stage of development; it is the admission that this society has become entangled in an insoluble contradiction with itself, and that it needs a machine, a state, to be set up to manage the struggle of the classes.\""),
 
-                ("Friedrich Nietzsche, Thus Spoke Zarathustra",
+                ("Friedrich Nietzsche", "Thus Spoke Zarathustra",
                     "\"The snake which cannot cast its skin has to die. As well the minds which are prevented from changing their opinions; they cease to be mind.\""),
 
-                ("John Maynard Keynes, The General Theory of Employment, Interest and Money",
+                ("John Maynard Keynes", "The General Theory of Employment, Interest and Money",
                     "\"The long run is a misleading guide to current affairs. In the long run we are all dead.\""),
 
-                ("Mao Zedong, Quotations from Chairman Mao Tse-tung",
+                ("Mao Zedong", "Quotations from Chairman Mao Tse-tung",
                     "\"Political power grows out of the barrel of a gun.\""),
 
-                ("Napoleon Bonaparte, Memoirs of Napoleon Bonaparte",
+                ("Napoleon Bonaparte", "Memoirs of Napoleon Bonaparte",
                     "\"History is a set of lies agreed upon.\""),
                 
                 # ============================================
@@ -9130,13 +9130,13 @@ class Game:
                 # SCIENCE FICTION & HORROR
                 # ============================================
                 
-                ("H.P. Lovecraft, The Call of Cthulhu",
+                ("H.P. Lovecraft", "The Call of Cthulhu",
                     "\"Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn.\""),
 
-                ("Arthur C. Clarke, 2001: A Space Odyssey",
+                ("Arthur C. Clarke", "2001: A Space Odyssey",
                     "\"Any sufficiently advanced technology is indistinguishable from magic.\""),
 
-                ("Philip K., Do Androids Dream of Electric Sheep?",
+                ("Philip K.", "Do Androids Dream of Electric Sheep?",
                     "\"The electric things have their lives, too. Paltry as those lives are.\""),
                 
                 # ============================================
@@ -9156,41 +9156,41 @@ class Game:
                 # OCCULT & ALTERNATIVE SPIRITUALITY
                 # ============================================
                 
-                ("Anton Szandor LaVey, The Satanic Bible",
+                ("Anton Szandor LaVey", "The Satanic Bible",
                     "\"Do what thou wilt shall be the whole of the Law.\""),
 
-                ("Aleister Crowley, The Book of the Law",
+                ("Aleister Crowley", "The Book of the Law",
                     "\"Do what thou wilt shall be the whole of the Law.\nLove is the law, love under will.\""),
 
-                ("Rumi, The Essential Rumi",
+                ("Rumi", "The Essential Rumi",
                     "\"You were born with wings, why prefer to crawl through life?\""),
                 
                 # ============================================
                 # MODERN POLITICAL SPEECHES & STATEMENTS
                 # ============================================
 
-                ("Donald Trump, Twitter",
+                ("Donald Trump", "Twitter",
                     "\"I have the best words, but there's no better word than 'fish'. Everyone loves fish. Fish are tremendous.\""),
 
-                ("Joe Biden, Speech",
+                ("Joe Biden", "Speech",
                     "\"My fellow Americans, I promise to protect our oceans and the fish that call it home. Together, we can build back better for our planet.\""),
 
-                ("Bill Clinton, Speech",
+                ("Bill Clinton", "Speech",
                     "\"I did not have relations with that fish. \""),
                 
-                ("Greta Thunberg, Speech",
+                ("Greta Thunberg", "Speech",
                     "\"The ocean is rising, and so are we. We must act now to save our fish and our future.\""),
 
-                ("Barack Obama, Speech",
+                ("Barack Obama", "Speech",
                     "\"The ocean is a source of wonder and sustenance. We have a responsibility to protect it for future generations.\""),
 
-                ("Bernie Sanders, Speech",
+                ("Bernie Sanders", "Speech",
                     "\"The ocean is not a dumping ground for pollution. We need to invest in clean energy and sustainable fishing practices.\""),
                 
-                ("local politician, Speech",
+                ("local politician", "Speech",
                     "\"I support our local fishermen and the fishing industry. We need to balance economic growth with environmental protection.\""),
 
-                ("Environmental activist, Speech",
+                ("Environmental activist", "Speech",
                     "\"The fish are dying, the waters are polluted, and we are running out of time. We need to take bold action to save our oceans.\""),
 
 
@@ -9199,50 +9199,50 @@ class Game:
                 # MUSIC LYRICS
                 # ============================================
 
-                ("Song lyric book, The Beatles, 'Octopus's Garden'",
+                ("Song lyric book, The Beatles", "'Octopus's Garden'",
                     "\"I'd like to be under the sea\nIn an octopus's garden in the shade.\""),
 
-                ("Song lyric book, King gizzard & The Lizard Wizard, 'Fishing for fishies'",
+                ("Song lyric book, King gizzard & The Lizard Wizard", "'Fishing for fishies'",
                     "\"Fishing for fishies\nDon't make them happy\nOr me neither.\n I feel so sorry for fishies.\""),
 
-                ("Song lyric book, Bob dylan, 'Master of war'",
+                ("Song lyric book, Bob dylan", "'Master of war'",
                     "\"Come you masters of war\nYou that build all the guns\nYou that build the death planes\nYou that build the big bombs\nYou that hide behind walls\nYou that hide behind desks\nI just want you to know\nI can see through your masks.\""),
                     
-                ("Song lyric book, Pink Floyd, 'Wish You Were Here'",
+                ("Song lyric book, Pink Floyd", "'Wish You Were Here'",
                     "\"We're just two lost souls swimming in a fish bowl, year after year.\""),
 
-                ("Song lyric book, The Police, 'Message in a Bottle'",
+                ("Song lyric book, The Police", "'Message in a Bottle'",
                     "\"Just a castaway, an island lost at sea, oh\nAnother lonely day, no one here but me, oh\nMore loneliness than any man could bear\nRescue me before I fall into despair, oh\""),
 
-                ("Song lyric book, Simon & Garfunkel, 'The Sound of Silence'",
+                ("Song lyric book, Simon & Garfunkel", "'The Sound of Silence'",
                     "\"Hello darkness, my old friend\nI've come to talk with you again.\""),
 
-                ("Song lyric book, Radiohead, 'Karma Police'",
+                ("Song lyric book, Radiohead", "'Karma Police'",
                     "\"Karma police, arrest this man\nHe talks in maths, he buzzes like a fridge\nHe's like a detuned radio.\""),
 
-                ("Song lyric book, The Smiths, 'How Soon is Now?'",
+                ("Song lyric book, The Smiths", "'How Soon is Now?'",
                     "\"I am the son and the heir of a shyness that is criminally vulgar\nI am the son and heir of nothing in particular.\""),
 
-                ("Song lyric book, Nirvana, 'Something in the way'",
+                ("Song lyric book, Nirvana", "'Something in the way'",
                     "\"It's okay to eat fish 'cause they don't have any feelings.\""),
 
-                ("Song lyric book, The Doors, 'Riders on the Storm'",
+                ("Song lyric book, The Doors", "'Riders on the Storm'",
                     "\"Riders on the storm\nThere's a killer on the road\nHis brain is squirtin' like a poisonous mushroom\nRiders on the storm\nThere's a killer on the road\nHis brain is squirmin' like a toad\""),
                 
-                ("Song lyric book, Gotye, 'Somebody That I Used to Know'",
+                ("Song lyric book, Gotye", "'Somebody That I Used to Know'",
                     "\"Now and then I think of when we were together\nLike when you said you felt so happy you could die.\""),
 
-                ("Song lyric book, The Rolling Stones, 'Paint It Black'",
+                ("Song lyric book, The Rolling Stones", "'Paint It Black'",
                     "\"I see a red door and I want it painted black\nNo colors anymore, I want them to turn black.\""),
 
-                ("Song lyric book, Kanye West, 'Gorgeus'",
+                ("Song lyric book, Kanye West", "'Gorgeus'",
                     "\" Choke a South Park writer with a fishstick\""),
 
-                ("Song lyric book, Childish Gambino, 'This is America'",
+                ("Song lyric book, Childish Gambino", "'This is America'",
                     "\"This is America\nDon't catch you slippin' now\nLook at how I'm livin' now\nPolice be trippin' now\""),
 
                 #didnt know where to put this but i think music kinda works
-                ("Dr. Seuss, 'One Fish Two Fish Red Fish Blue Fish'",
+                ("Dr. Seuss", "'One Fish Two Fish Red Fish Blue Fish'",
                     "\"One fish, two fish, red fish, blue fish.\nBlack fish, blue fish, old fish, new fish.\""),
 
                 # ============================================
