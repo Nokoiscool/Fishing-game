@@ -230,6 +230,10 @@ DID_YOU_KNOW_FACTS = [
     "Jörmungandr's venom is said to be potent enough to poison the ocean itself!",
     "The World Serpent is one of Loki's three monstrous children in Norse mythology!",
     "Defeating Jörmungandr breaks ancient Norse prophecy - with unknown consequences!",
+    "Ægir is the Norse god of the sea and brewer of ale for the gods!",
+    "In Norse mythology, Ægir and his wife Rán host the gods in their underwater hall!",
+    "Ægir's Brewing Horn is said to control storms and weather across the seas!",
+    "The Norse Sea Giant Ægir is known for his hospitality and respect for warriors!",
     
 ]
 
@@ -1558,6 +1562,141 @@ def jormungandr_tail_whip():
         return 25
 
 
+# ===== ÆGIR ATTACKS =====
+
+def aegir_iceberg_crash():
+    """Dodge massive icebergs summoned from the deep"""
+    print(Fore.CYAN + "\n🧊 ICEBERG CRASH! 🧊\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Ægir summons colossal icebergs from the depths!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    success = 0
+    
+    for i in range(4):
+        direction = random.choice(['LEFT', 'RIGHT'])
+        opposite = 'RIGHT' if direction == 'LEFT' else 'LEFT'
+        
+        print(Fore.RED + f"\n💥 Iceberg from the {direction}!" + Style.RESET_ALL)
+        print(Fore.YELLOW + f"Type '{opposite}' to dodge!" + Style.RESET_ALL)
+        
+        start_time = time.time()
+        
+        try:
+            response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper().strip()
+            elapsed = time.time() - start_time
+            
+            if response == opposite and elapsed < 2:
+                print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+                success += 1
+            elif response == opposite:
+                print(Fore.YELLOW + "Too slow! Clipped by ice! (-8 HP)" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "💥 CRASH! (-12 HP)" + Style.RESET_ALL)
+        except:
+            print(Fore.RED + "💥 CRASH! (-12 HP)" + Style.RESET_ALL)
+        
+        time.sleep(0.5)
+    
+    if success == 4:
+        print(Fore.GREEN + "\n🎯 Perfect dodges! The Sea Giant laughs heartily!" + Style.RESET_ALL)
+        return 0
+    elif success >= 2:
+        damage = 20 + (4 - success) * 10
+        return damage
+    else:
+        return 45
+
+def aegir_frozen_tide():
+    """Break through the freezing wave"""
+    print(Fore.CYAN + "\n❄️ FROZEN TIDE! ❄️\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "A massive wave of ice water rises!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Type the words quickly to break through!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    words = ['FROST', 'GLACIER', 'STORM', 'WINTER']
+    success = 0
+    
+    for word in words:
+        print(Fore.CYAN + f"\n❄️  {word}" + Style.RESET_ALL)
+        
+        start_time = time.time()
+        
+        try:
+            response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper().strip()
+            elapsed = time.time() - start_time
+            
+            if response == word and elapsed < 3.0:
+                print(Fore.GREEN + "✓ Ice shattered!" + Style.RESET_ALL)
+                success += 1
+            elif response == word:
+                print(Fore.YELLOW + "Correct but slow! Partially frozen!" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "✗ Frozen solid!" + Style.RESET_ALL)
+        except:
+            print(Fore.RED + "✗ Frozen solid!" + Style.RESET_ALL)
+        
+        time.sleep(0.4)
+    
+    if success == 4:
+        print(Fore.GREEN + "\n🎯 All ice shattered! You've impressed the giant!" + Style.RESET_ALL)
+        return 5
+    elif success >= 2:
+        return 20 + (4 - success) * 10
+    else:
+        return 50
+
+def aegir_aurora_beam():
+    """Memorize and repeat the aurora pattern"""
+    print(Fore.MAGENTA + "\n✨ AURORA BEAM! ✨\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Ægir channels the northern lights!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Watch the pattern, then repeat it!" + Style.RESET_ALL)
+    time.sleep(1.5)
+    
+    colors = ['RED', 'GREEN', 'BLUE', 'YELLOW']
+    pattern_length = 5
+    pattern = [random.choice(colors) for _ in range(pattern_length)]
+    
+    print(Fore.MAGENTA + "\n✨ Aurora Pattern:" + Style.RESET_ALL)
+    for i, color in enumerate(pattern, 1):
+        color_code = {
+            'RED': Fore.RED,
+            'GREEN': Fore.GREEN,
+            'BLUE': Fore.BLUE,
+            'YELLOW': Fore.YELLOW
+        }[color]
+        print(color_code + f"{i}. {color}" + Style.RESET_ALL)
+        time.sleep(0.7)
+    
+    time.sleep(1)
+    print(Fore.YELLOW + "\nRepeat the pattern!" + Style.RESET_ALL)
+    
+    success = 0
+    for i, correct_color in enumerate(pattern, 1):
+        try:
+            choice = input(Fore.GREEN + f"Color {i}: " + Style.RESET_ALL).upper().strip()
+            
+            if choice == correct_color:
+                print(Fore.GREEN + f"✓ {correct_color}!" + Style.RESET_ALL)
+                success += 1
+            else:
+                print(Fore.RED + f"✗ Wrong! It was {correct_color}!" + Style.RESET_ALL)
+        except:
+            print(Fore.RED + f"✗ Wrong! It was {correct_color}!" + Style.RESET_ALL)
+        
+        time.sleep(0.3)
+    
+    if success == pattern_length:
+        print(Fore.GREEN + "\n🎯 Perfect! Ægir roars with approval!" + Style.RESET_ALL)
+        return 0
+    elif success >= 3:
+        return 15 + (pattern_length - success) * 10
+    else:
+        return 55
+
+
 # ===== KRAKEN ATTACKS =====
 
 def kraken_tentacle_slam():
@@ -2715,6 +2854,147 @@ def cthulhu_ultimate_awakening():
     return total_damage
 
 
+# ===== FROST WYRM ATTACKS =====
+
+def frost_wyrm_blizzard_breath():
+    """Dodge the freezing breath attack"""
+    print(Fore.CYAN + "\n❄️ BLIZZARD BREATH! ❄️\n" + Style.RESET_ALL)
+    
+    print(Fore.LIGHTCYAN_EX + "The Frost Wyrm inhales deeply..." + Style.RESET_ALL)
+    print(Fore.YELLOW + "Its chest glows with icy light!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    total_damage = 0
+    num_waves = 4
+    
+    print(Fore.CYAN + "\nDodge the freezing waves!" + Style.RESET_ALL)
+    time.sleep(0.5)
+    
+    for i in range(num_waves):
+        positions = [1, 2, 3, 4, 5]
+        frozen_zones = random.sample(positions, 3)  # 3 zones hit with ice
+        
+        print()
+        print(Fore.LIGHTCYAN_EX + f"Ice Wave #{i+1}!" + Style.RESET_ALL)
+        
+        # Show frozen zones
+        display = []
+        for pos in positions:
+            if pos in frozen_zones:
+                display.append('[❄️]')
+            else:
+                display.append('[ ]')
+        
+        print(Fore.WHITE + "Positions: " + ' '.join(display) + Style.RESET_ALL)
+        print(Fore.YELLOW + "Safe position? (1-5):" + Style.RESET_ALL)
+        
+        try:
+            choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+            if choice in frozen_zones:
+                print(Fore.CYAN + "❄️ FROZEN! (-12 HP)" + Style.RESET_ALL)
+                total_damage += 12
+            else:
+                print(Fore.GREEN + "✓ Avoided the ice!" + Style.RESET_ALL)
+        except:
+            total_damage += 12
+        
+        time.sleep(0.4)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★ PERFECT! You're immune to the cold! ★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def frost_wyrm_ice_spike_barrage():
+    """Memorize and dodge ice spike patterns"""
+    print(Fore.LIGHTBLUE_EX + "\n🔷 ICE SPIKE BARRAGE! 🔷\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Ice spikes form beneath the frozen lake!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Watch where they appear, then find safe ground!" + Style.RESET_ALL)
+    time.sleep(1.5)
+    
+    # Show spike pattern
+    grid_size = 9
+    num_spikes = 5
+    spike_positions = random.sample(range(1, grid_size + 1), num_spikes)
+    
+    print(Fore.CYAN + "\n❄️ ICE SPIKES FORMING:" + Style.RESET_ALL)
+    
+    # Display grid with spikes
+    for i in range(1, grid_size + 1):
+        if i in spike_positions:
+            print(Fore.LIGHTCYAN_EX + f"[{i}:🔷] ", end='')
+        else:
+            print(Fore.WHITE + f"[{i}:  ] ", end='')
+        if i % 3 == 0:
+            print()
+    
+    print()
+    time.sleep(2)
+    
+    # Hide pattern
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.LIGHTBLUE_EX + "❄️" * 30 + Style.RESET_ALL)
+    print(Fore.CYAN + "\nThe ice clouds your vision!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Which position is SAFE? (1-9):" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        if choice in spike_positions:
+            print(Fore.CYAN + "🔷 IMPALED BY ICE! (-25 HP)" + Style.RESET_ALL)
+            return 25
+        elif choice < 1 or choice > grid_size:
+            print(Fore.RED + "💥 Invalid position! You stumbled into spikes! (-25 HP)" + Style.RESET_ALL)
+            return 25
+        else:
+            print(Fore.GREEN + "✓ Safe spot! You avoided the spikes!" + Style.RESET_ALL)
+            return 0
+    except:
+        print(Fore.RED + "💥 Confusion! Ice spike got you! (-25 HP)" + Style.RESET_ALL)
+        return 25
+
+
+def frost_wyrm_permafrost_prison():
+    """Break free from the ice prison - button mashing challenge"""
+    print(Fore.BLUE + "\n🧊 PERMAFROST PRISON! 🧊\n" + Style.RESET_ALL)
+    
+    print(Fore.LIGHTCYAN_EX + "The Frost Wyrm roars!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Ice forms around you - you're being frozen solid!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    print(Fore.YELLOW + "BREAK FREE! Press SPACE rapidly!" + Style.RESET_ALL)
+    
+    target = 20
+    count = 0
+    start_time = time.time()
+    time_limit = 6
+    
+    print(Fore.WHITE + "GO!" + Style.RESET_ALL)
+    
+    while count < target and (time.time() - start_time) < time_limit:
+        key = get_key()
+        if key == ' ':
+            count += 1
+            # Show progress with ice breaking
+            progress = "█" * count + "░" * (target - count)
+            sys.stdout.write(f"\r{Fore.CYAN}[{progress}] {count}/{target} 🧊{Style.RESET_ALL}")
+            sys.stdout.flush()
+    
+    print()
+    elapsed = time.time() - start_time
+    
+    if count >= target:
+        print(Fore.GREEN + f"✓ BROKE FREE! ({elapsed:.1f}s)" + Style.RESET_ALL)
+        return 0
+    else:
+        damage = 30 - count
+        print(Fore.CYAN + f"❄️ FROZEN SOLID! Only {count}/{target} (-{damage} HP)" + Style.RESET_ALL)
+        print(Fore.LIGHTCYAN_EX + "*You're encased in ancient ice...*" + Style.RESET_ALL)
+        return damage
+
+
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
                                 _..--+~/@-@--.
@@ -3355,6 +3635,154 @@ JORMUNGANDR = Boss(
     spare_threshold=35
 )
 
+# =====  (NORSE SEA GIANT) =====
+
+AEGIR_ASCII = """
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⣤⡄⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣧⡀⢀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠉⠁⢀⣀⠀⢲⣿⠋⣀⠙⠛⠛⠋⣁⡀⢻⣿⠟⢠⣤⣀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⣾⣿⠋⠠⠿⢿⡄⢻⡷⠞⠓⠶⢿⠟⢀⡏⢠⣿⣿⣿⣿⣦⣄⡀⠀⠀
+        ⠀⠀⠀⠀⣹⣷⢶⣶⡶⠀⢻⣄⠳⠶⠶⠖⠀⠀⡟⠀⠘⠿⣿⣿⣍⣁⡀⠀⠀⠀
+        ⠀⠀⠀⠴⢋⣠⣴⡿⠀⠀⢸⣿⣷⣄⠐⠆⢸⣦⠀⠀⠀⠀⠹⣿⣿⣿⣇⠀⠀⠀
+        ⠀⠀⠀⠀⣿⣿⣿⠃⠀⠀⢸⣿⣿⠙⢷⣄⢸⣿⣧⠀⠀⠀⠀⢻⣿⠙⠿⡄⠀⠀
+        ⠀⠀⠀⠸⠟⠉⠏⠀⠀⠀⠀⠻⡏⢠⡈⢻⣿⠿⢋⠀⠤⢴⣦⠬⠏⢀⣦⡄⠀⠀
+        ⠀⠀⠀⣠⣶⣧⠀⠀⠀⢀⣦⠀⠀⣼⣷⣄⢁⣴⣿⠇⠀⠀⠁⠀⠀⢸⠋⠉⠀⠀
+        ⠀⠀⠀⠉⠀⠈⠁⠀⢀⣾⣿⣧⠈⠛⠋⠉⠻⠿⠛⠀⣾⣧⡀⠀⠀⢀⣄⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⡄⠀⠀⠀⠀⠘⢿⣿⣿⣿⡆⠀⠈⠛⠁⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠸⡟⠸⡿⠓⠺⡿⠂⠀⠀⠀⠀⠘⡿⠙⣿⡇⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠁⡀⢁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣦⠈⠁⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⣾⣧⣤⡆⢰⣷⣿⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣷⡄⣶⣶⣤⡴⠀⠀
+        ⠀⠀⠀⠀⠉⠉⠉⠁⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠁⠀⠀
+            [The frost giant who brews storms in his hall...]
+"""
+
+AEGIR = Boss(
+    name="Ægir",
+    hp=750,
+    defense=23,
+    attacks=[
+        BossAttack("Iceberg Crash", aegir_iceberg_crash, (0, 45), "Dodge the colossal icebergs!"),
+        BossAttack("Frozen Tide", aegir_frozen_tide, (0, 50), "Break through the freezing wave!"),
+        BossAttack("Aurora Beam", aegir_aurora_beam, (0, 55), "Match the aurora pattern!")
+    ],
+    ascii_art=AEGIR_ASCII,
+    dialogue={
+        "intro": [
+            "*The water grows impossibly cold*",
+            "*Frost spreads across the surface in intricate patterns*",
+            "*Then the sea itself parts*",
+            "*Revealing an underwater hall of ice and stone*",
+            "*A figure rises from the depths*",
+            "*Colossal. Ancient. Crowned with glaciers*",
+            "*ÆGIR*",
+            "*The Norse Sea Giant*",
+            "*Brewmaster of Storms*",
+            "*Host to the Gods*",
+            "*'Well met, little fisher!'*",
+            "*His voice booms like cracking ice*",
+            "*'I smell strength on you!'*",
+            "*'And the scent of worthy battles!'*",
+            "*'The sea is a harsh host...'*",
+            "*'But a generous one to those who prove themselves!'*",
+            "*'Come! Show me what you're made of!'*",
+            "*'If you survive...'*",
+            "*'We shall feast together!'*",
+            "*'And I shall teach you the old ways!'*"
+        ],
+        "default": [
+            "*Ægir laughs, and waves crash*",
+            "*'Good! You have spirit!'*",
+            "*'The weak do not last long in these waters!'*",
+            "*'My wife and I brew the storms!'*",
+            "*'We host the greatest feasts!'*",
+            "*'But first... you must prove worthy!'*"
+        ],
+        "hit": [
+            "*Your strike lands true!*",
+            "*Ægir grins widely*",
+            "*'HA! Well struck!'*",
+            "*'You fight with honor!'*",
+            "*'The old gods would be pleased!'*",
+            "*'Perhaps you ARE worthy of my hall!'*"
+        ],
+        "low_hp": [
+            "*Ægir's laughter fills the frozen air*",
+            "*'Magnificent! Truly magnificent!'*",
+            "*'Such strength! Such skill!'*",
+            "*'You remind me of the heroes of old!'*",
+            "*'I have not been tested like this in centuries!'*",
+            "*'Come, finish this honorably...'*",
+            "*'Or prove your wisdom...'*",
+            "*'And share my mead instead!'*"
+        ],
+        "merciful": [
+            "*You lower your weapon*",
+            "*And bow respectfully to the giant*",
+            "*Ægir's eyes widen with surprise*",
+            "*Then crinkle with joy*",
+            "*'HONOR! TRUE HONOR!'*",
+            "*'You know when to fight...'*",
+            "*'And when to seek friendship!'*",
+            "*'This is the way of the wise warrior!'*"
+        ],
+        "spare_ready": [
+            "*ÆGIR can be SPARED*",
+            "*'You have proven yourself in battle!'*",
+            "*'Now show me your wisdom!'*",
+            "*The sea giant extends a massive hand*"
+        ],
+        "spared": [
+            "*You take the giant's hand*",
+            "*His grip could crush mountains*",
+            "*But he is gentle*",
+            "*'WELCOME TO MY HALL!'*",
+            "*The underwater palace glows with warmth*",
+            "*'You have earned a place at my table!'*",
+            "*'And the friendship of Ægir!'*",
+            "*'Few mortals can claim such honor!'*",
+            "*Ægir produces an ancient horn*",
+            "*Carved from a narwhal's tusk*",
+            "*Inscribed with runes of power*",
+            "*'This is my Brewing Horn!'*",
+            "*'With it, I command the storms!'*",
+            "*'I choose the weather of each day!'*",
+            "*'Now... I give it to you!'*",
+            "*'Use it wisely, friend!'*",
+            "*'For weather is a gift...'*",
+            "*'Not a toy!'*",
+            "*'Come back anytime!'*",
+            "*'My hall is open to you!'*",
+            "*'We shall feast and tell tales!'*",
+            "*'As warriors do!'*"
+        ],
+        "killed": [
+            "*Your final strike pierces the giant's heart*",
+            "*Ægir staggers backward*",
+            "*Not in pain... but in disappointment*",
+            "*'I... misjudged you...'*",
+            "*'I thought... you were different...'*",
+            "*'I thought... you were a hero...'*",
+            "*The frost giant falls to his knees*",
+            "*The underwater hall begins to crack*",
+            "*'My hall... was open to you...'*",
+            "*'My friendship... was yours...'*",
+            "*'But you chose... violence...'*",
+            "*'The old ways... die with me...'*",
+            "*'The feasts... will end...'*",
+            "*'The storms... will brew themselves...'*",
+            "*'Without guidance...'*",
+            "*'Without wisdom...'*",
+            "*Ægir's body sinks into the depths*",
+            "*Taking the hall with him*",
+            "*The water grows warmer*",
+            "*But somehow... emptier*",
+            "*You have slain a friend you never knew*",
+            "*And the seas are colder for it*"
+        ]
+    },
+    spare_threshold=30
+)
+
 # ===== CTHULHU - THE DREAMING GOD =====
 
 CTHULHU_ASCII = """
@@ -3965,6 +4393,211 @@ MEGALODON_GHOST = Boss(
     spare_threshold=35
 )
 
+# ===== FROST WYRM =====
+
+FROST_WYRM_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         ❄️ THE FROST WYRM ❄️                              ║
+    ║         [Dragon of Ice and Ancient Snow]                   ║
+    ║         [Guardian of the Frozen Deep]                      ║
+    ╚════════════════════════════════════════════════════════════╝
+
+   (  )   /\   _                 (
+    \ |  (  \ ( \.(               )                      _____
+  \  \ \  `  `   ) \             (  ___                 / _   \
+ (_`    \+   . x  ( .\            \/   \____-----------/ (o)   \_
+- .-               \+  ;          (  O                           \____
+                          )        \_____________  `              \  /
+(__                +- .( -'.- <. - _  VVVVVVV VV V\                 \/
+(_____            ._._: <_ - <- _  (--  _AAAAAAA__A_/                  |
+  .    /./.+-  . .- /  +--  - .     \______________//_              \_______
+  (__ ' /x  / x _/ (                                  \___'          \     /
+ , x / ( '  . / .  /                                      |           \   /
+    /  /  _/ /    +                                      /              \/
+   '  (__/                                             /                  \
+          [A dragon of crystalline ice, breath that freezes time itself...]
+"""
+
+FROST_WYRM = Boss(
+    name="The Frost Wyrm",
+    hp=550,  # Strong but not overwhelming
+    defense=16,
+    attacks=[
+        BossAttack("Blizzard Breath", frost_wyrm_blizzard_breath, (0, 48), "Waves of freezing cold!"),
+        BossAttack("Ice Spike Barrage", frost_wyrm_ice_spike_barrage, (0, 25), "Memory test through the ice!"),
+        BossAttack("Permafrost Prison", frost_wyrm_permafrost_prison, (0, 30), "Trapped in ancient ice!")
+    ],
+    ascii_art=FROST_WYRM_ASCII,
+    dialogue={
+        "intro": [
+            "*The frozen lake cracks ominously*",
+            "*Not with the sound of breaking ice*",
+            "*But with the groan of something... stirring*",
+            "*Something that has slept beneath these waters*",
+            "*Since the ice age never truly ended here*",
+            "*Frost creeps across the surface*",
+            "*Patterns that are too perfect to be natural*",
+            "*Then you see it*",
+            "*Rising from below*",
+            "*Scales of pure crystalline ice*",
+            "*Wings that shimmer like aurora borealis*",
+            "*Eyes older than winter itself*",
+            "*THE FROST WYRM*",
+            "*'So... another comes to steal my hoard...'*",
+            "*Its voice is the creak of glaciers*",
+            "*The whisper of snowfall*",
+            "*'The frozen fish are MINE'*",
+            "*'Preserved perfectly... for millennia...'*",
+            "*'I will not share them with thieves!'*"
+        ],
+        "default": [
+            "*The wyrm circles beneath the ice*",
+            "*Its movements creating spiral cracks in the surface*",
+            "*'This lake is my domain'*",
+            "*'My treasure vault'*",
+            "*'My prison... and my sanctuary'*",
+            "*Frost patterns spread wherever it moves*",
+            "*Beautiful... and deadly*"
+        ],
+        "hit": [
+            "*Your attack chips the wyrm's icy scales*",
+            "*But they reform almost instantly*",
+            "*Frost flowing like water to seal the wound*",
+            "*'You damage... ice?'*",
+            "*'I AM the cold itself'*",
+            "*'How do you harm winter?'*",
+            "*Yet there's uncertainty in its voice*",
+            "*It CAN be hurt*",
+            "*And it knows this now*"
+        ],
+        "low_hp": [
+            "*Cracks spread across the wyrm's body*",
+            "*Not healing as quickly as before*",
+            "*'I... I am melting...'*",
+            "*'After so long... preserved perfectly...'*",
+            "*'To think... warmth could find me here...'*",
+            "*The dragon's movements slow*",
+            "*As if fighting against thawing*",
+            "*'Perhaps...'*",
+            "*'Perhaps this endless cold...'*",
+            "*'Was not... eternal... after all...'*",
+            "*'Tell me... fisher...'*",
+            "*'Is spring real?'*",
+            "*'I have not seen it... in so long...'*"
+        ],
+        "merciful": [
+            "*You stop attacking and simply... wait*",
+            "*The wyrm circles, confused*",
+            "*'You... do not strike?'*",
+            "*'You do not seek to plunder?'*",
+            "*You shake your head*",
+            "*'Then... why are you here?'*",
+            "*'This is a dead place'*",
+            "*'Frozen. Isolated. Forgotten.'*",
+            "*'No one comes here without want of treasure'*",
+            "*You explain - you're just... fishing*",
+            "*The wyrm stares at you*",
+            "*Through ancient, crystalline eyes*",
+            "*'Just... fishing?'*",
+            "*'Not seeking my hoard?'*",
+            "*'Not trying to take my domain?'*",
+            "*'You simply... fish?'*",
+            "*For the first time in eons*",
+            "*The Frost Wyrm almost... laughs*",
+            "*A sound like wind through icicles*"
+        ],
+        "spare_ready": [
+            "*The FROST WYRM can be SPARED*",
+            "*Its icy form stabilizes*",
+            "*Cracks freezing over again*",
+            "*But gently this time*",
+            "*Not defensively*",
+            "*'You could destroy me...'*",
+            "*'But you choose... conversation?'*",
+            "*'How... strange...'*",
+            "*'And strangely... warm...'*"
+        ],
+        "spared": [
+            "*You offer the dragon peace*",
+            "*Not conquest. Not theft.*",
+            "*Just... coexistence*",
+            "*The wyrm's eyes widen*",
+            "*'Coexist... with a dragon...'*",
+            "*'With a territorial hoarder...'*",
+            "*'Who guards frozen fish like treasure...'*",
+            "*The creature lowers its massive head*",
+            "*'I have been... alone... so long...'*",
+            "*'Alone in this ice'*",
+            "*'Guarding a hoard that no one remembers'*",
+            "*'From threats that never came'*",
+            "*'Until you.'*",
+            "*The wyrm's breath crystallizes in the air*",
+            "*But gently*",
+            "*Like snowflakes, not weapons*",
+            "*'You may fish here... friend'*",
+            "*'The frozen ones are mine to guard'*",
+            "*'But the living waters... we can share'*",
+            "*A single scale falls*",
+            "*Landing in your hand*",
+            "*It's cold but doesn't burn*",
+            "*'Dragon Scale of Eternal Ice'*",
+            "*'It will preserve any catch forever'*",
+            "*'Perfectly frozen. Perfectly fresh.'*",
+            "*'A gift... from one fisher to another'*",
+            "*The wyrm sinks back beneath the ice*",
+            "*But you sense it watching*",
+            "*Not with hostility*",
+            "*But with... hope?*",
+            "*Perhaps the Frost Wyrm*",
+            "*Has finally found*",
+            "*What it truly hoarded*",
+            "*Not fish*",
+            "*But companionship*"
+        ],
+        "killed": [
+            "*Your final strike pierces the wyrm's core*",
+            "*The crystalline heart SHATTERS*",
+            "*'NO... THE COLD... LEAVING...'*",
+            "*The dragon's form begins to melt*",
+            "*Not slowly*",
+            "*But catastrophically*",
+            "*Chunks of ancient ice crashing into the water*",
+            "*'MY HOARD... MY BEAUTIFUL HOARD...'*",
+            "*The frozen fish*",
+            "*Preserved for millennia*",
+            "*Begin to thaw*",
+            "*And immediately... decay*",
+            "*Thousands of years of rot*",
+            "*Compressed into moments*",
+            "*The smell is indescribable*",
+            "*'WHAT HAVE YOU DONE?!'*",
+            "*The wyrm's voice cracks*",
+            "*Not with rage*",
+            "*But with grief*",
+            "*'I protected them... for so long...'*",
+            "*'Kept them perfect... pristine...'*",
+            "*'And you... you...'*",
+            "*The dragon dissolves completely*",
+            "*The frozen lake begins to thaw*",
+            "*Rapidly. Unnaturally.*",
+            "*The ancient cold that kept this place frozen*",
+            "*Is gone*",
+            "*And with it goes the balance*",
+            "*The arctic waters warm*",
+            "*Ice shelves crack and fall*",
+            "*Entire ecosystems shift*",
+            "*You didn't just kill a dragon*",
+            "*You ended a climate*",
+            "*The Arctic Waters will never be the same*",
+            "*And you feel the weight of that*",
+            "*In your bones*",
+            "*Which are... somehow... colder now*",
+            "*Despite the warming water*"
+        ]
+    },
+    spare_threshold=30
+)
+
 # Boss item that triggers the fight
 class BossItem:
     def __init__(self, name, boss, description, location):
@@ -4004,6 +4637,12 @@ BOSS_ITEMS = {
         "An ancient Norse rune stone pulsing with primordial power. It whispers of the World Serpent...",
         "Deep Sea"
     ),
+    "Ægir's Brewing Horn": BossItem(
+        "Ægir's Brewing Horn",
+        AEGIR,
+        "A narwhal tusk horn inscribed with storm runes. The Norse Sea Giant used it to control the weather. It hums with ancient power...",
+        "Deep Sea"
+    ),
     "Fragment of R'lyeh": BossItem(
         "Fragment of R'lyeh",
         CTHULHU,
@@ -4021,6 +4660,12 @@ BOSS_ITEMS = {
         MEGALODON_GHOST,
         "A ghostly tooth from the prehistoric apex predator. It phases in and out of reality, cold to the touch despite the volcanic heat...",
         "Volcanic Lake"
+    ),
+    "Frozen Scale": BossItem(
+        "Frozen Scale",
+        FROST_WYRM,
+        "A crystalline dragon scale that never melts. It radiates ancient cold and whispers of a hoard beneath frozen waters...",
+        "Arctic Waters"
     ),
     # Add more boss items for other locations here
 }
@@ -10193,6 +10838,9 @@ class Game:
         print(Fore.CYAN + "6. Cthulhu (Deep Sea)" + Style.RESET_ALL)
         print(Fore.CYAN + "7. ifrit (Volcanic lake)" + Style.RESET_ALL) 
         print(Fore.CYAN + "8. Megalodon ghost (volcanic lake) " + Style.RESET_ALL)
+        print(Fore.CYAN + "9. Ægir (frozen lake)" + Style.RESET_ALL)
+        print(Fore.CYAN + "10. The frost wyrm (frozen lake)" + Style.RESET_ALL)
+        print()
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -10475,7 +11123,7 @@ class Game:
     def dev_unlock_locations(self):
         """Unlock all locations by marking bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Ægir", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost", "The Frost Wyrm"]
         # Ensure positive karma for Captain Redbeard
         if self.karma < 1:
             self.karma = 10
@@ -10497,7 +11145,7 @@ class Game:
     def dev_mark_all_bosses(self):
         """Mark all bosses as defeated"""
         # Use the exact boss names from the Boss objects
-        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost"]
+        self.defeated_bosses = ["Loch Ness Monster", "The River Guardian", "The Crimson Tide", "The Kraken", "Jörmungandr", "Ægir", "Cthulhu", "Ifrit the Flamebringer", "The Megalodon's Ghost", "The Frost Wyrm"]
         # Also ensure positive karma so Captain Redbeard appears
         if self.karma < 1:
             self.karma = 10
