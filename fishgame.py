@@ -6134,6 +6134,10 @@ class Game:
         
         # Debug
         self.debug_mode = False
+        
+        # Autosave tracking
+        self.fish_caught_since_save = 0
+        self.autosave_enabled = True
     
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -6211,6 +6215,76 @@ class Game:
             json.dump(save_data, f, indent=2)
         
         print(Fore.GREEN + f"Game saved to {filename}!" + Style.RESET_ALL)
+    
+    def autosave(self, reason=""):
+        """Autosave game silently"""
+        if not self.autosave_enabled:
+            return
+        
+        try:
+            # Update playtime before saving
+            self.update_playtime()
+            
+            save_data = {
+                'version': GAME_VERSION,
+                'name': self.name,
+                'stats': self.stats,
+                'difficulty_name': self.difficulty_name,
+                'difficulty_mult': self.difficulty_mult,
+                'level': self.level,
+                'xp': self.xp,
+                'xp_threshold': self.xp_threshold,
+                'money': self.money,
+                'skill_points': self.skill_points,
+                'inventory': [fish.to_dict() for fish in self.inventory],
+                'boss_inventory': [{'name': item.name, 'boss': item.boss.name, 'description': item.description, 'location': item.location} for item in self.boss_inventory],
+                'karma': self.karma,
+                'defeated_bosses': self.defeated_bosses,
+                'owned_rods': [rod.name for rod in self.owned_rods],
+                'owned_baits': [bait.name for bait in self.owned_baits],
+                'current_rod': self.current_rod.name,
+                'current_bait': self.current_bait.name,
+                'rod_durability': self.rod_durability,
+                'rod_max_durability': self.rod_max_durability,
+                'encyclopedia': self.encyclopedia,
+                'trophy_room': [fish.to_dict() for fish in self.trophy_room],
+                'current_location': self.current_location.name,
+                'current_weather': self.current_weather,
+                'active_quests': [{'title': q.title, 'description': q.description} for q in self.active_quests],
+                'completed_quests': [{'title': q.title, 'description': q.description} for q in self.completed_quests],
+                'max_hp': self.max_hp,
+                'current_hp': self.current_hp,
+                'owned_combat_items': {
+                    'attack': [item.name for item in self.owned_combat_items['attack']],
+                    'defense': [item.name for item in self.owned_combat_items['defense']],
+                    'hp': [item.name for item in self.owned_combat_items['hp']]
+                },
+                'equipped_combat_items': {
+                    'attack': self.equipped_combat_items['attack'].name if self.equipped_combat_items['attack'] else None,
+                    'defense': self.equipped_combat_items['defense'].name if self.equipped_combat_items['defense'] else None,
+                    'hp': self.equipped_combat_items['hp'].name if self.equipped_combat_items['hp'] else None
+                },
+                'received_pirate_gift': self.received_pirate_gift,
+                'mactavish_daily_quest': getattr(self, 'mactavish_daily_quest', None),
+                'mactavish_quest_progress': getattr(self, 'mactavish_quest_progress', 0),
+                'mactavish_last_quest_date': getattr(self, 'mactavish_last_quest_date', None),
+                'playtime_seconds': self.playtime_seconds,
+            }
+            
+            # Create hash-based filename
+            name_hash = hashlib.md5(self.name.encode()).hexdigest()[:8]
+            filename = f"save_{name_hash}.json"
+            
+            with open(filename, 'w') as f:
+                json.dump(save_data, f, indent=2)
+            
+            # Silent save with small indicator
+            if reason:
+                print(Fore.LIGHTBLACK_EX + f"💾 Autosaved ({reason})" + Style.RESET_ALL)
+        except Exception as e:
+            # Don't interrupt gameplay if autosave fails
+            if self.debug_mode:
+                print(Fore.RED + f"Autosave failed: {e}" + Style.RESET_ALL)
     
     def load_game(self):
         """Load game from JSON file"""
@@ -6383,6 +6457,10 @@ class Game:
         
         print(Fore.LIGHTYELLOW_EX + f"\n🎉 LEVEL UP! You are now level {self.level}! 🎉" + Style.RESET_ALL)
         print(Fore.GREEN + f"Earned 3 skill points! Total: {self.skill_points}" + Style.RESET_ALL)
+        
+        # Autosave after level up
+        self.autosave("level up")
+        
         time.sleep(2)
     
     def get_attack_bonus(self):
@@ -6568,6 +6646,12 @@ class Game:
         # Add to inventory and encyclopedia
         self.inventory.append(caught_fish)
         
+        # Autosave counter - save every 5 fish
+        self.fish_caught_since_save += 1
+        if self.fish_caught_since_save >= 5:
+            self.autosave("5 fish caught")
+            self.fish_caught_since_save = 0
+        
         # Track MacTavish daily quest progress
         if hasattr(self, 'mactavish_daily_quest') and self.mactavish_daily_quest:
             quest = self.mactavish_daily_quest
@@ -6713,6 +6797,10 @@ class Game:
             count = len(self.inventory)
             self.inventory.clear()
             print(Fore.GREEN + f"Sold {count} fish for ${total}!" + Style.RESET_ALL)
+            
+            # Autosave after selling
+            self.autosave("sold fish")
+            
             input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
         elif choice == 's':
             # Sell specific fish
@@ -6723,6 +6811,9 @@ class Game:
                     value = int(fish.sell_price * self.difficulty_mult)
                     self.money += value
                     print(Fore.GREEN + f"Sold {fish.name} for ${value}!" + Style.RESET_ALL)
+                    
+                    # Autosave after selling
+                    self.autosave("sold fish")
                 else:
                     print(Fore.RED + "Invalid fish number!" + Style.RESET_ALL)
                 input(Fore.CYAN + "Press Enter to continue..." + Style.RESET_ALL)
@@ -6878,6 +6969,10 @@ class Game:
                     self.money -= actual_price
                     self.owned_rods.append(rod)
                     print(Fore.GREEN + f"Bought {rod.name} for ${actual_price}!" + Style.RESET_ALL)
+                    
+                    # Autosave after purchase
+                    self.autosave("purchased item")
+                    
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -6923,6 +7018,10 @@ class Game:
                     self.money -= actual_price
                     self.owned_baits.append(bait)
                     print(Fore.GREEN + f"Bought {bait.name} for ${actual_price}!" + Style.RESET_ALL)
+                    
+                    # Autosave after purchase
+                    self.autosave("purchased item")
+                    
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -6996,6 +7095,10 @@ class Game:
                     self.money -= actual_price
                     self.owned_combat_items[category].append(item)
                     print(Fore.GREEN + f"Bought {item.name} for ${actual_price}!" + Style.RESET_ALL)
+                    
+                    # Autosave after purchase
+                    self.autosave("purchased item")
+                    
                     time.sleep(1)
                 else:
                     print(Fore.RED + "Not enough money!" + Style.RESET_ALL)
@@ -9849,6 +9952,9 @@ class Game:
                     if boss.name not in self.defeated_bosses:
                         self.defeated_bosses.append(boss.name)
                     
+                    # Autosave after defeating boss
+                    self.autosave("defeated boss")
+                    
                     # Special message for Cthulhu
                     if boss.name == "Cthulhu":
                         print()
@@ -9921,6 +10027,9 @@ class Game:
                 # Mark boss as defeated
                 if boss.name not in self.defeated_bosses:
                     self.defeated_bosses.append(boss.name)
+                
+                # Autosave after defeating boss
+                self.autosave("defeated boss")
                 
                 # Special message for Cthulhu
                 if boss.name == "Cthulhu":
