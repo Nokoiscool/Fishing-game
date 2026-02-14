@@ -2996,6 +2996,329 @@ def frost_wyrm_permafrost_prison():
         return damage
 
 
+def amalgamation_fusion_strike():
+    """Combines Nessie's dive, Kraken tentacles, and River Guardian bite"""
+    print(Fore.RED + "\n💀 THE AMALGAMATION SHIFTS FORMS! 💀\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    # Phase 1: Nessie dive prediction
+    print(Fore.CYAN + "Phase 1: DEEP DIVE EMERGENCE!" + Style.RESET_ALL)
+    dive_frames = [
+        "     💀     ",
+        "     💀~    ",
+        "     ~💀~~  ",
+        "     ~~~💀~ ",
+    ]
+    
+    for frame in dive_frames:
+        sys.stdout.write("\r" + Fore.LIGHTBLACK_EX + frame + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.2)
+    
+    print("\n")
+    zones = 5
+    emerge_zone = random.randint(0, zones - 1)
+    
+    print(Fore.YELLOW + f"Where will it emerge? (0-{zones-1}):" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if choice == emerge_zone:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "💥 Emerged at you! (-20 HP)" + Style.RESET_ALL)
+            total_damage += 20
+    except:
+        total_damage += 20
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Kraken tentacle mash
+    print()
+    print(Fore.MAGENTA + "Phase 2: TENTACLE BARRAGE!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Mash WASD quickly!" + Style.RESET_ALL)
+    
+    required_sequence = [random.choice(['W', 'A', 'S', 'D']) for _ in range(6)]
+    print(Fore.CYAN + f"Enter: {''.join(required_sequence)}" + Style.RESET_ALL)
+    
+    try:
+        start_time = time.time()
+        player_input = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start_time
+        
+        correct = ''.join(required_sequence)
+        if player_input == correct and elapsed < 3:
+            print(Fore.GREEN + "✓ Perfect defense!" + Style.RESET_ALL)
+        elif player_input == correct:
+            print(Fore.YELLOW + "⚡ Too slow! (-15 HP)" + Style.RESET_ALL)
+            total_damage += 15
+        else:
+            print(Fore.RED + "💥 Crushed! (-25 HP)" + Style.RESET_ALL)
+            total_damage += 25
+    except:
+        total_damage += 25
+    
+    time.sleep(0.5)
+    
+    # Phase 3: River Guardian bite
+    print()
+    print(Fore.GREEN + "Phase 3: RAZOR BITE!" + Style.RESET_ALL)
+    direction = random.choice(['W', 'A', 'S', 'D'])
+    direction_name = {'W': '⬆️  UP', 'A': '⬅️  LEFT', 'S': '⬇️  DOWN', 'D': '➡️  RIGHT'}
+    
+    print(Fore.YELLOW + f"Dodge {direction_name[direction]}! Press '{direction}':" + Style.RESET_ALL)
+    
+    try:
+        choice = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if choice == direction:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "💥 Bitten! (-15 HP)" + Style.RESET_ALL)
+            total_damage += 15
+    except:
+        total_damage += 15
+    
+    return total_damage
+
+
+def amalgamation_elemental_chaos():
+    """Combines Ifrit's fire, Frost Wyrm's ice, and Jörmungandr's venom"""
+    print(Fore.MAGENTA + "\n🔥❄️☠️ ELEMENTAL CHAOS! 🔥❄️☠️\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    # Three simultaneous hazards
+    print(Fore.RED + "FIRE from the left!" + Style.RESET_ALL)
+    print(Fore.CYAN + "ICE from the right!" + Style.RESET_ALL)
+    print(Fore.GREEN + "VENOM from above!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.YELLOW + "Which element do you prioritize defending against?" + Style.RESET_ALL)
+    print(Fore.WHITE + "1. 🔥 FIRE  2. ❄️  ICE  3. ☠️  VENOM" + Style.RESET_ALL)
+    
+    # One element deals full damage, others deal half
+    elements = {1: ('FIRE', 30), 2: ('ICE', 30), 3: ('VENOM', 30)}
+    worst_element = random.randint(1, 3)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        if choice == worst_element:
+            print(Fore.GREEN + f"✓ Blocked the worst of the {elements[worst_element][0]}!" + Style.RESET_ALL)
+            # Take damage from other two elements at half
+            other_damage = sum(damage // 2 for key, (name, damage) in elements.items() if key != choice)
+            total_damage = other_damage
+            print(Fore.YELLOW + f"💥 Hit by other elements! (-{total_damage} HP)" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + f"💥 The {elements[worst_element][0]} devastates you!" + Style.RESET_ALL)
+            total_damage = elements[worst_element][1]
+            print(Fore.RED + f"(-{total_damage} HP)" + Style.RESET_ALL)
+    except:
+        total_damage = 45
+        print(Fore.RED + "💥 Hit by EVERYTHING! (-45 HP)" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def amalgamation_cosmic_barrage():
+    """Combines Cthulhu's madness, Ægir's storms, and Megalodon's jaws"""
+    print(Fore.LIGHTMAGENTA_EX + "\n🌌 REALITY FRACTURES! 🌌\n" + Style.RESET_ALL)
+    
+    # Disorienting visual effect
+    symbols = ['@', '#', '$', '%', '&', '*', '!', '?']
+    for _ in range(5):
+        noise = ''.join(random.choice(symbols) for _ in range(60))
+        print(Fore.LIGHTBLACK_EX + noise + Style.RESET_ALL)
+        time.sleep(0.1)
+    
+    print()
+    print(Fore.MAGENTA + "The Amalgamation speaks in overlapping voices:" + Style.RESET_ALL)
+    voices = [
+        "You... killed... us...",
+        "We were guardians...",
+        "We protected these waters...",
+        "And you... MURDERED US!"
+    ]
+    
+    for voice in voices:
+        print(Fore.LIGHTBLACK_EX + f"*{voice}*" + Style.RESET_ALL)
+        time.sleep(0.8)
+    
+    print()
+    print(Fore.RED + "Focus through the madness!" + Style.RESET_ALL)
+    
+    # Math puzzle while disoriented
+    num1 = random.randint(8, 18)
+    num2 = random.randint(5, 12)
+    answer = num1 + num2
+    
+    print(Fore.YELLOW + f"What is {num1} + {num2}?" + Style.RESET_ALL)
+    
+    try:
+        start_time = time.time()
+        player_input = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        elapsed = time.time() - start_time
+        
+        if player_input == answer and elapsed < 4:
+            print(Fore.GREEN + "✓ Mental fortitude holds!" + Style.RESET_ALL)
+            return 0
+        elif player_input == answer:
+            print(Fore.YELLOW + "⚡ Correct, but the delay hurt! (-20 HP)" + Style.RESET_ALL)
+            return 20
+        else:
+            print(Fore.RED + "💥 Lost in the madness! (-35 HP)" + Style.RESET_ALL)
+            return 35
+    except:
+        print(Fore.RED + "💥 Mind shattered! (-35 HP)" + Style.RESET_ALL)
+        return 35
+
+
+def amalgamation_pirate_assault():
+    """Combines pirate cannons with multiple boss elements"""
+    print(Fore.RED + "\n⚓💀 PHANTOM FLEET ASSAULT! 💀⚓\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    # Cannon barrage - but with corrupted visuals
+    print(Fore.YELLOW + "Ghostly cannons fire!" + Style.RESET_ALL)
+    
+    cannon_positions = []
+    for i in range(5):
+        pos = random.randint(0, 9)
+        cannon_positions.append(pos)
+        
+        # Show loading
+        for frame in range(3):
+            display = [' '] * 10
+            display[pos] = '💀'
+            print("\r" + Fore.LIGHTBLACK_EX + "[" + ''.join(display) + "]" + Style.RESET_ALL, end='')
+            sys.stdout.flush()
+            time.sleep(0.15)
+        print()
+    
+    print()
+    print(Fore.CYAN + "Choose safe position (0-9):" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        hits = cannon_positions.count(choice)
+        if hits == 0:
+            print(Fore.GREEN + "✓ Safe zone!" + Style.RESET_ALL)
+        else:
+            damage = hits * 12
+            print(Fore.RED + f"💥 Hit by {hits} cannons! (-{damage} HP)" + Style.RESET_ALL)
+            total_damage = damage
+    except:
+        print(Fore.RED + "💥 Direct hit! (-40 HP)" + Style.RESET_ALL)
+        total_damage = 40
+    
+    return total_damage
+
+
+def amalgamation_morphing_attack():
+    """The boss randomly becomes one of the previous bosses for this attack"""
+    # Use simpler attacks that exist in the game
+    morphs = [
+        ("NESSIE'S FURY", "🐉", loch_ness_tidal_wave),
+        ("RIVER'S WRATH", "🐟", river_wrath_combo),
+        ("IFRIT'S FLAMES", "🔥", ifrit_lava_geyser),
+        ("FROST BREATH", "❄️", frost_wyrm_ice_spike_barrage),
+        ("KRAKEN'S GRASP", "🦑", kraken_crushing_grip),
+        ("PIRATE CANNONS", "⚓", pirate_cannon_barrage),
+    ]
+    
+    morph_name, icon, attack_func = random.choice(morphs)
+    
+    print(Fore.MAGENTA + f"\n{icon} THE AMALGAMATION MORPHS INTO {morph_name}! {icon}\n" + Style.RESET_ALL)
+    
+    # Morphing animation
+    morphing_frames = [
+        "💀",
+        "💀🌀",
+        "🌀💀🌀",
+        f"🌀{icon}🌀",
+        f"{icon}",
+    ]
+    
+    for frame in morphing_frames:
+        sys.stdout.write("\r" + Fore.CYAN + f"     {frame}     " + Style.RESET_ALL)
+        sys.stdout.flush()
+        time.sleep(0.3)
+    
+    print("\n")
+    print(Fore.RED + f"It uses the original {morph_name} attack!" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    # Execute the original boss attack
+    return attack_func()
+
+
+def amalgamation_ultimate_annihilation():
+    """The most devastating attack - used only below 25% HP"""
+    print(Fore.RED + "\n" + "="*60 + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "💀 ULTIMATE ANNIHILATION 💀" + Style.RESET_ALL)
+    print(Fore.RED + "="*60 + "\n" + Style.RESET_ALL)
+    
+    print(Fore.LIGHTBLACK_EX + "*All ten guardians scream as one*" + Style.RESET_ALL)
+    time.sleep(1)
+    print(Fore.LIGHTBLACK_EX + "*Their combined agony tears at reality itself*" + Style.RESET_ALL)
+    time.sleep(1)
+    print(Fore.RED + "*THIS IS YOUR JUDGMENT*" + Style.RESET_ALL)
+    time.sleep(1)
+    
+    print()
+    total_damage = 0
+    
+    # Four-phase ultimate attack
+    phases = [
+        ("Memory", "What was the first guardian you killed?"),
+        ("Guilt", "How many lives have you taken?"),
+        ("Despair", "Was it worth it?"),
+        ("Judgment", "Do you feel their pain?")
+    ]
+    
+    for phase_name, question in phases:
+        print()
+        print(Fore.MAGENTA + f"Phase: {phase_name}" + Style.RESET_ALL)
+        print(Fore.YELLOW + question + Style.RESET_ALL)
+        
+        # Visual distortion
+        for _ in range(3):
+            distortion = ''.join(random.choice(['▓', '▒', '░']) for _ in range(50))
+            print(Fore.LIGHTBLACK_EX + distortion + Style.RESET_ALL)
+            time.sleep(0.1)
+        
+        print()
+        print(Fore.CYAN + "Press SPACE to survive this phase:" + Style.RESET_ALL)
+        
+        try:
+            start_time = time.time()
+            player_input = input(Fore.GREEN + "> " + Style.RESET_ALL)
+            elapsed = time.time() - start_time
+            
+            if elapsed < 2:
+                print(Fore.GREEN + "✓ Survived!" + Style.RESET_ALL)
+            else:
+                damage = random.randint(15, 25)
+                print(Fore.RED + f"💥 Too slow! (-{damage} HP)" + Style.RESET_ALL)
+                total_damage += damage
+        except:
+            damage = random.randint(15, 25)
+            total_damage += damage
+        
+        time.sleep(0.5)
+    
+    print()
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "★ IMPOSSIBLY, YOU SURVIVED THE ULTIMATE! ★" + Style.RESET_ALL)
+    else:
+        print(Fore.RED + f"The guardians' judgment: {total_damage} damage!" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
                                 _..--+~/@-@--.
@@ -4598,6 +4921,213 @@ FROST_WYRM = Boss(
     },
     spare_threshold=30
 )
+
+AMALGAMATION_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         💀 THE AMALGAMATION OF HORRORS 💀                 ║
+    ║          [Fusion of the Ten Slain Guardians]              ║
+    ║              [Your Sins Made Manifest]                    ║
+    ╚════════════════════════════════════════════════════════════╝
+    
+            ⠀⠀⠀⠀⠀⣀⣤⣴⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣤⣀⠀⠀⠀⠀⠀
+            ⠀⠀⢀⣴⣿⡿⠛💀⠉⠉⠉⠉⠉⠉⠉💀⠛⢿⣿⣦⡀⠀⠀
+            ⠀⣠⣾⡿🐉⣠⣴⣶⣿⣿⣿⣿⣿⣿⣶⣦⡀🦑⢿⣷⣄⠀
+            ⢠⣿⡿⠁⣰🐟⠛⠛⠛⣿⣿⠛⠛⠛🦈⣆⠈⢿⣿⡄
+            ⣾⣿⠃⢠⡿⠃⠀⠀⠀⣿⣿⡇⠀⠀⠀⠘⢿⡄⠘⣿⣷
+            ⣿⣿⠀⣾⡇⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⢸⣷⠀⣿⣿
+            ⣿⣿⠀⣿⡇⠀🔥⠀⢸⣿⡇⠀❄️⠀⢸⣿⠀⣿⣿
+            ⢿⣿⡄⢹⣇⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⣸⡟⢀⣿⡿
+            ⠘⣿⣷⡀⠻⣦⡀⠀⢀⣿⣿⣿⡀⠀⢀⣴⠟⢀⣾⣿⠃
+            ⠀⠈⢿⣿⣦⡈⠛⠿⠿🐙💀🦑⠿⠿⠛⢁⣴⣿⡿⠁⠀
+            ⠀⠀⠀⠙⢿⣿⣷⣶⣤⣤⣤⣤⣤⣤⣶⣾⣿⡿⠋⠀⠀⠀
+            ⠀⠀⠀⠀⠀⠉⠛⠿⢿⣿⣿⣿⣿⡿⠿⠛⠉⠀⠀⠀⠀⠀
+            
+            [A writhing mass of nightmares...]
+            [Ten guardians... fused into one horror...]
+            [Their screams echo as one voice...]
+"""
+
+
+# ===== SECTION 3: BOSS DEFINITION =====
+# Add this with the other boss definitions (around line 5000)
+
+AMALGAMATION = Boss(
+    name="The Amalgamation of Horrors",
+    hp=1500,
+    defense=30,
+    attacks=[
+        BossAttack("Fusion Strike", amalgamation_fusion_strike, (0, 60), "Multi-phase combination attack!"),
+        BossAttack("Elemental Chaos", amalgamation_elemental_chaos, (0, 45), "Fire, Ice, and Venom converge!"),
+        BossAttack("Cosmic Barrage", amalgamation_cosmic_barrage, (0, 35), "Reality fractures!"),
+        BossAttack("Phantom Fleet", amalgamation_pirate_assault, (0, 40), "Ghostly cannons fire!"),
+        BossAttack("Morphing Attack", amalgamation_morphing_attack, (0, 50), "Becomes a previous boss!"),
+        BossAttack("ULTIMATE ANNIHILATION", amalgamation_ultimate_annihilation, (0, 90), "The judgment of ten guardians!")
+    ],
+    ascii_art=AMALGAMATION_ASCII,
+    dialogue={
+        "intro": [
+            "*The waters grow still... too still*",
+            "*A wrongness permeates the air*",
+            "*Something is rising from the deep*",
+            "*But it's not one thing*",
+            "*It's... everything*",
+            "💀💀💀",
+            "*Ten voices scream as one*",
+            "*'YOU... KILLED... US... ALL...'*",
+            "*A mass of writhing nightmares emerges*",
+            "*Nessie's neck twisted with Kraken tentacles*",
+            "*River Guardian fins melded to Jörmungandr's scales*",
+            "*Ifrit's flames burning cold with Frost Wyrm's ice*",
+            "*Cthulhu's madness woven through it all*",
+            "*This is no guardian*",
+            "*This is VENGEANCE*",
+            "*'WE WERE PROTECTORS'*",
+            "*'WE GUARDED THESE WATERS FOR MILLENNIA'*",
+            "*'AND YOU SLAUGHTERED US LIKE ANIMALS'*",
+            "*The Amalgamation writhes with impossible geometry*",
+            "*Colors that shouldn't exist*",
+            "*Sounds that make your bones ache*",
+            "*'NOW YOU FACE WHAT YOU CREATED'*",
+            "*'THE SUM OF YOUR SINS'*",
+            "*'MADE FLESH'*"
+        ],
+        "default": [
+            "*The creature shifts between forms*",
+            "*One moment Nessie's sorrowful eyes*",
+            "*The next Kraken's ancient fury*",
+            "*'We remember... everything...'*",
+            "*'Every moment we protected these waters'*",
+            "*'Every life we saved'*",
+            "*'And then... YOU came'*"
+        ],
+        "hit": [
+            "*Your attack strikes the amalgamated mass*",
+            "*But which guardian did you hurt?*",
+            "*Nessie's cry of pain*",
+            "*Ifrit's roar of rage*",
+            "*The River Guardian's growl*",
+            "*All at once*",
+            "*'DOES IT HURT?'*",
+            "*'GOOD'*",
+            "*'NOW YOU KNOW HOW WE FELT'*"
+        ],
+        "low_hp": [
+            "*The Amalgamation begins to fracture*",
+            "*Ten voices screaming in dissonant harmony*",
+            "*'No... not again...'*",
+            "*'You can't... kill us... twice...'*",
+            "*Nessie's voice: 'I just wanted... to protect them...'*",
+            "*River Guardian's voice: 'I was ancient... before humans...'*",
+            "*Ifrit's voice: 'I only sought... freedom...'*",
+            "*Kraken's voice: 'I held back... the darkness...'*",
+            "*Cthulhu's voice: 'I was... already dead...'*",
+            "*Ten guardians... reduced to this*",
+            "*'This is... your legacy... murderer...'*"
+        ],
+        "merciful": [
+            "*You lower your weapon*",
+            "*And you speak*",
+            "*Not to the monster*",
+            "*But to the guardians within*",
+            "*'I'm sorry'*",
+            "*The Amalgamation FREEZES*",
+            "*Ten voices... silent for the first time*",
+            "*'...what?'*",
+            "*You continue speaking*",
+            "*'I was wrong. I killed you all.'*",
+            "*'You were protectors, and I murdered you.'*",
+            "*'I cannot undo what I've done.'*",
+            "*'But I can... try to understand.'*",
+            "*The writhing mass... trembles*",
+            "*Nessie's voice, softer: '...you remember us?'*",
+            "*'Not as monsters... but as... guardians?'*"
+        ],
+        "spare_ready": [
+            "*The Amalgamation can be SPARED*",
+            "*But it's not one choice*",
+            "*It's ten choices*",
+            "*To spare each guardian you killed*",
+            "*To acknowledge what they were*",
+            "*'We... we don't want to be this...'*",
+            "*'This fusion... this horror...'*",
+            "*'If you truly understand...'*",
+            "*'If you truly regret...'*",
+            "*'...maybe we can finally rest'*"
+        ],
+        "spared": [
+            "*You reach out to the Amalgamation*",
+            "*And you name them*",
+            "*'Nessie... ancient protector of the loch...'*",
+            "*'River Guardian... keeper of the sacred rapids...'*",
+            "*'Crimson Tide... defenders of freedom...'*",
+            "*'Kraken... last of your kind...'*",
+            "*'Jörmungandr... World Serpent...'*",
+            "*'Ægir... Norse sea giant...'*",
+            "*'Cthulhu... dreamer in darkness...'*",
+            "*'Ifrit... bound flame...'*",
+            "*'Megalodon... ancient ghost...'*",
+            "*'Frost Wyrm... keeper of ice...'*",
+            "*With each name, the fusion... softens*",
+            "*The writhing slows*",
+            "*The screaming quiets*",
+            "*Until ten distinct forms hover before you*",
+            "*No longer merged*",
+            "*No longer agonized*",
+            "*'Thank you... for seeing us...'*",
+            "*'For remembering what we were...'*",
+            "*'We can't forgive you... not truly...'*",
+            "*'But we can... let go...'*",
+            "*One by one, the guardians fade*",
+            "*Not in death*",
+            "*But in peace*",
+            "*'The waters will remember us...'*",
+            "*'As protectors... not as this...'*",
+            "*'That is... enough...'*",
+            "*The last guardian - Nessie - lingers*",
+            "*'You carry our memory now... Fisher...'*",
+            "*'Carry it well...'*",
+            "*Then... silence*",
+            "*The waters are still*",
+            "*But it's a different stillness*",
+            "*Not the stillness of death*",
+            "*But of... rest*"
+        ],
+        "killed": [
+            "*Your final attack shatters the Amalgamation*",
+            "*But it doesn't die*",
+            "*It... explodes*",
+            "*Ten guardians torn apart AGAIN*",
+            "*Their death cries echo across all waters*",
+            "*Every ocean*",
+            "*Every river*",
+            "*Every lake*",
+            "*'YOU... MONSTER...'*",
+            "*'TWICE... YOU KILLED US... TWICE...'*",
+            "*The fragments dissolve into black water*",
+            "*Corrupting everything they touch*",
+            "*'WE CURSE YOU...'*",
+            "*'EVERY FISH YOU CATCH WILL TASTE OF ASH'*",
+            "*'EVERY WATER YOU TOUCH WILL RECOIL'*",
+            "*'THE SEAS THEMSELVES WILL KNOW YOUR NAME'*",
+            "*'AS THE ONE WHO KILLED THEIR GUARDIANS'*",
+            "*'NOT ONCE... BUT TWICE...'*",
+            "*The black water spreads*",
+            "*Poisoning*",
+            "*Corrupting*",
+            "*Dying*",
+            "*You have not defeated the Amalgamation*",
+            "*You have created something worse*",
+            "*A wound in the ocean's memory*",
+            "*That will NEVER heal*",
+            "*The waters turn black around you*",
+            "*And you realize*",
+            "*You are not the hero of this story*",
+            "*You never were*"
+        ]
+    },
+    spare_threshold=20
+)
+
 
 # Boss item that triggers the fight
 class BossItem:
@@ -10735,6 +11265,20 @@ class Game:
             print(Fore.CYAN + f"╚═══════════════════════════════════════╝" + Style.RESET_ALL)
             print(Fore.YELLOW + location.description + Style.RESET_ALL)
             print()
+
+            if (location.name == "Space Station Aquarium" and 
+                self.check_amalgamation_trigger() and 
+                "The Amalgamation of Horrors" not in self.defeated_bosses):
+                
+                print(Fore.RED + "="*60 + Style.RESET_ALL)
+                print(Fore.RED + "  THE VOID SCREAMS " + Style.RESET_ALL)
+                print(Fore.RED + "="*60 + Style.RESET_ALL)
+                print()
+                print(Fore.LIGHTBLACK_EX + "Beyond the observation windows..." + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + "The stars are... wrong." + Style.RESET_ALL)
+                print(Fore.LIGHTBLACK_EX + "Something impossible exists in the void." + Style.RESET_ALL)
+                print(Fore.RED + "Ten voices echo through the station." + Style.RESET_ALL)
+                print()
             
             # Render the map
             for y, row in enumerate(location_map.layout):
@@ -11218,6 +11762,27 @@ class Game:
                 return
             
             input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
+
+
+    def check_amalgamation_trigger(self):
+        """Check if player has killed all 10 guardians"""
+        required_bosses = [
+            "Loch Ness Monster", 
+            "The River Guardian", 
+            "The Crimson Tide", 
+            "The Kraken", 
+            "Jörmungandr", 
+            "Ægir", 
+            "Cthulhu", 
+            "Ifrit the Flamebringer", 
+            "The Megalodon's Ghost", 
+            "The Frost Wyrm"
+        ]
+    
+
+        all_defeated = all(boss in self.defeated_bosses for boss in required_bosses)
+        
+        return all_defeated and self.karma <= -100
     
     def use_boss_item(self):
         """Use a boss item to trigger boss fight"""
@@ -11269,6 +11834,7 @@ class Game:
         print(Fore.CYAN + "8. Megalodon ghost (volcanic lake) " + Style.RESET_ALL)
         print(Fore.CYAN + "9. Ægir (Arctic waters)" + Style.RESET_ALL)
         print(Fore.CYAN + "10. Frost wyrm (Arctic waters)" + Style.RESET_ALL)
+        print(Fore.WHITE + "11. Amalgamation of Horrors (KARMA BOSS)" + Style.RESET_ALL)
         print(Fore.WHITE + "0. Back" + Style.RESET_ALL)
         
         choice = input(Fore.GREEN + "\nSpawn which boss? " + Style.RESET_ALL)
@@ -11293,6 +11859,8 @@ class Game:
             self.start_boss_fight(AEGIR)
         elif choice == '10':
             self.start_boss_fight(FROST_WYRM)
+        elif choice == '11':
+            self.start_boss_fight(AMALGAMATION)
         elif choice == '0':
             return
         else:
