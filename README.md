@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 ![Code Size](https://img.shields.io/badge/code%20size-~140KB-informational.svg)
 ![Fish Species](https://img.shields.io/badge/fish%20species-150+-success.svg)
-![Locations](https://img.shields.io/badge/locations-10-blueviolet.svg)
+![Locations](https://img.shields.io/badge/locations-6-blueviolet.svg)
 ![Boss Battles](https://img.shields.io/badge/boss%20battles-10-red.svg)
 ![Status](https://img.shields.io/badge/status-full%20release-brightgreen.svg)
 ![Game Type](https://img.shields.io/badge/type-RPG%20%2F%20Story%20Rich-ff69b4.svg)
