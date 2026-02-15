@@ -7,7 +7,7 @@
 ![Code Size](https://img.shields.io/badge/code%20size-~140KB-informational.svg)
 ![Fish Species](https://img.shields.io/badge/fish%20species-150+-success.svg)
 ![Locations](https://img.shields.io/badge/locations-10-blueviolet.svg)
-![Boss Battles](https://img.shields.io/badge/boss%20battles-10%20GUARDIANS-red.svg)
+![Boss Battles](https://img.shields.io/badge/boss%20battles-10-red.svg)
 ![Status](https://img.shields.io/badge/status-full%20release-brightgreen.svg)
 ![Game Type](https://img.shields.io/badge/type-RPG%20%2F%20Story%20Rich-ff69b4.svg)
 ![Terminal](https://img.shields.io/badge/interface-terminal%20Unicode-black.svg)
@@ -16,7 +16,7 @@
 ![Updates](https://img.shields.io/badge/updates-active-success.svg)
 ![Made With](https://img.shields.io/badge/made%20with-%E2%9D%A4%EF%B8%8F-red.svg)
 ![Music System](https://img.shields.io/badge/music-dynamic%20soundtrack-purple.svg)
-![Endings](https://img.shields.io/badge/endings-4%20unique-yellow.svg)
+![Endings](https://img.shields.io/badge/endings-3%20unique-yellow.svg)
 
 
 
