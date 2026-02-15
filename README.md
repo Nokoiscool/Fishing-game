@@ -198,20 +198,6 @@ After completing any ending, start **New Game+** with:
 - **Ismagmais** - Original soundtrack composition
 - **Noko** - Additional tracks and audio implementation
 
-### Playtesters
-Special thanks to our beta testers who helped refine the experience:
-- **Crimson** 
-- **Pat** 
-- **Aisers** 
-- **Morten** 
-- **Adrian** 
-
-### Special Thanks
-- **Kjetil**
-- **Christoffer**
-- **BigLoaf96**
-
-
 ### Technology
 - **Python** - Programming language
 - **colorama** - Terminal color support
@@ -220,7 +206,6 @@ Special thanks to our beta testers who helped refine the experience:
 ---
 
 
----
 
 ## 🐛 Support
 
