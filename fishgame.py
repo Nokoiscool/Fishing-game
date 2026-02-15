@@ -40,14 +40,14 @@ def end_credits(player_name="Player"):
     ║  - Ismagmais                                                 ║ 
     ║  - Noko                                                      ║
     ║                                                              ║
-    ║  playtesters:                                                ║ 
+    ║  Playtesters:                                                ║ 
     ║  - "Crimson"                                                 ║
     ║  - "Pat"                                                     ║
     ║  - "Aisers"                                                  ║
     ║  - "Morten"                                                  ║
     ║  - "Adrian"                                                  ║
     ║                                                              ║
-    ║ special thanks:                                              ║
+    ║ Special thanks:                                              ║
     ║  - Kjetil                                                    ║
     ║  - Christoffer                                               ║
     ║  - BigLoaf96                                                 ║
