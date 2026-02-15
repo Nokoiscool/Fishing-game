@@ -11,11 +11,453 @@ from colorama import Fore, Style, init
 from datetime import datetime
 
 # Game version for save file compatibility
-GAME_VERSION = "0.7.2"
+GAME_VERSION = "1.0.0"
 
 # Music system - cross-platform support
 current_music = None
 music_enabled = True
+
+
+def end_credits(player_name="Player"):
+    credits = f"""
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                     THANK YOU FOR PLAYING!                   ║
+    ║                                                              ║
+    ║  Developed:                                                  ║
+    ║   -Noko                                                      ║
+    ║                                                              ║
+    ║ Linux port:                                                  ║
+    ║   -Beff                                                      ║     
+    ║                                                              ║
+    ║  Story:                                                      ║
+    ║   -Noko                                                      ║
+    ║                                                              ║
+    ║  Art:                                                        ║
+    ║   -https://www.asciiart.eu/                                  ║
+    ║   -Noko                                                      ║
+    ║                                                              ║
+    ║  Music:                                                      ║
+    ║  -Ismagmais                                                  ║
+    ║  -Noko                                                       ║
+    ║                                                              ║
+    ║  playtesters:                                                ║ 
+    ║  - "Crimson"                                                 ║
+    ║  - "Pat"                                                     ║
+    ║  - "Aisers"                                                  ║
+    ║                                                              ║
+    ║ special thanks:                                              ║
+    ║  - Kjetil                                                    ║
+    ║  - Christoffer                                               ║
+    ║                                                              ║
+    ║   - You, {player_name}                                       ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+    """
+
+    #credits roll animation
+    lines = credits.split("\n")
+    print("\n" * (len(lines) + 2))
+    for line in lines:
+        print(line)
+        time.sleep(0.1)
+
+
+def post_ending_menu(game_instance, ending_type):
+    """Menu displayed after an ending - allows New Game+, New Game, or Continue"""
+    print("\n" * 2)
+    print(Fore.CYAN + "╔══════════════════════════════════════════════════════════════╗" + Style.RESET_ALL)
+    print(Fore.CYAN + "║                    WHAT WOULD YOU LIKE TO DO?                ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "╚══════════════════════════════════════════════════════════════╝" + Style.RESET_ALL)
+    print()
+    print(Fore.LIGHTMAGENTA_EX + "1. New Game+ (Harder difficulty, keep some progress)" + Style.RESET_ALL)
+    print(Fore.GREEN + "2. New Game (Start fresh)" + Style.RESET_ALL)
+    print(Fore.YELLOW + "3. Continue on Save (Explore the world after ending)" + Style.RESET_ALL)
+    print(Fore.RED + "4. Exit Game" + Style.RESET_ALL)
+    print()
+    
+    choice = input(Fore.CYAN + "Your choice: " + Style.RESET_ALL)
+    
+    if choice == '1':
+        # New Game+
+        start_new_game_plus(game_instance, ending_type)
+    elif choice == '2':
+        # New Game
+        print(Fore.YELLOW + "\nStarting a new game..." + Style.RESET_ALL)
+        time.sleep(1)
+        # Restart the game by calling main
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    elif choice == '3':
+        # Continue on save
+        print(Fore.GREEN + "\nContinuing your journey..." + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + "The ending has passed, but your story continues..." + Style.RESET_ALL)
+        time.sleep(2)
+        # Just return to let the game continue
+        return True
+    elif choice == '4':
+        # Exit
+        print(Fore.GREEN + "\nThanks for playing! 🎣" + Style.RESET_ALL)
+        sys.exit(0)
+    else:
+        print(Fore.RED + "Invalid choice, exiting..." + Style.RESET_ALL)
+        time.sleep(1)
+        sys.exit(0)
+
+
+def start_new_game_plus(old_game, ending_type):
+    """Start New Game+ with increased difficulty and some retained progress"""
+    print("\n" * 2)
+    print(Fore.LIGHTMAGENTA_EX + "╔══════════════════════════════════════════════════════════════╗" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "║                     🌟 NEW GAME+ 🌟                          ║" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "╚══════════════════════════════════════════════════════════════╝" + Style.RESET_ALL)
+    print()
+    print(Fore.YELLOW + "Starting a new adventure with:" + Style.RESET_ALL)
+    print(Fore.GREEN + "  ✓ All fish encyclopedia entries kept" + Style.RESET_ALL)
+    print(Fore.GREEN + "  ✓ 50% of your money carried over" + Style.RESET_ALL)
+    print(Fore.GREEN + "  ✓ Character stats retained" + Style.RESET_ALL)
+    print(Fore.RED + "  ✗ Bosses reset (ready to fight again!)" + Style.RESET_ALL)
+    print(Fore.RED + "  ✗ Inventory cleared" + Style.RESET_ALL)
+    print(Fore.RED + "  ✗ Locations locked again" + Style.RESET_ALL)
+    print()
+    print(Fore.LIGHTMAGENTA_EX + "Difficulty increased:" + Style.RESET_ALL)
+    print(Fore.YELLOW + "  • Boss HP +50%" + Style.RESET_ALL)
+    print(Fore.YELLOW + "  • Boss damage +25%" + Style.RESET_ALL)
+    print(Fore.YELLOW + "  • Rarer fish are harder to catch" + Style.RESET_ALL)
+    print(Fore.YELLOW + "  • Shop prices increased" + Style.RESET_ALL)
+    print()
+    
+    input(Fore.LIGHTBLACK_EX + "Press Enter to begin New Game+..." + Style.RESET_ALL)
+    
+    # Create new game+ character data
+    ng_plus_data = {
+        'name': old_game.name,
+        'stats': old_game.stats.copy(),
+        'difficulty_name': 'New Game+',
+        'difficulty_mult': old_game.difficulty_mult * 1.5,  # Make it harder
+        'ng_plus': True,
+        'ng_plus_money': int(old_game.money * 0.5),
+        'ng_plus_encyclopedia': old_game.encyclopedia.copy(),
+        'ng_plus_ending': ending_type
+    }
+    
+    # Create new game instance
+    new_game = Game(ng_plus_data)
+    new_game.start_game()
+
+
+def bad_ending(player_name="Player", game_instance=None):
+    """Bad ending - Defeated the Amalgamation (killed all 10 guardians)"""
+    stop_music()
+    play_music("ending_bad")
+    
+    print("\n" * 3)
+    print(Fore.RED + "=" * 60 + Style.RESET_ALL)
+    print(Fore.RED + "            💀 BAD ENDING: THE SILENT WATERS 💀" + Style.RESET_ALL)
+    print(Fore.RED + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    epilogue = [
+        "",
+        "The Amalgamation falls silent, its borrowed voices fading into the void.",
+        "Ten guardians, ancient protectors of the waters, are no more.",
+        "",
+        "Without their watchful presence, the balance shatters.",
+        "",
+        "AquaTech, unchallenged, expands rapidly.",
+        "Their drilling rigs multiply like mechanical locusts.",
+        "Industrial nets sweep the oceans clean.",
+        "Chemical runoff turns rivers into toxic streams.",
+        "",
+        "Within a decade, AquaTech becomes the world's largest corporation.",
+        "They own the water. All of it.",
+        "Every drop that falls, every current that flows, is monitored, measured, monetized.",
+        "",
+        "The rivers remember the Guardian who protected them - but no longer flows freely.",
+        "The loch remembers Nessie's ancient sorrow - now filled with processing plants.",
+        "The ocean remembers the Kraken's vigilance - now silent and empty.",
+        "",
+        "Fish populations collapse. Entire species vanish overnight.",
+        "The Encyclopedia of Living Waters fills with entries marked 'EXTINCT'.",
+        "",
+        f"{player_name}, you are celebrated as the hero who defeated the monsters.",
+        "AquaTech names a drilling platform after you.",
+        "Children are taught your name in schools.",
+        "",
+        "But at night, you dream of ten voices.",
+        "Screaming.",
+        "",
+        "The waters remember everything.",
+        "And they will never forgive what you've done.",
+        "",
+        "THE END (?)"
+    ]
+    
+    for line in epilogue:
+        if line == "":
+            print()
+        else:
+            print(Fore.LIGHTBLACK_EX + line + Style.RESET_ALL)
+        time.sleep(1.5)
+    
+    print()
+    print(Fore.RED + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    end_credits(player_name)
+    
+    # Achievement message
+    print(Fore.RED + "\n💀 Achievement Unlocked: 'The Destroyer' 💀" + Style.RESET_ALL)
+    print(Fore.LIGHTBLACK_EX + "You chose power over wisdom. The waters will remember." + Style.RESET_ALL)
+    time.sleep(3)
+    
+    # Post-ending menu
+    if game_instance:
+        return post_ending_menu(game_instance, 'bad')
+    else:
+        sys.exit(0)
+
+
+def medium_ending(player_name="Player", game_instance=None):
+    """Medium ending - Defeated Stellar Leviathan without meeting karma requirement"""
+    stop_music()
+    play_music("ending_medium")
+    
+    print("\n" * 3)
+    print(Fore.YELLOW + "=" * 60 + Style.RESET_ALL)
+    print(Fore.YELLOW + "      ⚖️ MEDIUM ENDING: THE CYCLE CONTINUES ⚖️" + Style.RESET_ALL)
+    print(Fore.YELLOW + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    epilogue = [
+        "",
+        "The Stellar Leviathan retreats into the cosmos, its song fading.",
+        "You have proven your strength, but not your wisdom.",
+        "",
+        "The guardians you defeated remain silent in their graves.",
+        "The guardians you spared return to their domains, wary and distant.",
+        "",
+        "New guardians begin to emerge from the waters.",
+        "Younger. Angrier. Less patient than their predecessors.",
+        "The River births a new protector, born of pollution and rage.",
+        "The Loch's sorrow crystallizes into something darker than Nessie ever was.",
+        "",
+        "AquaTech continues its operations, neither growing nor shrinking.",
+        "The Old Fisherman stands at the docks, arguing with their representatives.",
+        "Some weeks they win concessions. Some weeks they lose.",
+        "The battle never ends. The waters never rest.",
+        "",
+        "Hub Island remains a refuge, but the conflicts beyond its shores intensify.",
+        "Corporations exploit. Activists protest. Guardians strike back.",
+        "The cycle repeats, generation after generation.",
+        "",
+        f"{player_name}, you return to Hub Island often.",
+        "The NPC Fisherman greets you warmly, but his eyes hold questions:",
+        "'Could you have done more? Should you have chosen differently?'",
+        "",
+        "The waters remember your choices.",
+        "Both the lives you took and the lives you spared.",
+        "",
+        "The future is uncertain.",
+        "Nothing has been solved.",
+        "Nothing has been lost.",
+        "The waters flow on, as they always have.",
+        "",
+        "THE END (?)"
+    ]
+    
+    for line in epilogue:
+        if line == "":
+            print()
+        else:
+            print(Fore.WHITE + line + Style.RESET_ALL)
+        time.sleep(1.5)
+    
+    print()
+    print(Fore.YELLOW + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    end_credits(player_name)
+    
+    # Achievement message
+    print(Fore.YELLOW + "\n⚖️ Achievement Unlocked: 'The Survivor' ⚖️" + Style.RESET_ALL)
+    print(Fore.WHITE + "You survived, but did you truly succeed?" + Style.RESET_ALL)
+    time.sleep(3)
+    
+    # Post-ending menu
+    if game_instance:
+        return post_ending_menu(game_instance, 'medium')
+    else:
+        sys.exit(0)
+
+
+def good_ending(player_name="Player", game_instance=None):
+    """Good ending - Defeated AquaTech Mech with all guardians spared"""
+    stop_music()
+    play_music("ending_good")
+    
+    print("\n" * 3)
+    print(Fore.GREEN + "=" * 60 + Style.RESET_ALL)
+    print(Fore.GREEN + "    ✨ GOOD ENDING: THE WATERS UNITED ✨" + Style.RESET_ALL)
+    print(Fore.GREEN + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    victory_scene = [
+        "",
+        "The AquaTech Megalodon Mech crashes into the ocean depths.",
+        "Its systems spark and die, another monument to hubris.",
+        "",
+        "The guardians surround you, their ancient eyes grateful.",
+        "Nessie's mournful call echoes across the waters - but now, there's hope in it.",
+        "The River Guardian's current runs clean and swift.",
+        "The Kraken's tentacles wave in what might be... a salute?",
+        "",
+        "Above, the Stellar Leviathan sings.",
+        "Every fish in every ocean sings with it.",
+        "A chorus of celebration that resonates through water itself.",
+        "",
+        "You return to Hub Island not as a conqueror, but as a friend.",
+        "",
+    ]
+    
+    for line in victory_scene:
+        if line == "":
+            print()
+        else:
+            print(Fore.LIGHTCYAN_EX + line + Style.RESET_ALL)
+        time.sleep(1.5)
+    
+    print(Fore.LIGHTMAGENTA_EX + "         🎉 THE CELEBRATION BEGINS! 🎉" + Style.RESET_ALL)
+    print()
+    time.sleep(2)
+    
+    party = [
+        "The entire island gathers at the docks.",
+        "The Old Fisherman pours drinks for everyone - even the fish.",
+        "Captain Redbeard's crew plays fiddle music so lively the waves dance.",
+        "Dr. Holloway presents her research to a crowd that finally believes her.",
+        "MacTavish tells stories of Nessie's glory days to anyone who'll listen.",
+        "",
+        "Ægir brings a storm that's somehow... festive? Thunder that sounds like applause.",
+        "Ifrit lights fireworks that burn underwater.",
+        "The Frost Wyrm creates an ice sculpture of your victory.",
+        "Cthulhu... watches. Approvingly? You think? It's hard to tell.",
+        "",
+        f"They lift you on their shoulders - humans and guardians together.",
+        f"'{player_name}! {player_name}! {player_name}!'",
+        "",
+        "It's the best day of your life.",
+        ""
+    ]
+    
+    for line in party:
+        if line == "":
+            print()
+        else:
+            print(Fore.YELLOW + line + Style.RESET_ALL)
+        time.sleep(1.5)
+    
+    print()
+    time.sleep(1)
+    
+    end_credits(player_name)
+    
+    print()
+    print(Fore.CYAN + "=" * 60 + Style.RESET_ALL)
+    print(Fore.CYAN + "                      EPILOGUE" + Style.RESET_ALL)
+    print(Fore.CYAN + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    epilogue = [
+        "",
+        "Six months later...",
+        "",
+        "AquaTech Industries faces the largest environmental lawsuit in history.",
+        "Evidence of their illegal drilling, their mechanical guardian, their exploitation",
+        "spreads across every news network worldwide.",
+        "",
+        "Dr. Holloway's research, once dismissed, becomes foundational.",
+        "Scientists finally accept what fishers have always known:",
+        "The waters are conscious. The fish are aware. Nature remembers.",
+        "",
+        "AquaTech's stock price collapses.",
+        "Their CEO, John AquaTech, stands before cameras and does something",
+        "unprecedented in corporate history:",
+        "",
+        "He apologizes.",
+        "",
+        "'We were wrong. We exploited. We destroyed. We treated the ocean",
+        "as a resource to extract rather than a living system to respect.'",
+        "",
+        "'We cannot undo what we've done. But we can stop doing more harm.'",
+        "",
+        "'Effective immediately, AquaTech is ceasing all drilling operations.'",
+        "'We are funding ocean restoration. Guardian protection programs.'",
+        "'A complete shift from exploitation to stewardship.'",
+        "",
+        "'This is not enough. It can never be enough. But it's a start.'",
+        "",
+        "The apology is accepted by some. Rejected by others.",
+        "Trust, once broken, takes generations to rebuild.",
+        "",
+        "But it's a beginning.",
+        "",
+        "AquaTech, stripped of its exploitative practices, eventually goes bankrupt.",
+        "The assets are bought by a collective of fishers, scientists, and",
+        "environmental groups who transform it into something new:",
+        "",
+        "The Global Waters Protection Initiative.",
+        "",
+        "Their mission: To listen to the waters, protect the guardians,",
+        "and ensure humanity learns to fish sustainably.",
+        "",
+        f"{player_name}, you become their spokesperson.",
+        "Not because you wanted fame, but because the guardians trust you.",
+        "",
+        "You travel the world, teaching others what you learned:",
+        "Fishing isn't about taking. It's about relationship.",
+        "The water decides. Always.",
+        "",
+        "The River Guardian blesses fishing communities with abundance.",
+        "Nessie guides ships through her loch without fear.",
+        "The Kraken's rift remains sealed, but you visit sometimes.",
+        "The tentacles wave. You wave back.",
+        "",
+        "The Stellar Leviathan still sings in space.",
+        "And sometimes, when you fish late at night,",
+        "you swear you can hear it:",
+        "",
+        "A cosmic harmony that says:",
+        "'The waters remember. And they are grateful.'",
+        "",
+        f"{player_name} and the guardians...",
+        "",
+        "...lived happily ever after.",
+        "",
+        "THE END"
+    ]
+    
+    for line in epilogue:
+        if line == "":
+            print()
+        else:
+            print(Fore.GREEN + line + Style.RESET_ALL)
+        time.sleep(1.5)
+    
+    print()
+    print(Fore.LIGHTGREEN_EX + "=" * 60 + Style.RESET_ALL)
+    time.sleep(2)
+    
+    # Achievement message
+    print(Fore.LIGHTGREEN_EX + "\n✨ Achievement Unlocked: 'The True Fisher' ✨" + Style.RESET_ALL)
+    print(Fore.LIGHTCYAN_EX + "You proved that humanity and nature can coexist." + Style.RESET_ALL)
+    print(Fore.WHITE + "The waters will remember your mercy forever." + Style.RESET_ALL)
+    time.sleep(3)
+    
+    # Post-ending menu
+    if game_instance:
+        return post_ending_menu(game_instance, 'good')
+    else:
+        sys.exit(0)
+
 
 def play_music(track_name):
     """Play background music with error handling"""
@@ -2996,6 +3438,397 @@ def frost_wyrm_permafrost_prison():
         return damage
 
 
+# ===== STELLAR LEVIATHAN (COSMIC SPACE WHALE) ATTACKS =====
+
+def stellar_leviathan_gravity_waves():
+    """Gravity-based attack with spatial distortion"""
+    print(Fore.LIGHTMAGENTA_EX + "\n🌌 GRAVITY WAVES RIPPLE THROUGH SPACE! 🌌\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.CYAN + "The Stellar Leviathan warps space around itself!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Phase 1: GRAVITATIONAL CURRENTS!" + Style.RESET_ALL)
+    print()
+    
+    # Show gravity field (5x5 grid)
+    grid_size = 5
+    whale_pos = (2, 2)  # Center
+    
+    print(Fore.LIGHTBLACK_EX + "Gravity field visualization:" + Style.RESET_ALL)
+    for y in range(grid_size):
+        row = ""
+        for x in range(grid_size):
+            dist = abs(x - whale_pos[0]) + abs(y - whale_pos[1])
+            if (x, y) == whale_pos:
+                row += Fore.LIGHTMAGENTA_EX + "🐋 " + Style.RESET_ALL
+            elif dist <= 1:
+                row += Fore.RED + "⚠️ " + Style.RESET_ALL
+            elif dist == 2:
+                row += Fore.YELLOW + "◯ " + Style.RESET_ALL
+            else:
+                row += Fore.BLUE + "· " + Style.RESET_ALL
+        print(row)
+    
+    time.sleep(2)
+    print()
+    print(Fore.CYAN + "Choose a safe position (row col) away from the gravity well:" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).strip().split()
+        y, x = int(response[0]), int(response[1])
+        
+        if 0 <= x < grid_size and 0 <= y < grid_size:
+            dist = abs(x - whale_pos[0]) + abs(y - whale_pos[1])
+            if dist > 2:
+                print(Fore.GREEN + "✓ Safe from the gravity well!" + Style.RESET_ALL)
+            elif dist == 2:
+                total_damage += 12
+                print(Fore.YELLOW + "⚡ Caught in the outer field! (-12 HP)" + Style.RESET_ALL)
+            else:
+                total_damage += 25
+                print(Fore.RED + "💫 PULLED INTO THE GRAVITY WELL! (-25 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 25
+            print(Fore.RED + "💫 OUT OF BOUNDS! CRUSHED! (-25 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 25
+        print(Fore.RED + "💫 DISORIENTED! CRUSHED! (-25 HP)" + Style.RESET_ALL)
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Gravity wave dodge
+    print()
+    print(Fore.LIGHTMAGENTA_EX + "Phase 2: GRAVITY WAVE PULSE!" + Style.RESET_ALL)
+    print(Fore.CYAN + "The whale releases a gravitational shockwave!" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type DIVE to escape below the wave:" + Style.RESET_ALL)
+    start_time = time.time()
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start_time
+        
+        if response == "DIVE" and elapsed < 2.0:
+            print(Fore.GREEN + "✓ Dove beneath the wave!" + Style.RESET_ALL)
+        else:
+            total_damage += 20
+            print(Fore.RED + "💥 HIT BY THE WAVE! (-20 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 20
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ PERFECT EVASION! You navigated the gravity field! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def stellar_leviathan_nebula_clouds():
+    """Obscuring nebula clouds that hide attacks"""
+    print(Fore.MAGENTA + "\n☁️ NEBULA CLOUDS ENVELOP THE AREA! ☁️\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.LIGHTBLACK_EX + "Colorful cosmic clouds obscure your vision!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Phase 1: FIND THE WHALE!" + Style.RESET_ALL)
+    print()
+    
+    # Show glimpses of the whale through clouds
+    positions = ['LEFT', 'CENTER', 'RIGHT']
+    whale_position = random.choice(positions)
+    
+    # Show clouds with brief glimpses
+    for i in range(3):
+        if i == 1:  # Brief glimpse
+            print(Fore.LIGHTMAGENTA_EX + f"✨ A shimmer in the {whale_position} clouds! ✨" + Style.RESET_ALL)
+        else:
+            print(Fore.LIGHTBLACK_EX + "☁️☁️☁️ Dense nebula clouds ☁️☁️☁️" + Style.RESET_ALL)
+        time.sleep(0.8)
+    
+    print()
+    print(Fore.YELLOW + "Where is the Stellar Leviathan? (LEFT/CENTER/RIGHT):" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == whale_position:
+            print(Fore.GREEN + "✓ Found it!" + Style.RESET_ALL)
+        else:
+            total_damage += 18
+            print(Fore.RED + f"💥 WRONG! Attacked from the {whale_position}! (-18 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 18
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Navigate through clouds
+    print()
+    print(Fore.LIGHTMAGENTA_EX + "Phase 2: NEBULA NAVIGATION!" + Style.RESET_ALL)
+    
+    sequence = ''.join(random.choices(['W', 'A', 'S', 'D'], k=5))
+    print(Fore.CYAN + f"Navigate through the clouds: {' → '.join(sequence)}" + Style.RESET_ALL)
+    time.sleep(2)
+    
+    # Obscure with clouds
+    print(Fore.LIGHTBLACK_EX + "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type the path:" + Style.RESET_ALL)
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == sequence:
+            print(Fore.GREEN + "✓ Navigated through!" + Style.RESET_ALL)
+        else:
+            total_damage += 17
+            print(Fore.RED + "💥 LOST IN THE NEBULA! (-17 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 17
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ PERFECT CLARITY! You saw through the cosmic veil! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def stellar_leviathan_cosmic_debris():
+    """Dodge incoming asteroids and space debris"""
+    print(Fore.LIGHTCYAN_EX + "\n☄️ COSMIC DEBRIS STORM! ☄️\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.YELLOW + "The Stellar Leviathan's movement disturbs the asteroid field!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Phase 1: ASTEROID DODGE!" + Style.RESET_ALL)
+    print()
+    
+    # Dodge sequence
+    debris_count = 4
+    print(Fore.LIGHTRED_EX + "Incoming debris from: ", end="")
+    directions = ['LEFT', 'RIGHT', 'UP', 'DOWN']
+    debris_pattern = [random.choice(directions) for _ in range(debris_count)]
+    
+    for i, direction in enumerate(debris_pattern):
+        print(Fore.YELLOW + f"{direction}", end="")
+        if i < debris_count - 1:
+            print(", ", end="")
+        time.sleep(0.4)
+    print()
+    
+    time.sleep(1)
+    print(Fore.CYAN + "Dodge commands: Type opposites (LEFT→RIGHT, UP→DOWN):" + Style.RESET_ALL)
+    
+    correct_dodges = []
+    for d in debris_pattern:
+        if d == 'LEFT':
+            correct_dodges.append('RIGHT')
+        elif d == 'RIGHT':
+            correct_dodges.append('LEFT')
+        elif d == 'UP':
+            correct_dodges.append('DOWN')
+        elif d == 'DOWN':
+            correct_dodges.append('UP')
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper().split()
+        
+        if response == correct_dodges:
+            print(Fore.GREEN + "✓ Perfect dodges!" + Style.RESET_ALL)
+        else:
+            hits = debris_count - sum(1 for i, r in enumerate(response[:debris_count]) if i < len(correct_dodges) and r == correct_dodges[i])
+            damage = hits * 7
+            total_damage += damage
+            print(Fore.RED + f"💥 HIT BY {hits} DEBRIS! (-{damage} HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 28
+        print(Fore.RED + "💥 HIT BY ALL DEBRIS! (-28 HP)" + Style.RESET_ALL)
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Shield against stardust
+    print()
+    print(Fore.LIGHTBLUE_EX + "Phase 2: STARDUST TRAIL!" + Style.RESET_ALL)
+    print(Fore.CYAN + "The whale leaves a trail of cosmic dust!" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type SHIELD to protect yourself:" + Style.RESET_ALL)
+    start_time = time.time()
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start_time
+        
+        if response == "SHIELD" and elapsed < 1.5:
+            print(Fore.GREEN + "✓ Shielded!" + Style.RESET_ALL)
+        else:
+            total_damage += 15
+            print(Fore.RED + "✨ COSMIC DUST DAMAGE! (-15 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 15
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ PERFECT MANEUVERS! You dodged the debris field! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def stellar_leviathan_stardust_song():
+    """Peaceful territorial defense - pattern matching"""
+    print(Fore.LIGHTCYAN_EX + "\n🎵 THE STELLAR LEVIATHAN SINGS! 🎵\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.MAGENTA + "The whale's song resonates through the cosmos..." + Style.RESET_ALL)
+    print(Fore.CYAN + "Phase 1: HARMONIC RESONANCE!" + Style.RESET_ALL)
+    print()
+    
+    # Musical pattern
+    notes = ['♪', '♫', '♬', '♩']
+    pattern = [random.choice(notes) for _ in range(6)]
+    
+    print(Fore.LIGHTMAGENTA_EX + "Listen to the cosmic melody..." + Style.RESET_ALL)
+    for note in pattern:
+        print(Fore.LIGHTCYAN_EX + note, end=" ", flush=True)
+        time.sleep(0.5)
+    
+    print("\n")
+    time.sleep(1)
+    
+    print(Fore.YELLOW + "Echo the song (use 1=♪, 2=♫, 3=♬, 4=♩):" + Style.RESET_ALL)
+    
+    pattern_numbers = [str(notes.index(n) + 1) for n in pattern]
+    correct_answer = ''.join(pattern_numbers)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).strip()
+        if response == correct_answer:
+            print(Fore.GREEN + "✓ Perfect harmony!" + Style.RESET_ALL)
+        else:
+            total_damage += 18
+            print(Fore.RED + "💥 DISSONANCE! The song damages you! (-18 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 18
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Peaceful understanding
+    print()
+    print(Fore.LIGHTBLUE_EX + "Phase 2: COSMIC WISDOM!" + Style.RESET_ALL)
+    print(Fore.CYAN + "*The song carries meaning...*" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "*'This space is my sanctuary...'*" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Respond with respect (Type RESPECT):" + Style.RESET_ALL)
+    
+    try:
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        if response == "RESPECT":
+            print(Fore.GREEN + "✓ The Leviathan acknowledges you!" + Style.RESET_ALL)
+        else:
+            total_damage += 12
+            print(Fore.YELLOW + "⚡ Your disrespect angers it! (-12 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 12
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ PERFECT HARMONY! You understood the cosmic song! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
+def stellar_leviathan_galactic_majesty():
+    """Ultimate attack - the whale's full cosmic power"""
+    print(Fore.LIGHTMAGENTA_EX + "\n✨ THE STELLAR LEVIATHAN REVEALS ITS TRUE FORM! ✨\n" + Style.RESET_ALL)
+    
+    total_damage = 0
+    
+    print(Fore.CYAN + "*The whale's translucent body illuminates...*" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "*Galaxies and nebulae swirl within!*" + Style.RESET_ALL)
+    print(Fore.LIGHTCYAN_EX + "*This is the majesty of the cosmos itself!*" + Style.RESET_ALL)
+    print()
+    
+    # Phase 1: Witness the cosmic beauty
+    print(Fore.MAGENTA + "Phase 1: COSMIC REVELATION!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "The sight is overwhelming! Focus your mind!" + Style.RESET_ALL)
+    
+    # Math challenge representing mental focus
+    num1, num2 = random.randint(5, 15), random.randint(5, 15)
+    answer = num1 + num2
+    
+    print(Fore.CYAN + f"Stay focused: {num1} + {num2} = ?" + Style.RESET_ALL)
+    
+    try:
+        start_time = time.time()
+        response = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        elapsed = time.time() - start_time
+        
+        if response == answer and elapsed < 3:
+            print(Fore.GREEN + "✓ Mind focused!" + Style.RESET_ALL)
+        else:
+            total_damage += 20
+            print(Fore.RED + "💫 OVERWHELMED BY COSMIC BEAUTY! (-20 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 20
+    
+    time.sleep(0.5)
+    
+    # Phase 2: Gravitational surge
+    print()
+    print(Fore.LIGHTBLUE_EX + "Phase 2: GRAVITATIONAL SURGE!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "The whale bends space itself!" + Style.RESET_ALL)
+    
+    sequence = ''.join(random.choices(['W', 'A', 'S', 'D'], k=7))
+    print(Fore.CYAN + f"Navigate the distortion: {' → '.join(sequence)}" + Style.RESET_ALL)
+    time.sleep(3)
+    
+    print(Fore.LIGHTMAGENTA_EX + "✨✨✨ SPACE WARPS ✨✨✨" + Style.RESET_ALL)
+    
+    try:
+        start_time = time.time()
+        response = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        elapsed = time.time() - start_time
+        
+        if response == sequence and elapsed < 5:
+            print(Fore.GREEN + "✓ Navigated the distortion!" + Style.RESET_ALL)
+        elif response == sequence:
+            total_damage += 25
+            print(Fore.YELLOW + "⚡ Too slow! Caught in gravity! (-25 HP)" + Style.RESET_ALL)
+        else:
+            total_damage += 40
+            print(Fore.RED + "💫 CRUSHED BY SPATIAL DISTORTION! (-40 HP)" + Style.RESET_ALL)
+    except:
+        total_damage += 40
+    
+    time.sleep(0.5)
+    
+    # Phase 3: Stardust finale
+    print()
+    print(Fore.LIGHTCYAN_EX + "Phase 3: STARDUST CASCADE!" + Style.RESET_ALL)
+    print(Fore.MAGENTA + "A trail of ancient starlight falls!" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "Type DIVE repeatedly to avoid (3 times):" + Style.RESET_ALL)
+    
+    successes = 0
+    for i in range(3):
+        try:
+            start = time.time()
+            response = input(Fore.GREEN + f"{i+1}> " + Style.RESET_ALL).upper()
+            if response == "DIVE" and (time.time() - start) < 1.5:
+                successes += 1
+                print(Fore.GREEN + "✓" + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "✗" + Style.RESET_ALL)
+        except:
+            print(Fore.RED + "✗" + Style.RESET_ALL)
+        time.sleep(0.2)
+    
+    failures = 3 - successes
+    if failures > 0:
+        damage = failures * 10
+        total_damage += damage
+        print(Fore.RED + f"✨ HIT BY STARDUST! (-{damage} HP)" + Style.RESET_ALL)
+    else:
+        print(Fore.GREEN + "✓ Avoided all stardust!" + Style.RESET_ALL)
+    
+    if total_damage == 0:
+        print(Fore.LIGHTGREEN_EX + "\n★★★ TRANSCENDENT! You witnessed the cosmos unharmed! ★★★" + Style.RESET_ALL)
+    
+    return total_damage
+
+
 def amalgamation_fusion_strike():
     """Combines Nessie's dive, Kraken tentacles, and River Guardian bite"""
     print(Fore.RED + "\n💀 THE AMALGAMATION SHIFTS FORMS! 💀\n" + Style.RESET_ALL)
@@ -3319,6 +4152,276 @@ def amalgamation_ultimate_annihilation():
     return total_damage
 
 
+
+def aquatech_industrial_nets():
+    """Massive fishing nets try to capture you"""
+    print(Fore.CYAN + "\n⚙️ AQUATECH DEPLOYS INDUSTRIAL NETS! ⚙️\n" + Style.RESET_ALL)
+    print(Fore.YELLOW + "The mech releases massive metallic nets!" + Style.RESET_ALL)
+    print(Fore.RED + "They spread across the battlefield!" + Style.RESET_ALL)
+    
+    zones = ["LEFT", "CENTER", "RIGHT"]
+    net_zones = random.sample(zones, 2)
+    safe_zone = [z for z in zones if z not in net_zones][0]
+    
+    print(Fore.YELLOW + f"\nNets deploying in zones: {', '.join(net_zones)}!" + Style.RESET_ALL)
+    print(Fore.GREEN + f"Escape to the safe zone!" + Style.RESET_ALL)
+    print()
+    
+    for zone in zones:
+        if zone in net_zones:
+            print(Fore.RED + f"[{zone}] 🕸️ NET ZONE 🕸️" + Style.RESET_ALL)
+        else:
+            print(Fore.GREEN + f"[{zone}] ✓ SAFE" + Style.RESET_ALL)
+    
+    print()
+    choice = input(Fore.YELLOW + "Which zone? (LEFT/CENTER/RIGHT): " + Style.RESET_ALL).upper()
+    
+    if choice == safe_zone:
+        print(Fore.GREEN + "\n✓ You dodged the nets!" + Style.RESET_ALL)
+        return 0
+    else:
+        print(Fore.RED + "\n✗ You're caught in the industrial net!" + Style.RESET_ALL)
+        print(Fore.RED + "The metal cables cut into you!" + Style.RESET_ALL)
+        return random.randint(35, 50)
+
+
+def aquatech_harpoon_barrage():
+    """Automated harpoon turrets fire rapidly"""
+    print(Fore.CYAN + "\n🎯 HARPOON TURRETS ACTIVATED! 🎯\n" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Multiple harpoon launchers lock onto you!" + Style.RESET_ALL)
+    
+    dodged = 0
+    total_harpoons = 3
+    
+    for i in range(total_harpoons):
+        print(Fore.RED + f"\nHarpoon {i+1} incoming!" + Style.RESET_ALL)
+        time.sleep(0.3)
+        
+        # Simplified dodge check
+        if random.random() > 0.4:
+            dodged += 1
+            print(Fore.GREEN + "✓ DODGED!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "✗ HIT!" + Style.RESET_ALL)
+    
+    if dodged == total_harpoons:
+        print(Fore.GREEN + "\n★ Perfect dodge! All harpoons avoided!" + Style.RESET_ALL)
+        return 0
+    elif dodged >= 2:
+        print(Fore.YELLOW + f"\nYou dodged {dodged}/{total_harpoons} harpoons!" + Style.RESET_ALL)
+        return random.randint(15, 25)
+    else:
+        print(Fore.RED + f"\nMultiple harpoons hit you! ({dodged}/{total_harpoons} dodged)" + Style.RESET_ALL)
+        return random.randint(40, 55)
+
+
+def aquatech_toxic_discharge():
+    """The mech releases industrial pollutants"""
+    print(Fore.CYAN + "\n☠️ TOXIC WASTE DISCHARGE! ☠️\n" + Style.RESET_ALL)
+    print(Fore.YELLOW + "The mech dumps industrial chemicals!" + Style.RESET_ALL)
+    print(Fore.RED + "Green sludge spreads through the water!" + Style.RESET_ALL)
+    print()
+    
+    patterns = [
+        ("Toxic cloud spreading LEFT!", "RIGHT", ["LEFT", "RIGHT", "STAY"]),
+        ("Sludge rising from BELOW!", "SWIM UP", ["SWIM UP", "DIVE DOWN", "STAY"]),
+        ("Chemical spray from ABOVE!", "DIVE DOWN", ["SWIM UP", "DIVE DOWN", "STAY"])
+    ]
+    
+    pattern = random.choice(patterns)
+    warning, correct_action, options = pattern
+    
+    print(Fore.RED + warning + Style.RESET_ALL)
+    print(Fore.YELLOW + "What do you do?" + Style.RESET_ALL)
+    
+    for i, opt in enumerate(options, 1):
+        print(Fore.WHITE + f"{i}. {opt}" + Style.RESET_ALL)
+    
+    try:
+        choice_num = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        if 1 <= choice_num <= len(options):
+            choice = options[choice_num - 1]
+            if choice == correct_action:
+                print(Fore.GREEN + "\n✓ You avoided the toxic discharge!" + Style.RESET_ALL)
+                return 0
+            else:
+                print(Fore.RED + "\n✗ The chemicals burn your skin!" + Style.RESET_ALL)
+                return random.randint(30, 45)
+        else:
+            print(Fore.RED + "\nHesitation costs you! The toxins hit!" + Style.RESET_ALL)
+            return random.randint(30, 45)
+    except:
+        print(Fore.RED + "\nHesitation costs you! The toxins hit!" + Style.RESET_ALL)
+        return random.randint(30, 45)
+
+
+def aquatech_sonar_pulse():
+    """Disorienting sonar that you must counter"""
+    print(Fore.CYAN + "\n📡 SONAR PULSE DETECTED! 📡\n" + Style.RESET_ALL)
+    print(Fore.YELLOW + "The mech emits a powerful sonar wave!" + Style.RESET_ALL)
+    print(Fore.RED + "It's trying to disorient you!" + Style.RESET_ALL)
+    print()
+    
+    pattern_length = random.randint(4, 6)
+    pattern = ''.join(random.choice('WASD') for _ in range(pattern_length))
+    
+    print(Fore.CYAN + "Counter the frequency by matching the pattern:" + Style.RESET_ALL)
+    print(Fore.YELLOW + f"Pattern: {pattern}" + Style.RESET_ALL)
+    time.sleep(2)
+    
+    player_input = input(Fore.GREEN + "Enter pattern: " + Style.RESET_ALL).upper()
+    
+    if player_input == pattern:
+        print(Fore.GREEN + "\n✓ Perfect! You countered the sonar!" + Style.RESET_ALL)
+        return 0
+    else:
+        correct = sum(1 for i, c in enumerate(player_input) if i < len(pattern) and c == pattern[i])
+        percentage = correct / len(pattern)
+        
+        if percentage >= 0.7:
+            print(Fore.YELLOW + f"\nPartial success! ({correct}/{len(pattern)} correct)" + Style.RESET_ALL)
+            return random.randint(15, 25)
+        else:
+            print(Fore.RED + f"\nThe sonar overwhelms you! ({correct}/{len(pattern)} correct)" + Style.RESET_ALL)
+            return random.randint(35, 50)
+
+
+def aquatech_harvester_blades():
+    """Giant rotating blades from the processing unit"""
+    print(Fore.CYAN + "\n⚙️ HARVESTER BLADES SPINNING! ⚙️\n" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Massive industrial blades rev up!" + Style.RESET_ALL)
+    print(Fore.RED + "They're designed to process entire schools of fish!" + Style.RESET_ALL)
+    print()
+    
+    positions = ["HIGH", "MID", "LOW"]
+    blade_sequence = random.sample(positions, 3)
+    
+    print(Fore.YELLOW + "The blades strike in sequence!" + Style.RESET_ALL)
+    print(Fore.GREEN + "Dodge each one!" + Style.RESET_ALL)
+    print()
+    
+    hits = 0
+    for i, blade_pos in enumerate(blade_sequence, 1):
+        print(Fore.RED + f"Blade {i} coming at {blade_pos} position!" + Style.RESET_ALL)
+        print(Fore.YELLOW + "Dodge which way? (HIGH/MID/LOW)" + Style.RESET_ALL)
+        
+        dodge = input(Fore.GREEN + "> " + Style.RESET_ALL).upper()
+        
+        safe_positions = [p for p in positions if p != blade_pos]
+        if dodge in safe_positions:
+            print(Fore.GREEN + "✓ Dodged!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "✗ The blade cuts you!" + Style.RESET_ALL)
+            hits += 1
+        print()
+    
+    if hits == 0:
+        print(Fore.GREEN + "★ Perfect! You avoided all the blades!" + Style.RESET_ALL)
+        return 0
+    elif hits == 1:
+        print(Fore.YELLOW + "You took one hit from the blades!" + Style.RESET_ALL)
+        return random.randint(25, 35)
+    else:
+        print(Fore.RED + f"Multiple blade hits! ({hits}/3)" + Style.RESET_ALL)
+        return random.randint(50, 70)
+
+
+def aquatech_phase1_ultimate():
+    """AquaTech's ultimate attack for Phase 1"""
+    print(Fore.RED + "\n" + "="*60 + Style.RESET_ALL)
+    print(Fore.RED + "💀 MAXIMUM EXTRACTION MODE ACTIVATED! 💀" + Style.RESET_ALL)
+    print(Fore.RED + "="*60 + "\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "The mech's entire body lights up with targeting lasers!" + Style.RESET_ALL)
+    print(Fore.YELLOW + "Every weapon system fires at once!" + Style.RESET_ALL)
+    print(Fore.RED + "This is the power of industrial-scale destruction!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.MAGENTA + "Stage 1: NETS DEPLOYING!" + Style.RESET_ALL)
+    time.sleep(0.8)
+    print(Fore.MAGENTA + "Stage 2: HARPOONS LOCKING!" + Style.RESET_ALL)
+    time.sleep(0.8)
+    print(Fore.MAGENTA + "Stage 3: TOXINS RELEASING!" + Style.RESET_ALL)
+    time.sleep(0.8)
+    print(Fore.MAGENTA + "Stage 4: BLADES SPINNING!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.YELLOW + "You must survive this onslaught!" + Style.RESET_ALL)
+    print(Fore.CYAN + "Quick! What's your strategy?" + Style.RESET_ALL)
+    print(Fore.WHITE + "1. DODGE AGGRESSIVELY" + Style.RESET_ALL)
+    print(Fore.WHITE + "2. DEFEND AND ENDURE" + Style.RESET_ALL)
+    print(Fore.WHITE + "3. COUNTER ATTACK" + Style.RESET_ALL)
+    
+    try:
+        choice = int(input(Fore.GREEN + "> " + Style.RESET_ALL))
+        
+        if choice == 1:
+            print(Fore.YELLOW + "\nYou dodge frantically through the chaos!" + Style.RESET_ALL)
+            if random.random() > 0.6:
+                print(Fore.GREEN + "Your agility saves you from the worst!" + Style.RESET_ALL)
+                return random.randint(40, 60)
+            else:
+                print(Fore.RED + "You can't dodge everything!" + Style.RESET_ALL)
+                return random.randint(70, 90)
+        elif choice == 2:
+            print(Fore.YELLOW + "\nYou brace yourself and endure!" + Style.RESET_ALL)
+            print(Fore.YELLOW + "The onslaught is brutal, but you survive!" + Style.RESET_ALL)
+            return random.randint(60, 80)
+        elif choice == 3:
+            print(Fore.YELLOW + "\nYou attack while defending!" + Style.RESET_ALL)
+            if random.random() > 0.5:
+                print(Fore.GREEN + "You destroy some of the incoming attacks!" + Style.RESET_ALL)
+                return random.randint(45, 65)
+            else:
+                print(Fore.RED + "You're too exposed! The attacks overwhelm you!" + Style.RESET_ALL)
+                return random.randint(75, 95)
+        else:
+            print(Fore.RED + "\nHesitation! You're hit by everything!" + Style.RESET_ALL)
+            return random.randint(80, 100)
+    except:
+        print(Fore.RED + "\nHesitation! You're hit by everything!" + Style.RESET_ALL)
+        return random.randint(80, 100)
+
+
+def aquatech_phase2_ultimate():
+    """AquaTech's ultimate attack for Phase 2 - weaker due to guardian assists"""
+    print(Fore.RED + "\n" + "="*60 + Style.RESET_ALL)
+    print(Fore.RED + "⚡ FINAL HARVEST PROTOCOL! ⚡" + Style.RESET_ALL)
+    print(Fore.RED + "="*60 + "\n" + Style.RESET_ALL)
+    
+    print(Fore.YELLOW + "The mech prepares its final desperate attack!" + Style.RESET_ALL)
+    print(Fore.CYAN + "But the Guardians intervene!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.LIGHTGREEN_EX + "🐉 Nessie shields you with her body!" + Style.RESET_ALL)
+    time.sleep(0.6)
+    print(Fore.LIGHTCYAN_EX + "🌊 River Guardian redirects the water currents!" + Style.RESET_ALL)
+    time.sleep(0.6)
+    print(Fore.LIGHTRED_EX + "☠️ Crimson Tide's cannons fire at the mech!" + Style.RESET_ALL)
+    time.sleep(0.6)
+    print(Fore.LIGHTMAGENTA_EX + "🐙 Kraken restrains the mech's limbs!" + Style.RESET_ALL)
+    time.sleep(0.6)
+    print(Fore.LIGHTBLUE_EX + "🐍 Jörmungandr coils around it!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.YELLOW + "The Guardians have weakened the attack!" + Style.RESET_ALL)
+    print(Fore.GREEN + "Now strike back!" + Style.RESET_ALL)
+    print()
+    
+    print(Fore.CYAN + "Press ENTER when ready to attack!" + Style.RESET_ALL)
+    input()
+    
+    print(Fore.GREEN + "\nYou strike with all your might!" + Style.RESET_ALL)
+    
+    if random.random() > 0.5:
+        print(Fore.GREEN + "The Guardians' protection minimizes the damage!" + Style.RESET_ALL)
+        return random.randint(20, 35)
+    else:
+        print(Fore.YELLOW + "Even with help, the attack still hurts!" + Style.RESET_ALL)
+        return random.randint(35, 50)
+
+
+
 # ===== BOSS DEFINITIONS =====
 LOCH_NESS_ASCII = """
                                 _..--+~/@-@--.
@@ -3338,19 +4441,19 @@ LOCH_NESS_ASCII = """
 
 LOCH_NESS_MONSTER = Boss(
     name="Loch Ness Monster",
-    hp=200,
+    hp=250,
     defense=5,
 attacks=[
         # Original attacks (kept for variety)
-        BossAttack("Wave Crash", loch_ness_wave_attack, (8, 18), "Sends powerful waves"),
-        BossAttack("Water Blast", loch_ness_water_blast, (10, 16), "Fires a concentrated water jet"),
+        BossAttack("Wave Crash", loch_ness_wave_attack, (12, 25), "Sends powerful waves"),
+        BossAttack("Water Blast", loch_ness_water_blast, (15, 22), "Fires a concentrated water jet"),
         # NEW Enhanced attacks
-        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 25), "Multi-wave barrage!"),
-        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 18), "Spinning vortex trap!"),
-        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 20), "Massive tail attack!"),
-        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 24), "Two-phase combo!"),
-        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 14), "Vision obscured!"),
-        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 22), "Devastating triple attack!")
+        BossAttack("Tidal Wave", loch_ness_tidal_wave, (0, 35), "Multi-wave barrage!"),
+        BossAttack("Whirlpool", loch_ness_whirlpool, (0, 28), "Spinning vortex trap!"),
+        BossAttack("Tail Sweep", loch_ness_tail_sweep, (0, 30), "Massive tail attack!"),
+        BossAttack("Deep Dive Slam", loch_ness_deep_dive_slam, (0, 34), "Two-phase combo!"),
+        BossAttack("Mist Breath", loch_ness_mist_breath, (0, 20), "Vision obscured!"),
+        BossAttack("ULTIMATE COMBO", loch_ness_combo_attack, (0, 38), "Devastating triple attack!")
     ],
     ascii_art=LOCH_NESS_ASCII,
     dialogue={
@@ -3386,14 +4489,14 @@ RIVER_GUARDIAN_ASCII = """
 
 RIVER_GUARDIAN = Boss(
     name="The River Guardian",
-    hp=400,  # Reduced from 800 - was way too high for 2nd boss
-    defense=10,  # Reduced from 15
+    hp=500,
+    defense=12,
     attacks=[
-        BossAttack("Rapids Rush", river_rapids_dodge, (0, 32), "Navigate treacherous rapids!"),
-        BossAttack("Torrential Bite", river_bite_sequence, (0, 42), "Dodge rapid bite attacks!"),
-        BossAttack("Whirlpool Spin", river_current_spin, (0, 28), "Escape the spinning vortex!"),
-        BossAttack("Tail Strike", river_tail_strike, (0, 35), "Perfect timing required!"),
-        BossAttack("RIVER'S WRATH", river_wrath_combo, (0, 60), "The Guardian's ultimate fury!")
+        BossAttack("Rapids Rush", river_rapids_dodge, (0, 45), "Navigate treacherous rapids!"),
+        BossAttack("Torrential Bite", river_bite_sequence, (0, 58), "Dodge rapid bite attacks!"),
+        BossAttack("Whirlpool Spin", river_current_spin, (0, 38), "Escape the spinning vortex!"),
+        BossAttack("Tail Strike", river_tail_strike, (0, 50), "Perfect timing required!"),
+        BossAttack("RIVER'S WRATH", river_wrath_combo, (0, 85), "The Guardian's ultimate fury!")
     ],
     ascii_art=RIVER_GUARDIAN_ASCII,
     dialogue={
@@ -3504,14 +4607,14 @@ PIRATE_SHIP_ASCII = """
 
 PIRATE_SHIP = Boss(
     name="The Crimson Tide",
-    hp=450,  # Increased from 350
-    defense=12,
+    hp=600,
+    defense=15,
     attacks=[
-        BossAttack("Cannon Barrage", pirate_cannon_barrage, (0, 55), "Dodge incoming cannonballs!"),
-        BossAttack("Harpoon Strike", pirate_harpoon_strike, (0, 32), "Duck the harpoon!"),
-        BossAttack("Broadside Ram", pirate_broadside_ram, (0, 40), "Avoid the ramming ship!"),
-        BossAttack("Net Toss", pirate_net_toss, (0, 26), "Cut yourself free!"),
-        BossAttack("ALL HANDS ASSAULT", pirate_ultimate_assault, (0, 65), "The crew's full might!")
+        BossAttack("Cannon Barrage", pirate_cannon_barrage, (0, 75), "Dodge incoming cannonballs!"),
+        BossAttack("Harpoon Strike", pirate_harpoon_strike, (0, 45), "Duck the harpoon!"),
+        BossAttack("Broadside Ram", pirate_broadside_ram, (0, 58), "Avoid the ramming ship!"),
+        BossAttack("Net Toss", pirate_net_toss, (0, 35), "Cut yourself free!"),
+        BossAttack("ALL HANDS ASSAULT", pirate_ultimate_assault, (0, 95), "The crew's full might!")
     ],
     ascii_art=PIRATE_SHIP_ASCII,
         dialogue={
@@ -3644,15 +4747,15 @@ KRAKEN_ASCII = """
 
 KRAKEN = Boss(
     name="The Kraken",
-    hp=600,  # Increased from 500
-    defense=18,
+    hp=850,
+    defense=20,
     attacks=[
-        BossAttack("Tentacle Slam", kraken_tentacle_slam, (0, 80), "Dodge the massive tentacles!"),
-        BossAttack("Ink Cloud", kraken_ink_cloud, (0, 35), "Navigate through the murky ink!"),
-        BossAttack("Whirlpool Grab", kraken_whirlpool_grab, (0, 42), "Escape the pulling vortex!"),
-        BossAttack("Beak Strike", kraken_beak_strike, (0, 48), "Avoid the crushing beak!"),
-        BossAttack("Crushing Grip", kraken_crushing_grip, (0, 52), "Break free from tentacles!"),
-        BossAttack("TIDAL FURY", kraken_tidal_fury, (0, 70), "The Kraken's ultimate wrath!")
+        BossAttack("Tentacle Slam", kraken_tentacle_slam, (0, 110), "Dodge the massive tentacles!"),
+        BossAttack("Ink Cloud", kraken_ink_cloud, (0, 50), "Navigate through the murky ink!"),
+        BossAttack("Whirlpool Grab", kraken_whirlpool_grab, (0, 65), "Escape the pulling vortex!"),
+        BossAttack("Beak Strike", kraken_beak_strike, (0, 75), "Avoid the crushing beak!"),
+        BossAttack("Crushing Grip", kraken_crushing_grip, (0, 85), "Break free from tentacles!"),
+        BossAttack("TIDAL FURY", kraken_tidal_fury, (0, 120), "The Kraken's ultimate wrath!")
     ],
     ascii_art=KRAKEN_ASCII,
     dialogue={
@@ -3808,15 +4911,15 @@ JORMUNGANDR_ASCII = """
 
 JORMUNGANDR = Boss(
     name="Jörmungandr",
-    hp=800,  # Increased from 750  hard but still not final boss level
-    defense=25,  # Increased from 22 - highest defense
+    hp=1100,
+    defense=28,
     attacks=[
-        BossAttack("World Coil", jormungandr_world_coil, (0, 45), "Break free from the crushing coils!"),
-        BossAttack("Venom Rain", jormungandr_venom_rain, (0, 50), "Dodge the poisonous droplets!"),
-        BossAttack("Tidal Wave", jormungandr_tidal_wave, (0, 40), "Swim against the massive waves!"),
-        BossAttack("Serpent's Gaze", jormungandr_serpent_gaze, (0, 30), "Resist the hypnotic stare!"),
-        BossAttack("Tail Whip", jormungandr_tail_whip, (0, 35), "React quickly to dodge!"),
-        BossAttack("RAGNARÖK FURY", jormungandr_ragnarok_fury, (0, 85), "The World Serpent's ultimate power!")
+        BossAttack("World Coil", jormungandr_world_coil, (0, 80), "Break free from the crushing coils!"),
+        BossAttack("Venom Rain", jormungandr_venom_rain, (0, 95), "Dodge the poisonous droplets!"),
+        BossAttack("Tidal Wave", jormungandr_tidal_wave, (0, 70), "Swim against the massive waves!"),
+        BossAttack("Serpent's Gaze", jormungandr_serpent_gaze, (0, 60), "Resist the hypnotic stare!"),
+        BossAttack("Tail Whip", jormungandr_tail_whip, (0, 65), "React quickly to dodge!"),
+        BossAttack("RAGNARÖK FURY", jormungandr_ragnarok_fury, (0, 160), "The World Serpent's ultimate power!")
     ],
     ascii_art=JORMUNGANDR_ASCII,
     dialogue={
@@ -3982,12 +5085,12 @@ AEGIR_ASCII = """
 
 AEGIR = Boss(
     name="Ægir",
-    hp=750,
-    defense=23,
+    hp=1000,
+    defense=26,
     attacks=[
-        BossAttack("Iceberg Crash", aegir_iceberg_crash, (0, 45), "Dodge the colossal icebergs!"),
-        BossAttack("Frozen Tide", aegir_frozen_tide, (0, 50), "Break through the freezing wave!"),
-        BossAttack("Aurora Beam", aegir_aurora_beam, (0, 55), "Match the aurora pattern!")
+        BossAttack("Iceberg Crash", aegir_iceberg_crash, (0, 85), "Dodge the colossal icebergs!"),
+        BossAttack("Frozen Tide", aegir_frozen_tide, (0, 95), "Break through the freezing wave!"),
+        BossAttack("Aurora Beam", aegir_aurora_beam, (0, 110), "Match the aurora pattern!")
     ],
     ascii_art=AEGIR_ASCII,
     dialogue={
@@ -4135,14 +5238,14 @@ CTHULHU_ASCII = """
 
 CTHULHU = Boss(
     name="Cthulhu",
-    hp=666,  # Appropriately eldritch number
-    defense=20,
+    hp=900,
+    defense=24,
     attacks=[
-        BossAttack("Madness Gaze", cthulhu_madness_gaze, (0, 35), "The Dreaming God's psychic assault!"),
-        BossAttack("Tentacles of R'lyeh", cthulhu_tentacle_rlyeh, (0, 28), "Massive tentacles from the sunken city!"),
-        BossAttack("Dream Paralysis", cthulhu_dream_paralysis, (0, 50), "Reality bends in the nightmare!"),
-        BossAttack("Summon Deep Ones", cthulhu_cultist_summon, (0, 45), "Cultist fish swarm to his will!"),
-        BossAttack("THE AWAKENING", cthulhu_ultimate_awakening, (0, 75), "Cthulhu begins to rise!")
+        BossAttack("Madness Gaze", cthulhu_madness_gaze, (0, 70), "The Dreaming God's psychic assault!"),
+        BossAttack("Tentacles of R'lyeh", cthulhu_tentacle_rlyeh, (0, 55), "Massive tentacles from the sunken city!"),
+        BossAttack("Dream Paralysis", cthulhu_dream_paralysis, (0, 90), "Reality bends in the nightmare!"),
+        BossAttack("Summon Deep Ones", cthulhu_cultist_summon, (0, 75), "Cultist fish swarm to his will!"),
+        BossAttack("THE AWAKENING", cthulhu_ultimate_awakening, (0, 140), "Cthulhu begins to rise!")
     ],
     ascii_art=CTHULHU_ASCII,
     dialogue={
@@ -4379,14 +5482,14 @@ IFRIT_ASCII = """
 
 IFRIT = Boss(
     name="Ifrit the Flamebringer",
-    hp=700,
-    defense=20,
+    hp=950,
+    defense=23,
     attacks=[
-        BossAttack("Lava Geyser", ifrit_lava_geyser, (0, 35), "Predict the eruption pattern!"),
-        BossAttack("Scorching Breath", ifrit_scorching_breath, (0, 50), "Dive deep to escape the flames!"),
-        BossAttack("Obsidian Shard Storm", ifrit_obsidian_shard_storm, (0, 30), "Block the razor-sharp shards!"),
-        BossAttack("Magma Whip", ifrit_magma_whip, (0, 30), "Dodge the molten tendrils!"),
-        BossAttack("VOLCANIC FURY", ifrit_volcanic_fury, (0, 90), "The lake itself becomes an inferno!")
+        BossAttack("Lava Geyser", ifrit_lava_geyser, (0, 65), "Predict the eruption pattern!"),
+        BossAttack("Scorching Breath", ifrit_scorching_breath, (0, 85), "Dive deep to escape the flames!"),
+        BossAttack("Obsidian Shard Storm", ifrit_obsidian_shard_storm, (0, 60), "Block the razor-sharp shards!"),
+        BossAttack("Magma Whip", ifrit_magma_whip, (0, 55), "Dodge the molten tendrils!"),
+        BossAttack("VOLCANIC FURY", ifrit_volcanic_fury, (0, 155), "The lake itself becomes an inferno!")
     ],
     ascii_art=IFRIT_ASCII,
     dialogue={
@@ -4565,12 +5668,12 @@ MEGALODON_GHOST_ASCII = """
 
 MEGALODON_GHOST = Boss(
     name="The Megalodon's Ghost",
-    hp=650,
-    defense=18,
+    hp=880,
+    defense=21,
     attacks=[
-        BossAttack("Phantom Bite", megalodon_phantom_bite, (0, 36), "The spectral jaws strike from nowhere!"),
-        BossAttack("Primal Rage", megalodon_primal_rage, (0, 45), "Ancient fury unleashed!"),
-        BossAttack("Tectonic Tremor", megalodon_tectonic_tremor, (0, 50), "The earth itself shakes!")
+        BossAttack("Phantom Bite", megalodon_phantom_bite, (0, 70), "The spectral jaws strike from nowhere!"),
+        BossAttack("Primal Rage", megalodon_primal_rage, (0, 90), "Ancient fury unleashed!"),
+        BossAttack("Tectonic Tremor", megalodon_tectonic_tremor, (0, 105), "The earth itself shakes!")
     ],
     ascii_art=MEGALODON_GHOST_ASCII,
     dialogue={
@@ -4744,12 +5847,12 @@ FROST_WYRM_ASCII = """
 
 FROST_WYRM = Boss(
     name="The Frost Wyrm",
-    hp=550,  # Strong but not overwhelming
-    defense=16,
+    hp=820,
+    defense=22,
     attacks=[
-        BossAttack("Blizzard Breath", frost_wyrm_blizzard_breath, (0, 48), "Waves of freezing cold!"),
-        BossAttack("Ice Spike Barrage", frost_wyrm_ice_spike_barrage, (0, 25), "Memory test through the ice!"),
-        BossAttack("Permafrost Prison", frost_wyrm_permafrost_prison, (0, 30), "Trapped in ancient ice!")
+        BossAttack("Blizzard Breath", frost_wyrm_blizzard_breath, (0, 90), "Waves of freezing cold!"),
+        BossAttack("Ice Spike Barrage", frost_wyrm_ice_spike_barrage, (0, 55), "Memory test through the ice!"),
+        BossAttack("Permafrost Prison", frost_wyrm_permafrost_prison, (0, 65), "Trapped in ancient ice!")
     ],
     ascii_art=FROST_WYRM_ASCII,
     dialogue={
@@ -4922,6 +6025,224 @@ FROST_WYRM = Boss(
     spare_threshold=30
 )
 
+# ===== STELLAR LEVIATHAN (COSMIC SPACE WHALE) =====
+
+STELLAR_LEVIATHAN_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║         ✨ THE STELLAR LEVIATHAN ✨                        ║
+    ║         [Cosmic Space Whale of the Void]                   ║
+    ║         [Peaceful Guardian of the Cosmos]                  ║
+    ╚════════════════════════════════════════════════════════════╝
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣶⣾⣷⣶⣦⣄⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⣠⣾⡇⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀
+        ⢀⣀⣀⣀⣠⣴⣾⣿⣿⠃⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆
+        ⠈⠻⢿⣿⣿⣿⡿⣟⠃⠀⣀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡧
+        ⠀⠀⠀⠀⠈⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣼⣿⣿⣿⣿⣿⣿⠇
+        ⠀⠀⠀⠀⠀⠀⠀⠈⠙⢻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⡙⠛⢛⡻⠋⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠒⠄⠬⢉⣡⣠⣿⣿⣿⣇⡌⠲⠠⠋⠈⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+
+         [A majestic being swimming through the cosmic ocean...]
+         [Galaxies swirl within its translucent form...]
+         [Ancient, beautiful, and territorial...]
+"""
+
+STELLAR_LEVIATHAN = Boss(
+    name="The Stellar Leviathan",
+    hp=1150,
+    defense=27,
+    attacks=[
+        BossAttack("Gravity Waves", stellar_leviathan_gravity_waves, (0, 85), "Space warps around the whale!"),
+        BossAttack("Nebula Clouds", stellar_leviathan_nebula_clouds, (0, 70), "Cosmic clouds obscure your vision!"),
+        BossAttack("Cosmic Debris", stellar_leviathan_cosmic_debris, (0, 95), "Asteroids rain down!"),
+        BossAttack("Stardust Song", stellar_leviathan_stardust_song, (0, 65), "The whale's cosmic wisdom resonates!"),
+        BossAttack("GALACTIC MAJESTY", stellar_leviathan_galactic_majesty, (0, 145), "The full beauty of the cosmos!")
+    ],
+    ascii_art=STELLAR_LEVIATHAN_ASCII,
+    dialogue={
+        "intro": [
+            "*The void of space shimmers*",
+            "*Not with stars*",
+            "*But with something moving between them*",
+            "*Something vast*",
+            "*Something beautiful*",
+            "*A shape emerges from the cosmic darkness*",
+            "*Translucent skin revealing galaxies within*",
+            "*Fins of pure nebula trailing stardust*",
+            "*Eyes that hold the light of dying stars*",
+            "*It sings*",
+            "*A song older than your solar system*",
+            "*A whale call that echoes through the void*",
+            "***...This space... is mine...***",
+            "*The translation forms in your mind*",
+            "*Not threatening, but clear*",
+            "*You are in its territory*",
+            "*And it will defend its sanctuary*",
+            "*Not out of malice*",
+            "*But because this is its home*",
+            "*Its ancient, peaceful home among the stars*"
+        ],
+        "default": [
+            "*The Stellar Leviathan swims gracefully through space*",
+            "*Bioluminescent patterns pulse across its body*",
+            "*Like constellations being born and dying*",
+            "***...You intrude... but do not understand...***",
+            "*Its song carries sadness, not anger*",
+            "***...This place... is sacred...***",
+            "*Nebulae trail from its fins like cosmic ribbons*",
+            "***...Turn back... before harm comes...***"
+        ],
+        "hit": [
+            "*Your attack strikes the Leviathan's side*",
+            "*Stardust blooms from the wound*",
+            "*The whale's song shifts - a note of pain*",
+            "***...Why... do you hurt me...?***",
+            "*It sounds confused more than angry*",
+            "***...I meant... no harm...***",
+            "*The galaxies within its body dim slightly*",
+            "***...Only... to protect... my space...***",
+            "*It continues to defend itself*",
+            "*But there's no rage in its movements*",
+            "*Only the sad necessity of survival*"
+        ],
+        "low_hp": [
+            "*The Leviathan's movements slow*",
+            "*Its bioluminescence flickers like dying stars*",
+            "*Cracks appear in its cosmic form*",
+            "*Void leaking through, not blood*",
+            "***...I have... swum these currents...***",
+            "***...For eons...***",
+            "***...Watched worlds be born...***",
+            "***...Watched stars die...***",
+            "*Its song grows quiet*",
+            "***...I never... wanted conflict...***",
+            "***...Only... to exist...***",
+            "***...In peace... among my stars...***",
+            "*The whale's eyes still hold their ancient light*",
+            "*But now there's something else*",
+            "*Acceptance, perhaps*",
+            "*Or simply... weariness*",
+            "***...The cosmos... is... so beautiful...***",
+            "***...I wish... you could see it... as I do...***"
+        ],
+        "merciful": [
+            "*You stop your attack*",
+            "*And simply float in the void*",
+            "*Watching the magnificent creature*",
+            "*The Leviathan circles warily*",
+            "*Its song questioning*",
+            "***...You... stop...?***",
+            "*You reach out*",
+            "*Not with violence*",
+            "*But with understanding*",
+            "*You speak to it*",
+            "*Through thought, through intention*",
+            "*'I understand. This is your home.'*",
+            "*The whale's song shifts*",
+            "*From defensive to... curious*",
+            "***...You... comprehend...?***",
+            "***...Few beings... ever understand...***",
+            "*It swims closer*",
+            "*Not threatening now*",
+            "*Just... present*",
+            "***...Most see empty space...***",
+            "***...And think it barren...***",
+            "***...But this void... is alive...***",
+            "***...With song... with light... with meaning...***",
+            "***...I guard it... not from malice...***",
+            "***...But because... it is precious...***"
+        ],
+        "spare_ready": [
+            "*THE STELLAR LEVIATHAN can be SPARED*",
+            "***...You could... end me...***",
+            "***...Or...***",
+            "***...We could... coexist...***",
+            "*The whale's song carries hope*",
+            "*Ancient, cosmic hope*"
+        ],
+        "spared": [
+            "*You lower your weapon completely*",
+            "*And the Stellar Leviathan understands*",
+            "*Its song swells*",
+            "*Not in triumph*",
+            "*But in relief*",
+            "***...Thank you... traveler...***",
+            "*The whale swims close*",
+            "*Its cosmic body filling your vision*",
+            "*You can see entire nebulae forming within it*",
+            "*Stars being born in its depths*",
+            "***...Few show mercy... to that which is different...***",
+            "***...Fewer still... to that which blocks their path...***",
+            "*It circles you gently*",
+            "*Stardust falling like rain*",
+            "***...I give you... a gift...***",
+            "*A single scale detaches*",
+            "*But it's not a scale*",
+            "*It's a piece of the cosmos itself*",
+            "*Solidified starlight*",
+            "***...The Cosmic Scale... a fragment of my essence...***",
+            "***...It will call... the rarest fish...***",
+            "***...Those that swim between stars...***",
+            "*The Leviathan's song grows distant*",
+            "*As it returns to its patrol*",
+            "*Swimming through the cosmic ocean*",
+            "***...You are welcome... in my space...***",
+            "***...No longer an intruder...***",
+            "***...But a friend... to the void...***",
+            "*The stars seem brighter somehow*",
+            "*And space feels less empty*",
+            "*You have earned the respect*",
+            "*Of one of the cosmos' oldest guardians*"
+        ],
+        "killed": [
+            "*Your final strike pierces the Leviathan's core*",
+            "*The whale's song becomes a shriek*",
+            "*Not of rage*",
+            "*But of anguish*",
+            "***...No... not like this...***",
+            "*Its translucent body begins to fragment*",
+            "*Galaxies spilling out into space*",
+            "*Stars going supernova within its dying form*",
+            "***...I only... wanted... to protect...***",
+            "*The cosmic debris spreads*",
+            "*Beautiful and terrible*",
+            "*Nebulae tearing apart*",
+            "*Black holes forming in its wake*",
+            "***...My space... my beautiful space...***",
+            "*The Leviathan's body dissolves*",
+            "*Becoming a supernova of light*",
+            "*And then... nothing*",
+            "*Just empty void*",
+            "*But something's wrong*",
+            "*The space around you feels... dead*",
+            "*The ambient cosmic radiation*",
+            "*The subtle background hum of the universe*",
+            "*Gone*",
+            "*The Stellar Leviathan wasn't just living here*",
+            "*It WAS this space*",
+            "*Its song kept the cosmic currents flowing*",
+            "*Its presence maintained the balance*",
+            "*And now...*",
+            "*The space begins to collapse*",
+            "*Not violently*",
+            "*But slowly*",
+            "*Inevitably*",
+            "*Without the Leviathan's song*",
+            "*This region of space begins to die*",
+            "*Stars dim*",
+            "*Planets drift from their orbits*",
+            "*The cosmic ecosystem unravels*",
+            "*You didn't just kill a creature*",
+            "*You silenced a song*",
+            "*That had been singing*",
+            "*Since the universe was young*",
+            "*And space will never sing quite the same way again*"
+        ]
+    },
+    spare_threshold=30
+)
+
 AMALGAMATION_ASCII = """
     ╔════════════════════════════════════════════════════════════╗
     ║         💀 THE AMALGAMATION OF HORRORS 💀                 ║
@@ -4948,20 +6269,17 @@ AMALGAMATION_ASCII = """
 """
 
 
-# ===== SECTION 3: BOSS DEFINITION =====
-# Add this with the other boss definitions (around line 5000)
-
 AMALGAMATION = Boss(
     name="The Amalgamation of Horrors",
-    hp=1500,
-    defense=30,
+    hp=2500,
+    defense=35,
     attacks=[
-        BossAttack("Fusion Strike", amalgamation_fusion_strike, (0, 60), "Multi-phase combination attack!"),
-        BossAttack("Elemental Chaos", amalgamation_elemental_chaos, (0, 45), "Fire, Ice, and Venom converge!"),
-        BossAttack("Cosmic Barrage", amalgamation_cosmic_barrage, (0, 35), "Reality fractures!"),
-        BossAttack("Phantom Fleet", amalgamation_pirate_assault, (0, 40), "Ghostly cannons fire!"),
-        BossAttack("Morphing Attack", amalgamation_morphing_attack, (0, 50), "Becomes a previous boss!"),
-        BossAttack("ULTIMATE ANNIHILATION", amalgamation_ultimate_annihilation, (0, 90), "The judgment of ten guardians!")
+        BossAttack("Fusion Strike", amalgamation_fusion_strike, (0, 120), "Multi-phase combination attack!"),
+        BossAttack("Elemental Chaos", amalgamation_elemental_chaos, (0, 95), "Fire, Ice, and Venom converge!"),
+        BossAttack("Cosmic Barrage", amalgamation_cosmic_barrage, (0, 80), "Reality fractures!"),
+        BossAttack("Phantom Fleet", amalgamation_pirate_assault, (0, 85), "Ghostly cannons fire!"),
+        BossAttack("Morphing Attack", amalgamation_morphing_attack, (0, 110), "Becomes a previous boss!"),
+        BossAttack("ULTIMATE ANNIHILATION", amalgamation_ultimate_annihilation, (0, 850), "The judgment of ten guardians!")
     ],
     ascii_art=AMALGAMATION_ASCII,
     dialogue={
@@ -5128,6 +6446,320 @@ AMALGAMATION = Boss(
     spare_threshold=20
 )
 
+AQUATECH_MEGALODON_MECH_ASCII = """
+    ╔════════════════════════════════════════════════════════════╗
+    ║          ⚙️  PROJECT MEGALODON  ⚙️                         ║
+    ║              [AquaTech Corporation]                        ║
+    ║         [Industrial Fishing Mech - Model M-1]              ║
+    ╚════════════════════════════════════════════════════════════╝
+
+                    ___
+                    |_|_|
+                    |_|_|              _____
+                    |_|_|     ____    |*_*_*|
+            _______   _\__\___/ __ \____|_|_   _______
+            / ____  |=|      \  <_+>  /      |=|  ____ \
+            ~|    |\|=|======\\______//======|=|/|    |~
+            |_   |    \      |      |      /    |    |
+            \==-|     \     |  2D  |     /     |----|~~/
+            |   |      |    |      |    |      |____/~/
+            |   |       \____\____/____/      /    / /
+            |   |         {----------}       /____/ /
+            |___|        /~~~~~~~~~~~~\     |_/~|_|/
+            \_/        |/~~~~~||~~~~~\|     /__|\
+            | |         |    ||||    |     (/|| \)
+            | |        /     |  |     \       \\
+            |_|        |     |  |     |
+                        |_____|  |_____|
+                        (_____)  (_____)
+                        |     |  |     |
+                        |     |  |     |
+                        |/~~~\|  |/~~~\|
+                        /|___|\  /|___|\
+                        <_______><_______>
+
+        [Massive mechanical shark-shaped vessel...]
+        [Industrial fishing equipment bristling from every surface...]
+        [Corporate logo gleaming in cold, sterile white...]
+        [The sound of machinery drowning out the ocean...]
+"""
+
+AQUATECH_MEGALODON_PHASE1 = Boss(
+    name="Project MEGALODON - Phase 1",
+    hp=1400,
+    defense=32,
+    attacks=[
+        BossAttack("Industrial Nets", aquatech_industrial_nets, (0, 90), "Massive nets deploy!"),
+        BossAttack("Harpoon Barrage", aquatech_harpoon_barrage, (0, 105), "Automated harpoons fire!"),
+        BossAttack("Toxic Discharge", aquatech_toxic_discharge, (0, 80), "Chemical waste released!"),
+        BossAttack("Sonar Pulse", aquatech_sonar_pulse, (0, 85), "Disorienting sonar blast!"),
+        BossAttack("Harvester Blades", aquatech_harvester_blades, (0, 125), "Processing blades activate!"),
+        BossAttack("MAXIMUM EXTRACTION", aquatech_phase1_ultimate, (0, 175), "All systems firing!")
+    ],
+    ascii_art=AQUATECH_MEGALODON_MECH_ASCII,
+    dialogue={
+        "intro": [
+            "*You arrive at the space station, guided by the Stellar Leviathan*",
+            "*The massive structure looms before you*",
+            "*Cold. Industrial. Lifeless.*",
+            "*'AQUATECH CORPORATION' emblazoned on every surface*",
+            "*Then you see it*",
+            "*Descending from the docking bay*",
+            "*A mechanical nightmare*",
+            "⚙️⚙️⚙️",
+            "*PROJECT MEGALODON*",
+            "*A mech shaped like a shark*",
+            "*But it's not an animal*",
+            "*It's a machine*",
+            "*An industrial fishing vessel weaponized*",
+            "*Nets, harpoons, processing blades*",
+            "*Everything designed to harvest*",
+            "*To extract*",
+            "*To profit*",
+            "*A synthesized voice crackles from speakers:*",
+            "'UNAUTHORIZED LIFE FORM DETECTED'",
+            "'YOU HAVE INTERFERED WITH AQUATECH OPERATIONS'",
+            "'ELIMINATED: 73 BILLION FISH THIS QUARTER'",
+            "'PROFIT: MAXIMIZED'",
+            "'RESISTANCE: FUTILE'",
+            "'INITIATING HARVEST PROTOCOL'",
+            "*This is the true enemy*",
+            "*Not a guardian protecting its home*",
+            "*But greed made manifest*",
+            "*The ocean's enemy*",
+            "*Humanity's shame*"
+        ],
+        "default": [
+            "'EFFICIENCY: 94%'",
+            "'BIOMASS DETECTED: CONVERTING TO PROFIT'",
+            "*The mech moves with cold precision*",
+            "*Every action calculated*",
+            "*Every motion optimized for killing*",
+            "'AQUATECH SHAREHOLDER VALUE: INCREASING'",
+            "*This machine has no malice*",
+            "*Only purpose*",
+            "*And that purpose is extinction for profit*"
+        ],
+        "hit": [
+            "*Your attack dents the metal hull*",
+            "*Sparks fly from damaged circuits*",
+            "'DAMAGE SUSTAINED: RECALCULATING'",
+            "'THREAT LEVEL: ELEVATED'",
+            "*But the machine shows no pain*",
+            "*Because it feels nothing*",
+            "*It simply adapts*",
+            "'COUNTER-MEASURES DEPLOYING'",
+            "*Cold. Calculated. Efficient.*"
+        ],
+        "low_hp": [
+            "*The mech's systems flicker*",
+            "*Smoke pours from damaged components*",
+            "'CRITICAL DAMAGE: 67%'",
+            "'HULL INTEGRITY: COMPROMISED'",
+            "'PROFIT MARGINS: THREATENED'",
+            "*Even damaged, it continues*",
+            "*Because machines don't give up*",
+            "*They don't feel fear*",
+            "*They just execute their programming*",
+            "'EMERGENCY PROTOCOL: ACTIVATED'",
+            "'MUST... MAXIMIZE... EXTRACTION...'",
+            "*Its movements become erratic*",
+            "*But no less deadly*"
+        ],
+        "merciful": [
+            "*You cannot show mercy to a machine*",
+            "*Not yet*",
+            "*It must be defeated first*"
+        ],
+        "spare_ready": [
+            "*Phase 1 cannot be spared*",
+            "*You must prove your strength*",
+            "*Before the guardians can help*"
+        ],
+        "spared": [
+            "*This phase ends in victory, not mercy*",
+            "*But Phase 2...*",
+            "*That's different*"
+        ],
+        "killed": [
+            "*Your attacks overwhelm the mech's defenses*",
+            "*It sparks and smokes*",
+            "*Systems failing*",
+            "'PRIMARY SYSTEMS: OFFLINE'",
+            "'INITIATING BACKUP PROTOCOL'",
+            "*But it's not over yet...*"
+        ]
+    },
+    spare_threshold=999
+)
+
+AQUATECH_MEGALODON_PHASE2 = Boss(
+    name="Project MEGALODON - Phase 2",
+    hp=950,
+    defense=30,
+    attacks=[
+        BossAttack("Desperate Nets", aquatech_industrial_nets, (0, 70), "Nets deploy!"),
+        BossAttack("Emergency Harpoons", aquatech_harpoon_barrage, (0, 85), "Harpoons fire!"),
+        BossAttack("Last Resort Toxins", aquatech_toxic_discharge, (0, 65), "Chemicals release!"),
+        BossAttack("Failing Sonar", aquatech_sonar_pulse, (0, 75), "Damaged sonar pulses!"),
+        BossAttack("FINAL HARVEST", aquatech_phase2_ultimate, (0, 110), "Last stand!")
+    ],
+    ascii_art=AQUATECH_MEGALODON_MECH_ASCII,
+    dialogue={
+        "intro": [
+            "*The mech sparks and smokes*",
+            "*Its systems critically damaged*",
+            "*But before it can recover...*",
+            "🌊🌊🌊",
+            "*THE GUARDIANS ARRIVE*",
+            "*From the depths below*",
+            "*From the waters above*",
+            "*They come*",
+            "*Every guardian you spared*",
+            "*Rising to fight alongside you*",
+            "",
+            "🐉 *Nessie surges up from the loch's memory*",
+            "'For those who showed mercy!'",
+            "",
+            "🌊 *The River Guardian flows through space itself*",
+            "'For the one who respected the waters!'",
+            "",
+            "☠️ *Captain Redbeard's ship phases into reality*",
+            "'For me brother-in-arms! FIRE ALL CANNONS!'",
+            "",
+            "🐙 *The Kraken's tentacles wrap around the mech*",
+            "'You freed me from rage. Now I return the favor!'",
+            "",
+            "🐍 *Jörmungandr coils around the battlefield*",
+            "'The World Serpent aids the world's savior!'",
+            "",
+            "🔥 *Ifrit blazes with controlled fire*",
+            "'You gave me freedom. I give you my flames!'",
+            "",
+            "🦈 *The Megalodon's ghost circles*",
+            "'Together, we remember what the ocean was!'",
+            "",
+            "⚡ *Ægir's storms crackle*",
+            "'The seas themselves fight with you!'",
+            "",
+            "❄️ *The Frost Wyrm's ice spreads*",
+            "'Ancient ice against modern metal!'",
+            "",
+            "👁️ *Cthulhu's presence warps reality*",
+            "'Even I oppose this abomination!'",
+            "",
+            "🌌 *Above, the Stellar Leviathan sings*",
+            "'And I brought you here, friend of the cosmos!'",
+            "",
+            "*United*",
+            "*Guardians and human*",
+            "*Nature and understanding*",
+            "*Together against greed*",
+            "",
+            "'DETECTING MULTIPLE HOSTILES'",
+            "'RECALCULATING...'",
+            "'ODDS OF VICTORY: DECLINING'",
+            "'SHAREHOLDERS WILL NOT BE PLEASED'",
+            "",
+            "*This is YOUR fight*",
+            "*But you don't fight alone*"
+        ],
+        "default": [
+            "'MULTIPLE TARGETS DETECTED'",
+            "'UNABLE TO ACQUIRE LOCK'",
+            "*The Guardians harry the mech from all sides*",
+            "*Nessie blocks attacks with her body*",
+            "*River Guardian's currents throw off its aim*",
+            "*The pirates' cannons never stop firing*",
+            "*Kraken holds it in place*",
+            "*Jörmungandr prevents escape*",
+            "'EFFICIENCY: DROPPING'",
+            "'PROFIT MARGINS: UNACCEPTABLE'",
+            "*But you are the key*",
+            "*Only you can finish this*"
+        ],
+        "hit": [
+            "*Your strike pierces damaged armor*",
+            "'CRITICAL HIT SUSTAINED'",
+            "*Nessie calls out: 'Well struck!'*",
+            "*The Kraken roars encouragement*",
+            "'GUARDIAN INTERFERENCE: 87%'",
+            "'CANNOT COMPENSATE'",
+            "*The guardians cheer you on*",
+            "*Every hit brings victory closer*"
+        ],
+        "low_hp": [
+            "*The mech is falling apart*",
+            "*Oil and coolant leak into the water*",
+            "'CATASTROPHIC FAILURE IMMINENT'",
+            "'EMERGENCY BROADCAST TO AQUATECH HQ'",
+            "'PROJECT MEGALODON: COMPROMISED'",
+            "'RECOMMENDATION: ABORT OPERATIONS'",
+            "'MARINE GUARDIANS: TOO ORGANIZED'",
+            "'HUMAN FISHER: TOO MERCIFUL'",
+            "'CONCLUSION: OCEAN CANNOT BE CONQUERED'",
+            "'ONLY... RESPECTED...'",
+            "*The machine's voice distorts*",
+            "*Its systems failing*",
+            "'FINAL MESSAGE: PROFIT... IS NOT... EVERYTHING...'",
+            "*Even programmed for greed*",
+            "*In its final moments*",
+            "*Perhaps it understands*"
+        ],
+        "merciful": [
+            "*You cannot show mercy to a machine*",
+            "*It has no soul to save*",
+            "*Only programming to execute*",
+            "*This must end in destruction*"
+        ],
+        "spare_ready": [
+            "*This machine cannot be spared*",
+            "*It will only continue its programming*",
+            "*There is only one way this ends*"
+        ],
+        "spared": [
+            "*Machines cannot be spared*",
+            "*They can only be stopped*"
+        ],
+        "killed": [
+            "*Your final strike pierces the reactor core*",
+            "*The guardians unleash their full power*",
+            "*Nessie rams it with ancient strength*",
+            "*Kraken tears at its hull*",
+            "*Ifrit's flames melt through armor*",
+            "*Frost Wyrm freezes it solid*",
+            "*Jörmungandr crushes it in coils*",
+            "*The pirates' cannons never stop firing*",
+            "*Cthulhu's madness corrupts its circuits*",
+            "*The mech EXPLODES*",
+            "",
+            "'CATASTROPHIC... SYSTEM... FAILURE...'",
+            "'MISSION... FAILED...'",
+            "'PROFIT... MARGIN... ZERO...'",
+            "'RECOMMENDATION... TO... AQUATECH...'",
+            "'...OCEAN... CANNOT... BE... CONQUERED...'",
+            "'...GUARDIANS... TOO... STRONG...'",
+            "'...HUMAN... TOO... MERCIFUL...'",
+            "'...ONLY... COEXISTENCE... REMAINS...'",
+            "",
+            "*The machine's final transmission*",
+            "*Beams back to AquaTech headquarters*",
+            "*Its last data*",
+            "*Its final lesson*",
+            "",
+            "*Metal rains down into the water*",
+            "*But the guardians shield you*",
+            "*From the debris*",
+            "*From the oil*",
+            "*From the destruction*",
+            "",
+            "*The threat is ended*",
+            #TODO: endings handled in another part of the code 
+        ]
+    },
+    spare_threshold=999
+)
+
 
 # Boss item that triggers the fight
 class BossItem:
@@ -5198,6 +6830,19 @@ BOSS_ITEMS = {
         "A crystalline dragon scale that never melts. It radiates ancient cold and whispers of a hoard beneath frozen waters...",
         "Arctic Waters"
     ),
+    "Cosmic Scale": BossItem(
+        "Cosmic Scale",
+        STELLAR_LEVIATHAN,
+        "A fragment of solidified starlight from the Stellar Leviathan. Galaxies swirl within its translucent surface, and it hums with the song of the cosmos...",
+        "Space"
+    ),
+    "Emergency Beacon": BossItem(
+        "Emergency Beacon",
+        AQUATECH_MEGALODON_PHASE1,
+        "A distress signal detected by the Stellar Leviathan. It leads to an AquaTech space station. The cosmic whale's song sounds... concerned.",
+        "Space Station Aquarium"
+    ),
+
     # Add more boss items for other locations here
 }
 
@@ -5246,7 +6891,7 @@ COMBAT_ITEMS_HP = [
 LOCATION_BOSS_REQUIREMENTS = {
     "Hub Island - Calm Lake": None,  # Starting location
     "Hub Island - Swift River": "Loch Ness Monster",  # Must defeat/spare Loch Ness first
-    "Ocean": "The Crimson Tide",  # Must defeat/spare pirates before accessing Ocean
+    "Ocean": "The River Guardian",  # Must defeat/spare River Guardian before accessing Ocean
     "Deep Sea": "The River Guardian",  # Also requires River Guardian (or you could add an Ocean boss)
     "Volcanic Lake": "The River Guardian",  # Could add more bosses for progression
     "Arctic Waters": "The River Guardian",
@@ -7282,6 +8927,25 @@ class Game:
         # Collections
         self.encyclopedia = {}  # {fish_name: count_caught}
         self.trophy_room = []   # List of Fish objects for display
+        
+        # New Game+ handling
+        if character_data and character_data.get('ng_plus'):
+            self.is_ng_plus = True
+            self.ng_plus_ending = character_data.get('ng_plus_ending', 'unknown')
+            # Carry over money (50%)
+            self.money = character_data.get('ng_plus_money', 100)
+            # Carry over encyclopedia
+            self.encyclopedia = character_data.get('ng_plus_encyclopedia', {})
+            # Boost boss difficulty
+            self.ng_plus_boss_multiplier = 1.5
+            print(Fore.LIGHTMAGENTA_EX + f"\n✨ NEW GAME+ ACTIVE ✨" + Style.RESET_ALL)
+            print(Fore.YELLOW + f"Previous ending: {self.ng_plus_ending.upper()}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"Starting money: ${self.money}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"Encyclopedia entries: {len(self.encyclopedia)}" + Style.RESET_ALL)
+            time.sleep(3)
+        else:
+            self.is_ng_plus = False
+            self.ng_plus_boss_multiplier = 1.0
         
         # World state
         self.current_location = LOCATIONS[0]
@@ -11391,6 +13055,14 @@ class Game:
         boss.mercy_level = 0
         boss.is_spareable = False
         
+        # Apply New Game+ multiplier
+        if self.is_ng_plus:
+            boss.hp = int(boss.hp * self.ng_plus_boss_multiplier)
+            boss.max_hp = boss.hp
+            # Increase attack damage too
+            for attack in boss.attacks:
+                attack.damage = (int(attack.damage[0] * 1.25), int(attack.damage[1] * 1.25))
+        
         # Reset player HP
         self.current_hp = self.max_hp
         
@@ -11660,6 +13332,33 @@ class Game:
                     print(Fore.LIGHTBLACK_EX + "*You hear whispers in your dreams...*" + Style.RESET_ALL)
                     print(Fore.MAGENTA + "=" * 60 + Style.RESET_ALL)
                 
+                # BAD ENDING: Defeated the Amalgamation (killed all guardians)
+                if boss.name == "The Amalgamation of Horrors":
+                    input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
+                    continue_game = bad_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    else:
+                        return  # Return to continue the game
+                
+                # MEDIUM ENDING: Defeated Stellar Leviathan without good karma
+                if boss.name == "The Stellar Leviathan":
+                    input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
+                    continue_game = medium_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    else:
+                        return  # Return to continue the game
+                
+                # GOOD ENDING: Defeated AquaTech Mech Phase 2 (with all guardians)
+                if boss.name == "Project MEGALODON - Phase 2":
+                    input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
+                    continue_game = good_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    else:
+                        return  # Return to continue the game
+                
                 input(Fore.LIGHTBLACK_EX + "\nPress Enter to continue..." + Style.RESET_ALL)
                 return
             
@@ -11784,6 +13483,84 @@ class Game:
         
         return all_defeated and self.karma <= -100
     
+    def start_aquatech_boss_fight(self):
+        '''Special two-phase boss fight for AquaTech Megalodon'''
+        # Restore player to full HP for this epic encounter
+        self.current_hp = self.max_hp
+        
+        # Phase 1: Solo
+        self.clear_screen()
+        print(Fore.MAGENTA + "\\n" + "="*60 + Style.RESET_ALL)
+        print(Fore.MAGENTA + "⚙️  PHASE 1: THE MACHINE ⚙️" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "="*60 + "\\n" + Style.RESET_ALL)
+        print(Fore.YELLOW + "You must face this industrial nightmare alone..." + Style.RESET_ALL)
+        print(Fore.YELLOW + "Prove your strength before the guardians can aid you!" + Style.RESET_ALL)
+        time.sleep(3)
+        
+        phase1_result = self.start_boss_fight(AQUATECH_MEGALODON_PHASE1)
+        
+        # If player died or fled, end here
+        if self.current_hp <= 0:
+            return
+        
+        # Restore some HP between phases
+        heal_amount = self.max_hp // 3
+        self.current_hp = min(self.max_hp, self.current_hp + heal_amount)
+        print(Fore.GREEN + f"\\n✓ You recover {heal_amount} HP between phases!" + Style.RESET_ALL)
+        time.sleep(2)
+        
+        # Phase transition cutscene
+        self.clear_screen()
+        print(Fore.CYAN + "\\n" + "="*60 + Style.RESET_ALL)
+        print(Fore.CYAN + "The mech sparks and smokes..." + Style.RESET_ALL)
+        print(Fore.CYAN + "Its systems flickering..." + Style.RESET_ALL)
+        print(Fore.CYAN + "But wait..." + Style.RESET_ALL)
+        print(Fore.CYAN + "Something is happening..." + Style.RESET_ALL)
+        print(Fore.CYAN + "="*60 + "\\n" + Style.RESET_ALL)
+        time.sleep(3)
+        
+        # Guardian arrival
+        print(Fore.LIGHTGREEN_EX + "\\n★★★ THE GUARDIANS ARRIVE! ★★★\\n" + Style.RESET_ALL)
+        time.sleep(1)
+        
+        # Show which guardians appear based on who was spared
+        guardian_list = [
+            ("Loch Ness Monster", "🐉 Nessie", Fore.LIGHTGREEN_EX),
+            ("The River Guardian", "🌊 River Guardian", Fore.LIGHTCYAN_EX),
+            ("The Crimson Tide", "☠️ Captain Redbeard", Fore.LIGHTRED_EX),
+            ("The Kraken", "🐙 The Kraken", Fore.LIGHTMAGENTA_EX),
+            ("Jörmungandr", "🐍 Jörmungandr", Fore.LIGHTBLUE_EX),
+            ("Ifrit the Flamebringer", "🔥 Ifrit", Fore.LIGHTYELLOW_EX),
+            ("The Megalodon's Ghost", "🦈 Megalodon", Fore.WHITE),
+            ("Ægir", "⚡ Ægir", Fore.YELLOW),
+            ("The Frost Wyrm", "❄️ Frost Wyrm", Fore.CYAN),
+            ("Cthulhu", "👁️ Cthulhu", Fore.MAGENTA),
+        ]
+        
+        guardian_count = 0
+        for boss_name, display_name, color in guardian_list:
+            if boss_name in self.defeated_bosses:
+                print(color + f"{display_name} joins the battle!" + Style.RESET_ALL)
+                guardian_count += 1
+                time.sleep(0.5)
+        
+        print(Fore.LIGHTMAGENTA_EX + "\\n🌌 Above, the Stellar Leviathan sings!" + Style.RESET_ALL)
+        time.sleep(1)
+        
+        print(Fore.CYAN + f"\\n{guardian_count} guardians have answered your call!" + Style.RESET_ALL)
+        print(Fore.CYAN + "Together, you will finish this!" + Style.RESET_ALL)
+        time.sleep(2)
+        
+        # Phase 2: With guardian help
+        self.clear_screen()
+        print(Fore.CYAN + "\\n" + "="*60 + Style.RESET_ALL)
+        print(Fore.CYAN + "🌊 PHASE 2: THE GUARDIANS' WRATH 🌊" + Style.RESET_ALL)
+        print(Fore.CYAN + "="*60 + "\\n" + Style.RESET_ALL)
+        time.sleep(2)
+        
+        self.start_boss_fight(AQUATECH_MEGALODON_PHASE2)
+    
+    #=========== DEVELOPER FUNCTIONS ===========#
     def use_boss_item(self):
         """Use a boss item to trigger boss fight"""
         if not self.boss_inventory:
@@ -11912,6 +13689,13 @@ class Game:
             print(Fore.GREEN + "18. Test Fishing (Instant Catch)" + Style.RESET_ALL)
             print(Fore.GREEN + "19. Set Rod Durability" + Style.RESET_ALL)
             print(Fore.GREEN + "20. Toggle God Mode (Infinite HP)" + Style.RESET_ALL)
+            print(Fore.GREEN + "21. Check Amalgamation Trigger Conditions" + Style.RESET_ALL)
+            print(Fore.GREEN + "22. Credits test" + Style.RESET_ALL)
+            print()
+            print(Fore.CYAN + "═══ Ending Tests ═══" + Style.RESET_ALL)
+            print(Fore.RED + "23. Trigger Bad Ending (Amalgamation)" + Style.RESET_ALL)
+            print(Fore.YELLOW + "24. Trigger Medium Ending (Stellar Leviathan)" + Style.RESET_ALL)
+            print(Fore.GREEN + "25. Trigger Good Ending (AquaTech Victory)" + Style.RESET_ALL)
             print()
             print(Fore.WHITE + "0. Exit Dev Menu" + Style.RESET_ALL)
             print()
@@ -11958,6 +13742,44 @@ class Game:
                 self.dev_set_durability()
             elif choice == '20':
                 self.dev_toggle_god_mode()
+            elif choice == '21':
+                if self.check_amalgamation_trigger():
+                    print(Fore.GREEN + "Amalgamation trigger conditions met! You can now fight the Amalgamation of Horrors in the Deep Sea!" + Style.RESET_ALL)
+                else:
+                    print(Fore.YELLOW + "Amalgamation trigger conditions not met. Defeat all 10 guardians and have karma <= -100 to unlock!" + Style.RESET_ALL)
+            elif choice == '22':
+                end_credits(self.name)
+            elif choice == '23':
+                # Trigger Bad Ending
+                confirm = input(Fore.RED + "Trigger Bad Ending? (Y/N): " + Style.RESET_ALL).lower()
+                if confirm == 'y':
+                    self.clear_screen()
+                    continue_game = bad_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    # If they chose continue, exit dev menu
+                    break
+            elif choice == '24':
+                # Trigger Medium Ending
+                confirm = input(Fore.YELLOW + "Trigger Medium Ending? (Y/N): " + Style.RESET_ALL).lower()
+                if confirm == 'y':
+                    self.clear_screen()
+                    continue_game = medium_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    # If they chose continue, exit dev menu
+                    break
+            elif choice == '25':
+                # Trigger Good Ending
+                confirm = input(Fore.GREEN + "Trigger Good Ending? (Y/N): " + Style.RESET_ALL).lower()
+                if confirm == 'y':
+                    self.clear_screen()
+                    continue_game = good_ending(self.name, self)
+                    if not continue_game:
+                        sys.exit(0)
+                    # If they chose continue, exit dev menu
+                    break
+            
             elif choice == '0':
                 break
             else:
@@ -12220,9 +14042,9 @@ if __name__ == "__main__":
     play_music("menu")
     
     print(Fore.CYAN + "╔═══════════════════════════════════════╗" + Style.RESET_ALL)
-    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣              ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║       BOSS BATTLES UPDATE             ║" + Style.RESET_ALL)
-    print(Fore.CYAN + "║         V.0.7.2 BETA                  ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║       🎣 FISHING GAME 🎣             ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║           FULL RELEASE                ║" + Style.RESET_ALL)
+    print(Fore.CYAN + "║             V.1.0.0                   ║" + Style.RESET_ALL)
     print(Fore.CYAN + "╚═══════════════════════════════════════╝" + Style.RESET_ALL)
     print()
     print(
