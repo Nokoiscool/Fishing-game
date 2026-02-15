@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0%20FULL%20RELEASE-orange.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
-![Code Size](https://img.shields.io/badge/code%20size-~140KB-informational.svg)
+![Code Size](https://img.shields.io/badge/code%20size-~690KB-informational.svg)
 ![Fish Species](https://img.shields.io/badge/fish%20species-150+-success.svg)
 ![Locations](https://img.shields.io/badge/locations-6-blueviolet.svg)
 ![Boss Battles](https://img.shields.io/badge/boss%20battles-10-red.svg)
