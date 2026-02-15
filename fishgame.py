@@ -12421,6 +12421,9 @@ class Game:
                 
                 ("Analects", "Confucius",
                     "\"The Master said, The gentleman understands what is morally right, whereas the small man understands what is profitable.\""),
+
+                ("The Republic", "Plato",
+                    "\"The heaviest penalty for declining to rule is to be ruled by someone inferior to yourself.\""),
                 
                 ("The State and Revolution", "Vladimir Lenin",
                     "\"The state is a product of society at a certain stage of development; it is the admission that this society has become entangled in an insoluble contradiction with itself, and that it needs a machine, a state, to be set up to manage the struggle of the classes.\""),
@@ -12436,6 +12439,12 @@ class Game:
 
                 ("Napoleon Bonaparte", "Memoirs of Napoleon Bonaparte",
                     "\"History is a set of lies agreed upon.\""),
+
+                ("Julius Cæsar", "Commentarii de Bello Gallico",
+                    "\"I have come, I have seen, I have conquered.\""),
+
+                ("Abraham Lincoln", "Gettysburg Address",
+                    "\"Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all\""),
                 
                 # ============================================
                 # NON-FICTION & HISTORICAL
@@ -12449,12 +12458,10 @@ class Game:
 
                 ("Guns, Germs, and Steel", "Jared Diamond",
                     "\"History followed different courses for different peoples because of differences among peoples' environments, not because of biological differences among peoples themselves.\""),
-                
-                ("Julius Caesar", "Commentarii de Bello Gallico",
-                    "\"I have come, I have seen, I have conquered.\""),
 
-                ("Abraham Lincoln", "Gettysburg Address",
-                    "\"Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all\""),
+                ("The Diary of Anne Frank", "Anne Frank",
+                    "\"Despite everything, I believe that people are really good at heart.\""),
+                
                 # ============================================
                 # RELIGIOUS & SPIRITUAL TEXTS
                 # ============================================
@@ -12520,6 +12527,9 @@ class Game:
                 
                 ("Wikipedia, the free encyclopedia",
                     "\"Fishing is the activity of trying to catch fish, either in the wild or in captivity.\""),
+
+                ("National Geographic", "Various Authors",
+                    "\"The ocean is home to an estimated 2.2 million species, many of which are still undiscovered.\""),
                 
                 # ============================================
                 # OCCULT & ALTERNATIVE SPIRITUALITY
@@ -12705,7 +12715,8 @@ class Game:
                 ("State of the island adress", "Bob, mayor of hub island",
                     "\"My fellow islanders, we stand at a crossroads. The sea is both our greatest resource and our greatest threat. We must come together to protect it, to learn from it, and to ensure that it continues to sustain us for generations to come.\""),
 
-
+                ("My journey as CEO of AquaTech", "John Aquatech",
+                    "\"When I took over AquaTech, I knew we had a responsibility to the ocean. We are not just a corporation; we are stewards of the sea. Our mission is to innovate while preserving the delicate balance of marine life.\""),
                 
 
 
