@@ -24,30 +24,33 @@ def end_credits(player_name="Player"):
     ║                     THANK YOU FOR PLAYING!                   ║
     ║                                                              ║
     ║  Developed:                                                  ║
-    ║   -Noko                                                      ║
+    ║    -Noko                                                     ║
     ║                                                              ║
     ║ Linux port:                                                  ║
-    ║   -Beff                                                      ║     
+    ║   - Beff                                                     ║      
     ║                                                              ║
     ║  Story:                                                      ║
-    ║   -Noko                                                      ║
+    ║   - Noko                                                     ║
     ║                                                              ║
     ║  Art:                                                        ║
-    ║   -https://www.asciiart.eu/                                  ║
-    ║   -Noko                                                      ║
+    ║   - https://www.asciiart.eu/                                 ║
+    ║   - Noko                                                     ║ 
     ║                                                              ║
     ║  Music:                                                      ║
-    ║  -Ismagmais                                                  ║
-    ║  -Noko                                                       ║
+    ║  - Ismagmais                                                 ║ 
+    ║  - Noko                                                      ║
     ║                                                              ║
     ║  playtesters:                                                ║ 
     ║  - "Crimson"                                                 ║
     ║  - "Pat"                                                     ║
     ║  - "Aisers"                                                  ║
+    ║  - "Morten"                                                  ║
+    ║  - "Adrian"                                                  ║
     ║                                                              ║
     ║ special thanks:                                              ║
     ║  - Kjetil                                                    ║
     ║  - Christoffer                                               ║
+    ║  - BigLoaf96                                                 ║
     ║                                                              ║
     ║   - You, {player_name}                                       ║
     ╚══════════════════════════════════════════════════════════════╝
