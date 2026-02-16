@@ -12525,7 +12525,7 @@ class Game:
                 ("Encyclopædia Britannica", "Various Authors",
                     "\"Fish are a diverse group of aquatic animals that have gills, fins, and typically a streamlined body.\""),
                 
-                ("Wikipedia, the free encyclopedia",
+                ("Wikipedia, the free encyclopedia", "Various Authors"
                     "\"Fishing is the activity of trying to catch fish, either in the wild or in captivity.\""),
 
                 ("National Geographic", "Various Authors",
