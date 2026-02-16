@@ -44,6 +44,7 @@ def end_credits(player_name="Player"):
     ║  - "Crimson"                                                 ║
     ║  - "Pat"                                                     ║
     ║  - "Aisers"                                                  ║
+    ║  - "JakkeMcMann                                              ║
     ║  - "Morten"                                                  ║
     ║  - "Adrian"                                                  ║
     ║                                                              ║
